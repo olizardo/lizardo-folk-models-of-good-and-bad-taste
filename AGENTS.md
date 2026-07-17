@@ -9,5 +9,5 @@ Analyze survey data regarding sociological definitions of "good taste" and "bad 
 * **Notebook**: Created `bertopic_good_taste.ipynb` to handle the text preprocessing and BERTopic pipeline.
 
 ## Data Structure
-* Raw data is in `FolkTaste_BruteData.csv` (first row is variable names, second row is full question text).
+* Raw data is in `data/FolkTaste_BruteData.csv` (first row is variable names, second row is full question text).
 * `Q1` determines if respondents have ever distinguished between good and bad taste. Those who answered "YES" provided open-text definitions in `GoodTaste` and `BadTaste`.
