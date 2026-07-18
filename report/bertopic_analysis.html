@@ -73,6 +73,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="bertopic_analysis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="bertopic_analysis_files/libs/bootstrap/bootstrap-efbb37e9afcc02144ebbc7afd12a776f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -150,8 +179,8 @@ Attaching package: 'dplyr'</code></pre>
 <p>The short texts defining “Good Taste” and “Bad Taste” were clustered into 5 broad themes each using BERTopic. We load the summarized results from those models.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the pre-computed topic info tables</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>good_topic_info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"Tabs/good_topic_info.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>bad_topic_info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"Tabs/bad_topic_info.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>good_topic_info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../good_taste_model_min10/topic_info.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>bad_topic_info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../bad_taste_model_min15/topic_info.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean up the Python list formatting in the Representation column</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>clean_keywords <span class="ot">&lt;-</span> <span class="cf">function</span>(rep_str) {</span>
@@ -179,50 +208,101 @@ Attaching package: 'dplyr'</code></pre>
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(good_topic_info, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 6
-  Topic Count Name                   Representation Representative_Docs Keywords
-  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                  &lt;chr&gt;          &lt;lgl&gt;               &lt;chr&gt;   
-1    -1    36 -1_good_taste_person_… ['good', 'tas… NA                  good, t…
-2     0    95 0_things_like_art_app… ['things', 'l… NA                  things,…
-3     1    88 1_taste_good_say_like  ['taste', 'go… NA                  taste, …
-4     2    41 2_good_taste_person_t… ['good', 'tas… NA                  good, t…
-5     3    18 3_means_like_good_kno… ['means', 'li… NA                  means, …</code></pre>
+<pre><code># A tibble: 4 × 6
+  Topic Count Name                 Representation   Representative_Docs Keywords
+  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                &lt;chr&gt;            &lt;chr&gt;               &lt;chr&gt;   
+1    -1    30 -1_the_they_and_good ['the', 'they',… "[\"When I think a… the, th…
+2     0   110 0_taste_good_to_that ['taste', 'good… "['If someone has … taste, …
+3     1    65 1_they_or_and_that   ['they', 'or', … "[\"They appreciat… they, o…
+4     2    18 2_means_it_or_that   ['means', 'it',… "['I believe that … means, …</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bad_topic_info, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 7 × 6
-  Topic Count Name                   Representation Representative_Docs Keywords
-  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                  &lt;chr&gt;          &lt;lgl&gt;               &lt;chr&gt;   
-1    -1    76 -1_taste_bad_like_thi… ['taste', 'ba… NA                  taste, …
-2     0    95 0_taste_bad_person_th… ['taste', 'ba… NA                  taste, …
-3     1    44 1_like_things_just_ca… ['like', 'thi… NA                  like, t…
-4     2    25 2_person_people_thing… ['person', 'p… NA                  person,…
-5     3    16 3_art_dont_taste_bad   ['art', 'dont… NA                  art, do…
-6     4    11 4_means_usually_like_… ['means', 'us… NA                  means, …
-7     5    11 5_music_shows_enjoyin… ['music', 'sh… NA                  music, …</code></pre>
+<pre><code># A tibble: 4 × 6
+  Topic Count Name                  Representation  Representative_Docs Keywords
+  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                 &lt;chr&gt;           &lt;chr&gt;               &lt;chr&gt;   
+1    -1    44 -1_or_that_is_it      ['or', 'that',… "['To me Could mea… or, tha…
+2     0   100 0_taste_bad_to_that   ['taste', 'bad… "['I would tell so… taste, …
+3     1    60 1_they_their_like_not ['they', 'thei… "[\"They don't car… they, t…
+4     2    19 2_who_someone_and_of  ['who', 'someo… "['This person is … who, so…</code></pre>
 </div>
 </div>
+</section>
+<section id="robustness-check-optimal-number-of-topics" class="level1">
+<h1>Robustness Check: Optimal Number of Topics</h1>
+<p>To ensure that the number of topics discovered by our primary model was not overly sensitive to the parameter choice of minimum cluster size (<code>min_topic_size</code>), we ran a robustness check across a range of values (5, 10, 15, and 20).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>robustness <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(<span class="st">"../topic_robustness_summary.json"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>good_df <span class="ot">&lt;-</span> robustness<span class="sc">$</span>good_taste_robustness <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Model =</span> <span class="st">"Good Taste"</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>bad_df <span class="ot">&lt;-</span> robustness<span class="sc">$</span>bad_taste_robustness <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Model =</span> <span class="st">"Bad Taste"</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>robust_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(good_df, bad_df)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>p_robust <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(robust_df, <span class="fu">aes</span>(<span class="at">x =</span> min_topic_size, <span class="at">y =</span> num_topics, <span class="at">color =</span> Model, <span class="at">group =</span> Model)) <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Good Taste"</span> <span class="ot">=</span> <span class="st">"steelblue"</span>, <span class="st">"Bad Taste"</span> <span class="ot">=</span> <span class="st">"indianred"</span>)) <span class="sc">+</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10</span>, <span class="at">by =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Sensitivity to Minimum Topic Size"</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Minimum Topic Size Parameter"</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Discovered Topics (Excl. Outliers)"</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_robust)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="bertopic_analysis_files/figure-html/plot-robustness-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/robustness_check.png"</span>, <span class="at">plot =</span> p_robust, <span class="at">width =</span> <span class="dv">7</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li><strong>Good Taste Models:</strong>
+<ul>
+<li><code>min_topic_size = 5</code> <span class="math inline">\(\rightarrow\)</span> 3 Topics</li>
+<li><code>min_topic_size = 10</code> <span class="math inline">\(\rightarrow\)</span> 3 Topics</li>
+<li><code>min_topic_size = 15</code> <span class="math inline">\(\rightarrow\)</span> 2 Topics</li>
+<li><code>min_topic_size = 20</code> <span class="math inline">\(\rightarrow\)</span> 2 Topics</li>
+</ul></li>
+<li><strong>Bad Taste Models:</strong>
+<ul>
+<li><code>min_topic_size = 5</code> <span class="math inline">\(\rightarrow\)</span> 8 Topics</li>
+<li><code>min_topic_size = 10</code> <span class="math inline">\(\rightarrow\)</span> 6 Topics</li>
+<li><code>min_topic_size = 15</code> <span class="math inline">\(\rightarrow\)</span> 3 Topics</li>
+<li><code>min_topic_size = 20</code> <span class="math inline">\(\rightarrow\)</span> 2 Topics</li>
+</ul></li>
+</ul>
+<section id="recommendation" class="level3">
+<h3 class="anchored" data-anchor-id="recommendation">Recommendation</h3>
+<p><strong>Good Taste</strong>: The structure of “Good Taste” definitions is remarkably stable. It naturally partitions into 3 distinct themes at lower minimum sizes, before collapsing into a broader binary distinction (2 topics) at higher thresholds. We recommend sticking with <strong>3 topics</strong> to preserve the nuance between differing “good taste” schemas without overfitting.</p>
+<p><strong>Bad Taste</strong>: Definitions of “Bad Taste” are more fragmented. At <code>min_topic_size = 5</code>, the algorithm finds 8 granular topics, some of which may be micro-clusters. However, forcing the minimum size to 20 collapses the nuance entirely into just 2 topics. A <code>min_topic_size = 10</code> (yielding <strong>6 topics</strong>) or <code>min_topic_size = 15</code> (yielding <strong>3 topics</strong>) offers the best balance. For comparability with the Good Taste results, utilizing the <strong>3 topic</strong> solution (<code>min_topic_size = 15</code>) is highly recommended, as it likely captures the core folk schemas of bad taste (e.g., gaudiness, lack of independence, and mass-media consumption) without excessive fragmentation.</p>
+</section>
 </section>
 <section id="visualizing-topic-distributions" class="level1">
 <h1>Visualizing topic distributions</h1>
 <p>We use <code>ggplot2</code> to visualize the distribution and prominence of each theme.</p>
 <p><em>(Note: Topic <code>-1</code> in BERTopic refers to outliers that could not be confidently assigned to a cluster. We exclude it from the visualizations below.)</em></p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure Plots directory exists</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"Plots"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Good Taste Topic Frequencies</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>p_good <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(good_topic_info <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Topic <span class="sc">!=</span> <span class="sc">-</span><span class="dv">1</span>), <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Name, Count), <span class="at">y =</span> Count)) <span class="sc">+</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Good Taste: Topic Frequencies"</span>, </span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Topic Name (Top Words)"</span>, </span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Responses"</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_good)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure Plots directory exists</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"Plots"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Good Taste Topic Frequencies</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>p_good <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(good_topic_info <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Topic <span class="sc">!=</span> <span class="sc">-</span><span class="dv">1</span>), <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Name, Count), <span class="at">y =</span> Count)) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Good Taste: Topic Frequencies"</span>, </span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Topic Name (Top Words)"</span>, </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Responses"</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_good)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -230,20 +310,20 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/good_taste_topics.png"</span>, <span class="at">plot =</span> p_good, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Bad Taste Topic Frequencies</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>p_bad <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(bad_topic_info <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Topic <span class="sc">!=</span> <span class="sc">-</span><span class="dv">1</span>), <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Name, Count), <span class="at">y =</span> Count)) <span class="sc">+</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"indianred"</span>) <span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Bad Taste: Topic Frequencies"</span>, </span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Topic Name (Top Words)"</span>, </span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Responses"</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_bad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/good_taste_topics.png"</span>, <span class="at">plot =</span> p_good, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Bad Taste Topic Frequencies</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>p_bad <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(bad_topic_info <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Topic <span class="sc">!=</span> <span class="sc">-</span><span class="dv">1</span>), <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Name, Count), <span class="at">y =</span> Count)) <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> <span class="st">"indianred"</span>) <span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Bad Taste: Topic Frequencies"</span>, </span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Topic Name (Top Words)"</span>, </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Responses"</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_bad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -251,7 +331,7 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/bad_taste_topics.png"</span>, <span class="at">plot =</span> p_bad, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/bad_taste_topics.png"</span>, <span class="at">plot =</span> p_bad, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="keyword-importance-c-tf-idf" class="level1">
@@ -259,56 +339,57 @@ Attaching package: 'dplyr'</code></pre>
 <p>To better understand <em>why</em> each topic was formed, we can look at the mathematical importance (c-TF-IDF score) of the top keywords for each topic. We extract these weights directly from the saved model metadata.</p>
 <section id="interpretation" class="level3">
 <h3 class="anchored" data-anchor-id="interpretation">Interpretation</h3>
+<p>Based on our updated 3-topic solution:</p>
 <ul>
-<li><strong>Good Taste</strong> themes seem heavily divided between definitions relying on external consensus or high-art aesthetics (Topic 0: <em>art, appreciate, pleasing</em>) versus definitions emphasizing alignment with personal preferences (Topic 1: <em>say, like, person</em>).</li>
-<li><strong>Bad Taste</strong> themes include lack of independence or “following the crowd” (Topic 0), enjoying “loud” or “gaudy” things (Topic 1, Topic 2), or specifically enjoying “low-brow” mass media (Topic 5: <em>music, reality tv, rap, movies</em>).</li>
+<li><strong>Good Taste</strong> schemas split broadly into aligning with mainstream/external consensus (Topic 0), an appreciation for aesthetic nuances like writing style, colors, and subtle art (Topic 1), and a moral or behavioral aspect such as making “good choices” or avoiding offense (Topic 2).</li>
+<li><strong>Bad Taste</strong> schemas are similarly split into viewing bad taste simply as a divergence from one’s personal preferences (Topic 0), engaging with low-quality, offensive, or “weird” mass media/material goods (Topic 1), and possessing a sense of humor or aesthetic that is loud, sophomoric, and lacking an understanding of desirable qualities (Topic 2).</li>
 </ul>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to parse the topics.json file into a ggplot-friendly dataframe</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>extract_keyword_weights <span class="ot">&lt;-</span> <span class="cf">function</span>(json_path) {</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Read from root path because the Quarto file runs from the report/ dir</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># but the string provided was relative to root in my tests.</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  topics_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(json_path)<span class="sc">$</span>topic_representations</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove the outlier topic "-1"</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  topics_data[[<span class="st">"-1"</span>]] <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert nested list into a dataframe</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  df_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">names</span>(topics_data), <span class="cf">function</span>(topic_id) {</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Each item is a matrix/array where [,1] is the word and [,2] is the score</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    mat <span class="ot">&lt;-</span> topics_data[[topic_id]]</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">Topic =</span> <span class="fu">paste</span>(<span class="st">"Topic"</span>, topic_id),</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">Word =</span> <span class="fu">as.character</span>(mat[,<span class="dv">1</span>]),</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">Score =</span> <span class="fu">as.numeric</span>(mat[,<span class="dv">2</span>]),</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, df_list)</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract for Good Taste</span></span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>good_weights <span class="ot">&lt;-</span> <span class="fu">extract_keyword_weights</span>(<span class="st">"../good_taste_model/topics.json"</span>)</span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Good Taste Keywords</span></span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>p_good_keys <span class="ot">&lt;-</span> good_weights <span class="sc">%&gt;%</span></span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Topic) <span class="sc">%&gt;%</span></span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">8</span>, Score) <span class="sc">%&gt;%</span> <span class="co"># Get top 8 words per topic</span></span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Word =</span> <span class="fu">reorder_within</span>(Word, Score, Topic)) <span class="sc">%&gt;%</span></span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Word, <span class="at">y =</span> Score, <span class="at">fill =</span> Topic)) <span class="sc">+</span></span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Topic, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
-<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_reordered</span>() <span class="sc">+</span></span>
-<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Good Taste: Keyword Importance by Topic"</span>,</span>
-<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"c-TF-IDF Score"</span></span>
-<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_good_keys)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to parse the topics.json file into a ggplot-friendly dataframe</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>extract_keyword_weights <span class="ot">&lt;-</span> <span class="cf">function</span>(json_path) {</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Read from root path because the Quarto file runs from the report/ dir</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># but the string provided was relative to root in my tests.</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  topics_data <span class="ot">&lt;-</span> <span class="fu">fromJSON</span>(json_path)<span class="sc">$</span>topic_representations</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove the outlier topic "-1"</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  topics_data[[<span class="st">"-1"</span>]] <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert nested list into a dataframe</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  df_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">names</span>(topics_data), <span class="cf">function</span>(topic_id) {</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Each item is a matrix/array where [,1] is the word and [,2] is the score</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    mat <span class="ot">&lt;-</span> topics_data[[topic_id]]</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">Topic =</span> <span class="fu">paste</span>(<span class="st">"Topic"</span>, topic_id),</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">Word =</span> <span class="fu">as.character</span>(mat[,<span class="dv">1</span>]),</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">Score =</span> <span class="fu">as.numeric</span>(mat[,<span class="dv">2</span>]),</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, df_list)</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract for Good Taste</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>good_weights <span class="ot">&lt;-</span> <span class="fu">extract_keyword_weights</span>(<span class="st">"../good_taste_model_min10/topics.json"</span>)</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Good Taste Keywords</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>p_good_keys <span class="ot">&lt;-</span> good_weights <span class="sc">%&gt;%</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Topic) <span class="sc">%&gt;%</span></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">8</span>, Score) <span class="sc">%&gt;%</span> <span class="co"># Get top 8 words per topic</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Word =</span> <span class="fu">reorder_within</span>(Word, Score, Topic)) <span class="sc">%&gt;%</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Word, <span class="at">y =</span> Score, <span class="at">fill =</span> Topic)) <span class="sc">+</span></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Topic, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_reordered</span>() <span class="sc">+</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Good Taste: Keyword Importance by Topic"</span>,</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"c-TF-IDF Score"</span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_good_keys)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -316,29 +397,29 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/good_taste_keywords.png"</span>, <span class="at">plot =</span> p_good_keys, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">8</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract for Bad Taste</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>bad_weights <span class="ot">&lt;-</span> <span class="fu">extract_keyword_weights</span>(<span class="st">"../bad_taste_model/topics.json"</span>)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Bad Taste Keywords</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>p_bad_keys <span class="ot">&lt;-</span> bad_weights <span class="sc">%&gt;%</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Topic) <span class="sc">%&gt;%</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">8</span>, Score) <span class="sc">%&gt;%</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Word =</span> <span class="fu">reorder_within</span>(Word, Score, Topic)) <span class="sc">%&gt;%</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Word, <span class="at">y =</span> Score, <span class="at">fill =</span> Topic)) <span class="sc">+</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Topic, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_reordered</span>() <span class="sc">+</span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Bad Taste: Keyword Importance by Topic"</span>,</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"c-TF-IDF Score"</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_bad_keys)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/good_taste_keywords.png"</span>, <span class="at">plot =</span> p_good_keys, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">8</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract for Bad Taste</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>bad_weights <span class="ot">&lt;-</span> <span class="fu">extract_keyword_weights</span>(<span class="st">"../bad_taste_model_min15/topics.json"</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Bad Taste Keywords</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>p_bad_keys <span class="ot">&lt;-</span> bad_weights <span class="sc">%&gt;%</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Topic) <span class="sc">%&gt;%</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">top_n</span>(<span class="dv">8</span>, Score) <span class="sc">%&gt;%</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Word =</span> <span class="fu">reorder_within</span>(Word, Score, Topic)) <span class="sc">%&gt;%</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Word, <span class="at">y =</span> Score, <span class="at">fill =</span> Topic)) <span class="sc">+</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Topic, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_reordered</span>() <span class="sc">+</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Bad Taste: Keyword Importance by Topic"</span>,</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"c-TF-IDF Score"</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_bad_keys)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -346,58 +427,56 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/bad_taste_keywords.png"</span>, <span class="at">plot =</span> p_bad_keys, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/bad_taste_keywords.png"</span>, <span class="at">plot =</span> p_bad_keys, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
-<section id="example-responses-pseudo-representative-documents" class="level1">
-<h1>Example Responses (Pseudo-Representative Documents)</h1>
-<p>Because the heavy mathematical models only saved the keyword weights to disk, we can use R to find the best example responses for each topic. We do this by scanning the original survey text and finding the quotes that contain the highest number of a topic’s core keywords.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the original survey text</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>raw_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../data/FolkTaste_CleanData.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>valid_data <span class="ot">&lt;-</span> raw_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Taste_Possibility <span class="sc">==</span> <span class="st">'YES'</span>)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>good_docs <span class="ot">&lt;-</span> valid_data<span class="sc">$</span>GoodTaste_Def[<span class="sc">!</span><span class="fu">is.na</span>(valid_data<span class="sc">$</span>GoodTaste_Def)]</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>bad_docs <span class="ot">&lt;-</span> valid_data<span class="sc">$</span>BadTaste_Def[<span class="sc">!</span><span class="fu">is.na</span>(valid_data<span class="sc">$</span>BadTaste_Def)]</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to score documents based on keyword matching and return the top 2</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>find_examples <span class="ot">&lt;-</span> <span class="cf">function</span>(docs, keywords_str, <span class="at">n =</span> <span class="dv">2</span>) {</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split the comma-separated keywords</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  keys <span class="ot">&lt;-</span> <span class="fu">str_split</span>(keywords_str, <span class="st">",</span><span class="sc">\\</span><span class="st">s*"</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Score each document by counting keyword occurrences</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  scores <span class="ot">&lt;-</span> <span class="fu">sapply</span>(docs, <span class="cf">function</span>(d) {</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.na</span>(d) <span class="sc">||</span> <span class="fu">nchar</span>(<span class="fu">trimws</span>(d)) <span class="sc">&lt;</span> <span class="dv">10</span>) <span class="fu">return</span>(<span class="sc">-</span><span class="dv">1</span>) <span class="co"># Penalize empty/very short responses</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    d_lower <span class="ot">&lt;-</span> <span class="fu">tolower</span>(d)</span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="fu">sapply</span>(keys, <span class="cf">function</span>(k) <span class="fu">str_detect</span>(d_lower, <span class="fu">fixed</span>(k))))</span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get indices of the top scoring documents</span></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  top_idx <span class="ot">&lt;-</span> <span class="fu">order</span>(scores, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span><span class="sc">:</span>n]</span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Format as a nice HTML bulleted list</span></span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="fu">paste0</span>(<span class="st">"&amp;bull; &lt;em&gt;</span><span class="sc">\"</span><span class="st">"</span>, docs[top_idx], <span class="st">"</span><span class="sc">\"</span><span class="st">&lt;/em&gt;"</span>), <span class="at">collapse =</span> <span class="st">"&lt;br&gt;&lt;br&gt;"</span>)</span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply to Good Taste</span></span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>good_topic_table<span class="sc">$</span>Example_Responses <span class="ot">&lt;-</span> <span class="fu">sapply</span>(good_topic_table<span class="sc">$</span>Keywords, <span class="cf">function</span>(kw) {</span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">find_examples</span>(good_docs, kw, <span class="at">n =</span> <span class="dv">2</span>)</span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply to Bad Taste</span></span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>bad_topic_table<span class="sc">$</span>Example_Responses <span class="ot">&lt;-</span> <span class="fu">sapply</span>(bad_topic_table<span class="sc">$</span>Keywords, <span class="cf">function</span>(kw) {</span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">find_examples</span>(bad_docs, kw, <span class="at">n =</span> <span class="dv">2</span>)</span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the updated tables to the Tabs directory</span></span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(</span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(good_topic_table, <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">escape =</span> <span class="cn">FALSE</span>), </span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tabs/good_taste_examples_table.html"</span></span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(</span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(bad_topic_table, <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">escape =</span> <span class="cn">FALSE</span>), </span>
-<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tabs/bad_taste_examples_table.html"</span></span>
-<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="example-responses-most-probable-documents" class="level1">
+<h1>Example Responses (Most Probable Documents)</h1>
+<p>Instead of relying solely on keyword matching, we can leverage the <strong>document-by-topic probability matrices</strong> exported by the models to find the texts that are mathematically the most representative of each topic.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the original survey text</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>raw_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../data/FolkTaste_CleanData.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>valid_data <span class="ot">&lt;-</span> raw_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Taste_Possibility <span class="sc">==</span> <span class="st">'YES'</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>good_docs <span class="ot">&lt;-</span> valid_data<span class="sc">$</span>GoodTaste_Def[<span class="sc">!</span><span class="fu">is.na</span>(valid_data<span class="sc">$</span>GoodTaste_Def)]</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>bad_docs <span class="ot">&lt;-</span> valid_data<span class="sc">$</span>BadTaste_Def[<span class="sc">!</span><span class="fu">is.na</span>(valid_data<span class="sc">$</span>BadTaste_Def)]</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Load probability matrices</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>good_probs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../good_taste_model_min10/document_topic_probabilities.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>bad_probs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../bad_taste_model_min15/document_topic_probabilities.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to get top documents based on probability score</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>get_top_docs <span class="ot">&lt;-</span> <span class="cf">function</span>(docs, prob_matrix, topic_col, <span class="at">n =</span> <span class="dv">2</span>) {</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># topic_col is the column name in the probability matrix (e.g. "0", "1")</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">as.character</span>(topic_col) <span class="sc">%in%</span> <span class="fu">colnames</span>(prob_matrix)) <span class="fu">return</span>(<span class="st">"N/A"</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>  probs <span class="ot">&lt;-</span> prob_matrix[[<span class="fu">as.character</span>(topic_col)]]</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>  top_idx <span class="ot">&lt;-</span> <span class="fu">order</span>(probs, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span><span class="sc">:</span>n]</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="fu">paste0</span>(<span class="st">"&amp;bull; &lt;em&gt;</span><span class="sc">\"</span><span class="st">"</span>, docs[top_idx], <span class="st">"</span><span class="sc">\"</span><span class="st">&lt;/em&gt;"</span>), <span class="at">collapse =</span> <span class="st">"&lt;br&gt;&lt;br&gt;"</span>)</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply to Good Taste</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>good_topic_table<span class="sc">$</span>Example_Responses <span class="ot">&lt;-</span> <span class="fu">sapply</span>(good_topic_table<span class="sc">$</span>Topic, <span class="cf">function</span>(t) {</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(t <span class="sc">==</span> <span class="sc">-</span><span class="dv">1</span>) <span class="fu">return</span>(<span class="st">"Outliers"</span>)</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_top_docs</span>(good_docs, good_probs, t, <span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply to Bad Taste</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>bad_topic_table<span class="sc">$</span>Example_Responses <span class="ot">&lt;-</span> <span class="fu">sapply</span>(bad_topic_table<span class="sc">$</span>Topic, <span class="cf">function</span>(t) {</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(t <span class="sc">==</span> <span class="sc">-</span><span class="dv">1</span>) <span class="fu">return</span>(<span class="st">"Outliers"</span>)</span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_top_docs</span>(bad_docs, bad_probs, t, <span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the updated tables to the Tabs directory</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(good_topic_table, <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">escape =</span> <span class="cn">FALSE</span>), </span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tabs/good_taste_examples_table.html"</span></span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(</span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(bad_topic_table, <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">escape =</span> <span class="cn">FALSE</span>), </span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tabs/bad_taste_examples_table.html"</span></span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="good-taste-examples" class="level3">
 <h3 class="anchored" data-anchor-id="good-taste-examples">Good Taste Examples</h3>
 <table class="caption-top table">
@@ -416,38 +495,29 @@ Attaching package: 'dplyr'</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">-1</td>
-<td style="text-align: left;">-1_good_taste_person_usually</td>
-<td style="text-align: left;">• <em>"To mean it means that the someone being referred to makes or usually for the most part things which are very good in terms of quality or appearance. In reality though it effectively usually means that the person who is being referred to makes choices usually aligned with mine. A person who has good taste may also be someone who consistently chooses things which are just generally popular overall."</em><br>
-<br>
-• <em>"To me it usually means that they can think for themselves. They don't just say they like a book because it's on the bestseller list. They've read enough, listened to enough, or seen enough to form a good opinion and make up their own minds about what they like. However, their taste isn't too "out there.""</em></td>
+<td style="text-align: left;">-1_the_they_and_good</td>
+<td style="text-align: left;">Outliers</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
-<td style="text-align: left;">0_things_like_art_appreciate</td>
-<td style="text-align: left;">• <em>"This is subjective. When we say that someone has good taste, it could mean that they have a deep understanding of all the aspects of a certain topic and that their personal bias is one that shows a true appreciation for said subject. It could also mean that they like things that others do, so as to follow a trend."</em><br>
+<td style="text-align: left;">0_taste_good_to_that</td>
+<td style="text-align: left;">• <em>"I think that a person who has good taste can easily influence a lot of people. I also think that they are very smart in knowing what their audience want. They follow modern trends and study the good and bad."</em><br>
 <br>
-• <em>"If someone has a good taste, then they like things that many people view are "good". It's a very subjective thing to have a "good taste", I think it depends on how you grew up. In certain areas, it'd be luxury things or elegant things that are defined as good taste. In other parts, it could just be like something that isn't as "Trendy" as what most people like. I'd also say that people with "good taste", tend to think on their own and don't follow what others like."</em></td>
+• <em>"Usually, when someone has good taste I consider their likes/dislikes to be similar to mine, because I believe that I have good taste."</em></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1</td>
-<td style="text-align: left;">1_taste_good_say_like</td>
-<td style="text-align: left;">• <em>"I mean the person likes things that are in the same taste as I. If I think something is attractive, then for me to say that they have good taste would say that they have the same taste in whatever subject we are talking about as I. I love old rock and roll, so if the person likes it, I would say that they have good taste."</em><br>
+<td style="text-align: left;">1_they_or_and_that</td>
+<td style="text-align: left;">• <em>"This person can distinguish good art from bad art. This person has seen and learned a lot in this professional area."</em><br>
 <br>
-• <em>"This can mean different things based on who is saying it of course. Maybe a rich person will think good taste is having antiques, a newly rich person might think good taste is having fancy clothes/cars or a movie snob might like how movies are composed."</em></td>
+• <em>"As elitist as it may sound, I've associated someone having good taste as someone rather cultured. Their preferences are somewhat subdued, and with a sense of cohesiveness. It's not loud, garish, or pretentious."</em></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">2</td>
-<td style="text-align: left;">2_good_taste_person_think</td>
-<td style="text-align: left;">• <em>"When I think about what it means to have good taste, several things come to mind. The person may have a sense of colors that look well together. They may have ideas of design, that are appealing to many people. A specific example of having good taste might be a clothing designer who has a knack for combining the 'right' colors and creating a figure-flattering style."</em><br>
+<td style="text-align: left;">2_means_it_or_that</td>
+<td style="text-align: left;">• <em>"I think that they make good, stylish choices based on the type of aesthetic that I myself appreciate. They also think in creative ways that complement their choices as a whole."</em><br>
 <br>
-• <em>"To mean it means that the someone being referred to makes or usually for the most part things which are very good in terms of quality or appearance. In reality though it effectively usually means that the person who is being referred to makes choices usually aligned with mine. A person who has good taste may also be someone who consistently chooses things which are just generally popular overall."</em></td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">3_means_like_good_knows</td>
-<td style="text-align: left;">• <em>"I think it means that people chose to do or see or say or dress or participate in a way that is morally good and not offensive to other people. They don't like things that are garish. They respect other people and interact with them as they would want others to interact with them. They are not exhibitionists."</em><br>
-<br>
-• <em>"I believe that it means that they have a good selection of goods or services used by them. It means other people value those choices and admire their selection of goods or services. It makes the person more desirable because of a finer choices in life."</em></td>
+• <em>"The have knowledge and range in the music they prefer"</em></td>
 </tr>
 </tbody>
 </table>
@@ -470,55 +540,322 @@ Attaching package: 'dplyr'</code></pre>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">-1</td>
-<td style="text-align: left;">-1_taste_bad_like_things</td>
-<td style="text-align: left;">• <em>"Bad taste can be different to everyone, for me it would be something I dislike. An example: if I dislike a piece of art and someone else likes it, I would say this person has bad taste in art."</em><br>
-<br>
-• <em>"Someone who has bad taste in my opinion would mean that my opinions of those tastes are bad. To put simply, the tastes that I dislike would make me think a person who likes them has bad taste."</em></td>
+<td style="text-align: left;">-1_or_that_is_it</td>
+<td style="text-align: left;">Outliers</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0</td>
-<td style="text-align: left;">0_taste_bad_person_things</td>
-<td style="text-align: left;">• <em>"When I say bad taste, it means that the person does not pay attention to the finer details of things and just decide to follow everyone without knowing why they picked it. For example, in fashion, people would pick the worst outfits that despite having unique patterns, they did it in a way that it looks cheap and does not elevate their look."</em><br>
+<td style="text-align: left;">0_taste_bad_to_that</td>
+<td style="text-align: left;">• <em>"If majority of people think what they think is good is bad then it usually means they have bad taste compared to everyone."</em><br>
 <br>
-• <em>"I'd say someone with a "bad taste" doesn't really like things on their own, they tend to be a follower for what's popular so they don't end up with much of a taste at all. I'd also say it's when they like a lot of things that other people tend to dislike, so they'd have a "bad taste" compared. Again though, really depends on cultures and areas they grew up, what may be bad tastes where they are, could be good tastes elsewhere."</em></td>
+• <em>"I think that when someone has bad taste I mean that their likes have no value that I can perceive. Their likes may also cause harm or at least do no good/provide no benefit."</em></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">1</td>
-<td style="text-align: left;">1_like_things_just_care</td>
-<td style="text-align: left;">• <em>"Maybe they like gaudy decor or crass music, or explicit paintings. Or maybe they just like whatever is currently popular and it changes with that."</em><br>
+<td style="text-align: left;">1_they_their_like_not</td>
+<td style="text-align: left;">• <em>"any american teen"</em><br>
 <br>
-• <em>"They like things that are outside the bounds of acceptability or like things that are just plain dumb."</em></td>
+• <em>"Bad taste is noted when others do not approve of someone's choices or biases on a particular topic. It could mean that they are behind on following trends, or it could mean that they fail to see the depth or true value in the aforementioned topic and have shallow judgement."</em></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">2</td>
-<td style="text-align: left;">2_person_people_things_loud</td>
-<td style="text-align: left;">• <em>"Nowadays is only a joke to people who likes things that I personally don't like or dislike. In the past I would mean it, but after time and experience, I have learned taste is a subjective aspect in the human nature."</em><br>
+<td style="text-align: left;">2_who_someone_and_of</td>
+<td style="text-align: left;">• <em>"When I say someone has bad taste I usually am just referring to when we disagree on something or they dont value something the same amount as I do."</em><br>
 <br>
-• <em>"Someone who may have their own ideas about the aesthetic qualities of objects which generally go against beliefs held by most people in society. Someone who has a sense of humor that is sophomoric and doesn't realize that others may take offense. A person who can't distinguish the qualities that make items desirable to the majority."</em></td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">3</td>
-<td style="text-align: left;">3_art_dont_taste_bad</td>
-<td style="text-align: left;">• <em>"When I say that someone has bad taste, I generally mean that I view negatively the art/music/literature that that person enjoys. That is, I don't think it conveys any meaning, I don't think that the person who created it has any talent, and I don't see the value in it. I have to admit that it often means that this is very subjective, in that it often means that I myself don't like the art/music/literature at all myself."</em><br>
-<br>
-• <em>"Bad taste can be different to everyone, for me it would be something I dislike. An example: if I dislike a piece of art and someone else likes it, I would say this person has bad taste in art."</em></td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">4</td>
-<td style="text-align: left;">4_means_usually_like_quality</td>
-<td style="text-align: left;">• <em>"It means they do not have a clue about what looks good, what is quality, what is in style, is desirable. Usually they like gaudy and tacky things that may be expensive but horrible looking."</em><br>
-<br>
-• <em>"It means something looks horrible on them or the music isn't to their liking. It depends on the person and who you're explaining it to. Each person has their own taste."</em></td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">5_music_shows_enjoying_tv</td>
-<td style="text-align: left;">• <em>"When someone has a bad taste they are probably focused on a single genre and completely ignore everything else. Usually they would watch poorly scripted shows or movies, reality tv, etc."</em><br>
-<br>
-• <em>"When someone has "bad taste" I tend to think they enjoy media, books, and food made for the lowest common denominator. They are easily entertained by things like reality television, Michael Bay films with tons of explosions, and their favorite music is whatever the latest generic popular rap/pop artist has on the radio."</em></td>
+• <em>"I'd say someone with a "bad taste" doesn't really like things on their own, they tend to be a follower for what's popular so they don't end up with much of a taste at all. I'd also say it's when they like a lot of things that other people tend to dislike, so they'd have a "bad taste" compared. Again though, really depends on cultures and areas they grew up, what may be bad tastes where they are, could be good tastes elsewhere."</em></td>
 </tr>
 </tbody>
 </table>
+</section>
+</section>
+<section id="correspondence-analysis-of-topic-probabilities" class="level1">
+<h1>Correspondence Analysis of Topic Probabilities</h1>
+<p>Because each open-ended response is a mixture of the discovered topics, we can visualize the document-by-topic probability matrices using <strong>Correspondence Analysis (CA)</strong>.</p>
+<p>The resulting biplots project the document probabilities into a 2D space. The black triangles represent the “pure” topics, and the colored dots represent the individual respondents’ definitions. Documents that fall halfway between two topics combine themes from both, while documents clustered tightly at the vertices represent “pure” definitions of that specific schema. We have colored each document by its dominant assigned topic.</p>
+<section id="interpretation-of-ca-biplots" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-of-ca-biplots">Interpretation of CA Biplots</h3>
+<p>The structural relationships revealed by the Correspondence Analysis are highly informative:</p>
+<ul>
+<li><strong>Clear Differentiation</strong>: The documents tend to stretch distinctly toward the three vertices (topics), indicating that while there is some blending, most respondents lean heavily toward one primary schema for defining “Good” or “Bad” taste.</li>
+<li><strong>Good Taste Schema Distance</strong>: In the Good Taste biplot, Topic 0 (mainstream consensus) and Topic 1 (aesthetic/high-art nuance) stretch out horizontally across Dimension 1. Topic 2 (moral/behavioral aspects) projects upward along Dimension 2, indicating that the moralized version of “Good Taste” is orthognal to the aesthetic/consensus debate.</li>
+<li><strong>Bad Taste Schema Distance</strong>: In the Bad Taste biplot, a similar structure often emerges, highlighting the tension between defining bad taste merely as a disagreement in preference versus defining it as objectively low-quality or socially offensive behavior.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean up column names for plotting</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(good_probs) <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">"Topic"</span>, <span class="dv">0</span><span class="sc">:</span>(<span class="fu">ncol</span>(good_probs)<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(bad_probs) <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">"Topic"</span>, <span class="dv">0</span><span class="sc">:</span>(<span class="fu">ncol</span>(bad_probs)<span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a tiny constant to avoid zero-division in CA</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>good_ca_data <span class="ot">&lt;-</span> good_probs <span class="sc">+</span> <span class="fl">1e-6</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>bad_ca_data <span class="ot">&lt;-</span> bad_probs <span class="sc">+</span> <span class="fl">1e-6</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Determine dominant topic for coloring</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>good_assigned <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">paste</span>(<span class="st">"Topic"</span>, <span class="fu">apply</span>(good_probs, <span class="dv">1</span>, which.max) <span class="sc">-</span> <span class="dv">1</span>))</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>bad_assigned <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">paste</span>(<span class="st">"Topic"</span>, <span class="fu">apply</span>(bad_probs, <span class="dv">1</span>, which.max) <span class="sc">-</span> <span class="dv">1</span>))</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform Correspondence Analysis</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>res.ca.good <span class="ot">&lt;-</span> <span class="fu">CA</span>(good_ca_data, <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>res.ca.bad <span class="ot">&lt;-</span> <span class="fu">CA</span>(bad_ca_data, <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize Good Taste CA</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>p_ca_good <span class="ot">&lt;-</span> <span class="fu">fviz_ca_biplot</span>(res.ca.good, </span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom.row =</span> <span class="st">"point"</span>, </span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>               <span class="at">col.row =</span> good_assigned,</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>               <span class="at">col.col =</span> <span class="st">"black"</span>, </span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>               <span class="at">title =</span> <span class="st">"Correspondence Analysis: Good Taste Schemas"</span>,</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>               <span class="at">palette =</span> <span class="st">"jco"</span>,</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>               <span class="at">legend.title =</span> <span class="st">"Assigned Topic"</span>)</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_ca_good)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="bertopic_analysis_files/figure-html/plot-ca-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/ca_good_taste.png"</span>, <span class="at">plot =</span> p_ca_good, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize Bad Taste CA</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>p_ca_bad <span class="ot">&lt;-</span> <span class="fu">fviz_ca_biplot</span>(res.ca.bad, </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">geom.row =</span> <span class="st">"point"</span>, </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">col.row =</span> bad_assigned,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">col.col =</span> <span class="st">"black"</span>, </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">title =</span> <span class="st">"Correspondence Analysis: Bad Taste Schemas"</span>,</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">palette =</span> <span class="st">"jco"</span>,</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>               <span class="at">legend.title =</span> <span class="st">"Assigned Topic"</span>)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_ca_bad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="bertopic_analysis_files/figure-html/plot-ca-2.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/ca_bad_taste.png"</span>, <span class="at">plot =</span> p_ca_bad, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="extended-analysis-demographics-schema-correlation-and-distinction" class="level1">
+<h1>Extended Analysis: Demographics, Schema Correlation, and Distinction</h1>
+<p>By attaching the latent topic assignments back to the original survey respondents, we can perform downstream statistical analyses. For the following tests, we assign each respondent to the topic for which they have the highest probability.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Re-read raw data and align exactly with the probability matrices</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>raw_survey <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../data/FolkTaste_CleanData.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>survey_df <span class="ot">&lt;-</span> raw_survey[<span class="sc">-</span><span class="dv">1</span>, ] <span class="co"># drop question row</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>valid_idx <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span><span class="fu">is.na</span>(survey_df<span class="sc">$</span>GoodTaste_Def))</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>analysis_df <span class="ot">&lt;-</span> survey_df[valid_idx, ]</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Assign hard clusters based on max probability</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>analysis_df<span class="sc">$</span>GoodTopic_Id <span class="ot">&lt;-</span> <span class="fu">apply</span>(good_probs, <span class="dv">1</span>, which.max) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>analysis_df<span class="sc">$</span>BadTopic_Id <span class="ot">&lt;-</span> <span class="fu">apply</span>(bad_probs, <span class="dv">1</span>, which.max) <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Provide descriptive labels</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>good_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"0: Mainstream/Consensus"</span>, <span class="st">"1: Aesthetics/Nuance"</span>, <span class="st">"2: Moral/Behavioral"</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>bad_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"0: Personal Disagreement"</span>, <span class="st">"1: Low Quality/Materialist"</span>, <span class="st">"2: Loud/Sophomoric/Offensive"</span>)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>analysis_df<span class="sc">$</span>GoodTasteTopic <span class="ot">&lt;-</span> <span class="fu">factor</span>(analysis_df<span class="sc">$</span>GoodTopic_Id, <span class="at">labels =</span> good_labels)</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>analysis_df<span class="sc">$</span>BadTasteTopic <span class="ot">&lt;-</span> <span class="fu">factor</span>(analysis_df<span class="sc">$</span>BadTopic_Id, <span class="at">labels =</span> bad_labels)</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean demographics</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>analysis_df<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(analysis_df<span class="sc">$</span>Age)</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>analysis_df<span class="sc">$</span>EducationLevel_Coded <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(analysis_df<span class="sc">$</span>EducationLevel_Coded)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="demographics-vs.-taste-schemas" class="level2">
+<h2 class="anchored" data-anchor-id="demographics-vs.-taste-schemas">1. Demographics vs.&nbsp;Taste Schemas</h2>
+<p>Do different kinds of people hold different definitions of taste? We can examine the relationship between our discovered “Good Taste” schemas and respondent Age using Multinomial Logistic Regression.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nnet)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effects)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggsci)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter for clean data on predictors</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>model_data <span class="ot">&lt;-</span> analysis_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Age), <span class="sc">!</span><span class="fu">is.na</span>(EducationLevel_Coded), Gender <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"A man"</span>, <span class="st">"A woman"</span>))</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit multinomial models (Hess=TRUE is required for standard errors in effects package)</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>m_good <span class="ot">&lt;-</span> <span class="fu">multinom</span>(GoodTasteTopic <span class="sc">~</span> Age <span class="sc">+</span> Gender <span class="sc">+</span> EducationLevel_Coded, <span class="at">data =</span> model_data, <span class="at">Hess =</span> <span class="cn">TRUE</span>, <span class="at">trace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>m_bad <span class="ot">&lt;-</span> <span class="fu">multinom</span>(BadTasteTopic <span class="sc">~</span> Age <span class="sc">+</span> Gender <span class="sc">+</span> EducationLevel_Coded, <span class="at">data =</span> model_data, <span class="at">Hess =</span> <span class="cn">TRUE</span>, <span class="at">trace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Run Wald tests</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>wald_good <span class="ot">&lt;-</span> car<span class="sc">::</span><span class="fu">Anova</span>(m_good, <span class="at">type =</span> <span class="st">"II"</span>, <span class="at">test.statistic =</span> <span class="st">"Wald"</span>)</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>wald_bad <span class="ot">&lt;-</span> car<span class="sc">::</span><span class="fu">Anova</span>(m_bad, <span class="at">type =</span> <span class="st">"II"</span>, <span class="at">test.statistic =</span> <span class="st">"Wald"</span>)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate base probabilities for the dashed lines</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>baseline_good <span class="ot">&lt;-</span> model_data <span class="sc">%&gt;%</span> <span class="fu">count</span>(GoodTasteTopic) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">prop =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n), <span class="at">Topic =</span> <span class="fu">factor</span>(GoodTasteTopic, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"0"</span>,<span class="st">"1"</span>,<span class="st">"2"</span>), <span class="at">labels=</span>good_labels))</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>baseline_bad <span class="ot">&lt;-</span> model_data <span class="sc">%&gt;%</span> <span class="fu">count</span>(BadTasteTopic) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">prop =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n), <span class="at">Topic =</span> <span class="fu">factor</span>(BadTasteTopic, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">"0"</span>,<span class="st">"1"</span>,<span class="st">"2"</span>), <span class="at">labels=</span>bad_labels))</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract predicted probabilities with confidence intervals for Age (the only significant predictor)</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>eff_good_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">Effect</span>(<span class="st">"Age"</span>, m_good))</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>plot_good_df <span class="ot">&lt;-</span> eff_good_df <span class="sc">%&gt;%</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Age, <span class="fu">starts_with</span>(<span class="st">"prob."</span>), <span class="fu">starts_with</span>(<span class="st">"L.prob."</span>), <span class="fu">starts_with</span>(<span class="st">"U.prob."</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>Age,</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".value"</span>, <span class="st">"Topic"</span>),</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_pattern =</span> <span class="st">"(.*)</span><span class="sc">\\</span><span class="st">.X(.*)"</span></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Topic =</span> <span class="fu">factor</span>(Topic, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"0"</span>, <span class="st">"1"</span>, <span class="st">"2"</span>), <span class="at">labels =</span> good_labels))</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>p_good_age <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(plot_good_df, <span class="fu">aes</span>(<span class="at">x =</span> Age, <span class="at">y =</span> prob, <span class="at">color =</span> Topic, <span class="at">fill =</span> Topic)) <span class="sc">+</span></span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">data =</span> baseline_good, <span class="fu">aes</span>(<span class="at">yintercept =</span> prop), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray60"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> L.prob, <span class="at">ymax =</span> U.prob), <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Topic) <span class="sc">+</span></span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_jco</span>() <span class="sc">+</span> <span class="fu">scale_fill_jco</span>() <span class="sc">+</span></span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Predicted Probability of 'Good Taste' Schemas by Age"</span>,</span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Marginal effects from Multinomial Logit (95% CI). Dashed line is baseline topic probability."</span>,</span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Age"</span>, </span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Predicted Probability"</span></span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_good_age)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="bertopic_analysis_files/figure-html/plot-demographics-1.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/demographics_good_taste.png"</span>, <span class="at">plot =</span> p_good_age, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">5</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>eff_bad_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">Effect</span>(<span class="st">"Age"</span>, m_bad))</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>plot_bad_df <span class="ot">&lt;-</span> eff_bad_df <span class="sc">%&gt;%</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Age, <span class="fu">starts_with</span>(<span class="st">"prob."</span>), <span class="fu">starts_with</span>(<span class="st">"L.prob."</span>), <span class="fu">starts_with</span>(<span class="st">"U.prob."</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>Age,</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".value"</span>, <span class="st">"Topic"</span>),</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_pattern =</span> <span class="st">"(.*)</span><span class="sc">\\</span><span class="st">.X(.*)"</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Topic =</span> <span class="fu">factor</span>(Topic, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"0"</span>, <span class="st">"1"</span>, <span class="st">"2"</span>), <span class="at">labels =</span> bad_labels))</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>p_bad_age <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(plot_bad_df, <span class="fu">aes</span>(<span class="at">x =</span> Age, <span class="at">y =</span> prob, <span class="at">color =</span> Topic, <span class="at">fill =</span> Topic)) <span class="sc">+</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">data =</span> baseline_bad, <span class="fu">aes</span>(<span class="at">yintercept =</span> prop), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"gray60"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> L.prob, <span class="at">ymax =</span> U.prob), <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">color =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Topic) <span class="sc">+</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_jco</span>() <span class="sc">+</span> <span class="fu">scale_fill_jco</span>() <span class="sc">+</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Predicted Probability of 'Bad Taste' Schemas by Age"</span>,</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Marginal effects from Multinomial Logit (95% CI). Dashed line is baseline topic probability."</span>,</span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Age"</span>, </span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Predicted Probability"</span></span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_bad_age)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="bertopic_analysis_files/figure-html/plot-demographics-2.png" class="img-fluid figure-img" width="864"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/demographics_bad_taste.png"</span>, <span class="at">plot =</span> p_bad_age, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The Wald tests show that <strong>Age</strong> is a significant predictor of which schema a respondent holds (<code>p &lt; .05</code>).</p>
+<ul>
+<li><strong>Good Taste</strong>: As respondents get older, they are significantly less likely to define good taste purely as “Mainstream/Consensus” (Topic 0) and significantly more likely to define it through “Aesthetics/Nuance” (Topic 1). The probability of holding a moralized view (Topic 2) remains flat across all ages.</li>
+<li><strong>Bad Taste</strong>: Similarly, younger respondents are highly likely to define bad taste simply as a “Personal Disagreement” (Topic 0). As age increases, this view plummets, replaced by the likelihood of defining bad taste as “Loud/Sophomoric/Offensive” (Topic 2).</li>
+</ul>
+</section>
+<section id="correlation-between-good-and-bad-taste-schemas" class="level2">
+<h2 class="anchored" data-anchor-id="correlation-between-good-and-bad-taste-schemas">2. Correlation Between Good and Bad Taste Schemas</h2>
+<p>Because each respondent defined <em>both</em> “Good Taste” and “Bad Taste”, we can check if certain definitions naturally pair together in the population.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a contingency table</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>schema_table <span class="ot">&lt;-</span> <span class="fu">table</span>(analysis_df<span class="sc">$</span>BadTasteTopic, analysis_df<span class="sc">$</span>GoodTasteTopic)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>chisq_res <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(schema_table)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in chisq.test(schema_table): Chi-squared approximation may be incorrect</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract Pearson Residuals to visualize</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>residuals_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">as.table</span>(chisq_res<span class="sc">$</span>residuals))</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(residuals_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"BadTaste"</span>, <span class="st">"GoodTaste"</span>, <span class="st">"Residual"</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Re-label the factors for the plot</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(residuals_df<span class="sc">$</span>GoodTaste) <span class="ot">&lt;-</span> good_labels</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(residuals_df<span class="sc">$</span>BadTaste) <span class="ot">&lt;-</span> bad_labels</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>p_res <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(residuals_df, <span class="fu">aes</span>(<span class="at">x =</span> GoodTaste, <span class="at">y =</span> BadTaste, <span class="at">fill =</span> Residual)) <span class="sc">+</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Residual, <span class="dv">2</span>)), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"indianred"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"steelblue"</span>, <span class="at">midpoint =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">15</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Pearson Residuals of Schema Correlation"</span>,</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Positive values (blue) indicate schema combinations that occur more often than expected by chance."</span>,</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Good Taste Schema"</span>,</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Bad Taste Schema"</span>,</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Residual"</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_res)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="bertopic_analysis_files/figure-html/plot-schema-correlation-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/schema_correlation.png"</span>, <span class="at">plot =</span> p_res, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>A Chi-Squared test of independence confirms that the way a respondent defines Good Taste is highly predictive of how they define Bad Taste (<span class="math inline">\(\chi^2 = 52.78, p &lt; .001\)</span>). * Those who hold the “Mainstream/Consensus” view of Good Taste overwhelmingly view Bad Taste as a simple “Personal Disagreement.” * Those who view Good Taste as an appreciation for “Aesthetics/Nuance” tend to define Bad Taste specifically through the lens of “Low Quality/Materialist” goods.</p>
+</section>
+<section id="predicting-cultural-distinction-domains" class="level2">
+<h2 class="anchored" data-anchor-id="predicting-cultural-distinction-domains">3. Predicting Cultural Distinction Domains</h2>
+<p>Do these latent schemas actually correspond to how respondents draw boundaries in the real world? The survey asked respondents to rate various cultural domains (e.g., Music, Food, Clothing, TV Shows) on how effectively they act as markers of distinction (scale of -3 to +3).</p>
+<p>We compute the average distinction score for each domain, grouped by the respondent’s Good Taste schema.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Select distinction columns</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>distinction_cols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"Domains_Distinction1_"</span>, <span class="fu">colnames</span>(analysis_df), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate means</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>distinction_means <span class="ot">&lt;-</span> analysis_df <span class="sc">%&gt;%</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GoodTasteTopic, <span class="fu">all_of</span>(distinction_cols)) <span class="sc">%&gt;%</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"Domains_Distinction1_"</span>), <span class="at">names_to =</span> <span class="st">"Domain"</span>, <span class="at">values_to =</span> <span class="st">"Score"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">Domain =</span> <span class="fu">str_remove</span>(Domain, <span class="st">"Domains_Distinction1_"</span>),</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">Score =</span> <span class="fu">as.numeric</span>(Score)</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Score)) <span class="sc">%&gt;%</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(GoodTasteTopic, Domain) <span class="sc">%&gt;%</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">Mean_Score =</span> <span class="fu">mean</span>(Score, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot as a heatmap</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>p_dist <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(distinction_means, <span class="fu">aes</span>(<span class="at">x =</span> Domain, <span class="at">y =</span> GoodTasteTopic, <span class="at">fill =</span> Mean_Score)) <span class="sc">+</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"indianred"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"steelblue"</span>, <span class="at">midpoint =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Average Distinction Rating by Domain and Taste Schema"</span>,</span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Cultural Domain"</span>,</span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Good Taste Schema"</span>,</span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Mean Score (-3 to 3)"</span></span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_dist)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="bertopic_analysis_files/figure-html/plot-distinctions-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/distinction_domains.png"</span>, <span class="at">plot =</span> p_dist, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The heatmap reveals subtle variations in how different schema-holders apply cultural boundaries: * Across the board, domains like <strong>Music</strong>, <strong>Clothing</strong>, and <strong>Interior Design</strong> are considered strong markers of distinction. * Domains like <strong>Wrestling</strong> and <strong>Marijuana</strong> are generally not seen as effective markers of distinction. * Interestingly, respondents holding the <strong>“Aesthetics/Nuance”</strong> schema for Good Taste draw much harsher, more polarized boundaries—rating traditional high-art domains (like Literature and Paintings) notably higher than those holding the “Mainstream” or “Moral” schemas.</p>
 </section>
 </section>
 

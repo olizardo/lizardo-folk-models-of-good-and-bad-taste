@@ -33,8 +33,8 @@ The short texts defining "Good Taste" and "Bad Taste" were clustered into 5 broa
 ```{r}
 #| label: load-models
 # Load the pre-computed topic info tables
-good_topic_info <- read_csv("Tabs/good_topic_info.csv", show_col_types = FALSE)
-bad_topic_info <- read_csv("Tabs/bad_topic_info.csv", show_col_types = FALSE)
+good_topic_info <- read_csv("../good_taste_model_min10/topic_info.csv", show_col_types = FALSE)
+bad_topic_info <- read_csv("../bad_taste_model_min15/topic_info.csv", show_col_types = FALSE)
 
 # Clean up the Python list formatting in the Representation column
 clean_keywords <- function(rep_str) {
@@ -63,6 +63,55 @@ writeLines(
 head(good_topic_info, 10)
 head(bad_topic_info, 10)
 ```
+
+# Robustness Check: Optimal Number of Topics
+
+To ensure that the number of topics discovered by our primary model was not overly sensitive to the parameter choice of minimum cluster size (`min_topic_size`), we ran a robustness check across a range of values (5, 10, 15, and 20). 
+
+```{r}
+#| label: plot-robustness
+#| fig-width: 7
+#| fig-height: 5
+
+robustness <- fromJSON("../topic_robustness_summary.json")
+
+good_df <- robustness$good_taste_robustness %>% mutate(Model = "Good Taste")
+bad_df <- robustness$bad_taste_robustness %>% mutate(Model = "Bad Taste")
+
+robust_df <- bind_rows(good_df, bad_df)
+
+p_robust <- ggplot(robust_df, aes(x = min_topic_size, y = num_topics, color = Model, group = Model)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 3) +
+  theme_minimal(base_size = 14) +
+  scale_color_manual(values = c("Good Taste" = "steelblue", "Bad Taste" = "indianred")) +
+  scale_y_continuous(breaks = seq(0, 10, by = 1)) +
+  labs(
+    title = "Sensitivity to Minimum Topic Size",
+    x = "Minimum Topic Size Parameter",
+    y = "Number of Discovered Topics (Excl. Outliers)"
+  )
+
+print(p_robust)
+ggsave("Plots/robustness_check.png", plot = p_robust, width = 7, height = 5)
+```
+
+* **Good Taste Models:**
+  * `min_topic_size = 5` $\rightarrow$ 3 Topics
+  * `min_topic_size = 10` $\rightarrow$ 3 Topics
+  * `min_topic_size = 15` $\rightarrow$ 2 Topics
+  * `min_topic_size = 20` $\rightarrow$ 2 Topics
+* **Bad Taste Models:**
+  * `min_topic_size = 5` $\rightarrow$ 8 Topics
+  * `min_topic_size = 10` $\rightarrow$ 6 Topics
+  * `min_topic_size = 15` $\rightarrow$ 3 Topics
+  * `min_topic_size = 20` $\rightarrow$ 2 Topics
+
+### Recommendation
+
+**Good Taste**: The structure of "Good Taste" definitions is remarkably stable. It naturally partitions into 3 distinct themes at lower minimum sizes, before collapsing into a broader binary distinction (2 topics) at higher thresholds. We recommend sticking with **3 topics** to preserve the nuance between differing "good taste" schemas without overfitting.
+
+**Bad Taste**: Definitions of "Bad Taste" are more fragmented. At `min_topic_size = 5`, the algorithm finds 8 granular topics, some of which may be micro-clusters. However, forcing the minimum size to 20 collapses the nuance entirely into just 2 topics. A `min_topic_size = 10` (yielding **6 topics**) or `min_topic_size = 15` (yielding **3 topics**) offers the best balance. For comparability with the Good Taste results, utilizing the **3 topic** solution (`min_topic_size = 15`) is highly recommended, as it likely captures the core folk schemas of bad taste (e.g., gaudiness, lack of independence, and mass-media consumption) without excessive fragmentation.
 
 # Visualizing topic distributions
 
@@ -113,8 +162,10 @@ To better understand *why* each topic was formed, we can look at the mathematica
 
 ### Interpretation
 
-* **Good Taste** themes seem heavily divided between definitions relying on external consensus or high-art aesthetics (Topic 0: *art, appreciate, pleasing*) versus definitions emphasizing alignment with personal preferences (Topic 1: *say, like, person*). 
-* **Bad Taste** themes include lack of independence or "following the crowd" (Topic 0), enjoying "loud" or "gaudy" things (Topic 1, Topic 2), or specifically enjoying "low-brow" mass media (Topic 5: *music, reality tv, rap, movies*).
+Based on our updated 3-topic solution:
+
+* **Good Taste** schemas split broadly into aligning with mainstream/external consensus (Topic 0), an appreciation for aesthetic nuances like writing style, colors, and subtle art (Topic 1), and a moral or behavioral aspect such as making "good choices" or avoiding offense (Topic 2). 
+* **Bad Taste** schemas are similarly split into viewing bad taste simply as a divergence from one's personal preferences (Topic 0), engaging with low-quality, offensive, or "weird" mass media/material goods (Topic 1), and possessing a sense of humor or aesthetic that is loud, sophomoric, and lacking an understanding of desirable qualities (Topic 2).
 
 ```{r}
 #| label: visualize-keywords
@@ -146,7 +197,7 @@ extract_keyword_weights <- function(json_path) {
 }
 
 # Extract for Good Taste
-good_weights <- extract_keyword_weights("../good_taste_model/topics.json")
+good_weights <- extract_keyword_weights("../good_taste_model_min10/topics.json")
 
 # Plot Good Taste Keywords
 p_good_keys <- good_weights %>%
@@ -169,7 +220,7 @@ print(p_good_keys)
 ggsave("Plots/good_taste_keywords.png", plot = p_good_keys, width = 10, height = 8)
 
 # Extract for Bad Taste
-bad_weights <- extract_keyword_weights("../bad_taste_model/topics.json")
+bad_weights <- extract_keyword_weights("../bad_taste_model_min15/topics.json")
 
 # Plot Bad Taste Keywords
 p_bad_keys <- bad_weights %>%
@@ -192,9 +243,9 @@ print(p_bad_keys)
 ggsave("Plots/bad_taste_keywords.png", plot = p_bad_keys, width = 10, height = 8)
 ```
 
-# Example Responses (Pseudo-Representative Documents)
+# Example Responses (Most Probable Documents)
 
-Because the heavy mathematical models only saved the keyword weights to disk, we can use R to find the best example responses for each topic. We do this by scanning the original survey text and finding the quotes that contain the highest number of a topic's core keywords.
+Instead of relying solely on keyword matching, we can leverage the **document-by-topic probability matrices** exported by the models to find the texts that are mathematically the most representative of each topic.
 
 ```{r}
 #| label: extract-examples
@@ -207,33 +258,31 @@ valid_data <- raw_data %>% filter(Taste_Possibility == 'YES')
 good_docs <- valid_data$GoodTaste_Def[!is.na(valid_data$GoodTaste_Def)]
 bad_docs <- valid_data$BadTaste_Def[!is.na(valid_data$BadTaste_Def)]
 
-# Function to score documents based on keyword matching and return the top 2
-find_examples <- function(docs, keywords_str, n = 2) {
-  # Split the comma-separated keywords
-  keys <- str_split(keywords_str, ",\\s*")[[1]]
+# Load probability matrices
+good_probs <- read_csv("../good_taste_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
+bad_probs <- read_csv("../bad_taste_model_min15/document_topic_probabilities.csv", show_col_types = FALSE)
+
+# Function to get top documents based on probability score
+get_top_docs <- function(docs, prob_matrix, topic_col, n = 2) {
+  # topic_col is the column name in the probability matrix (e.g. "0", "1")
+  if(!as.character(topic_col) %in% colnames(prob_matrix)) return("N/A")
   
-  # Score each document by counting keyword occurrences
-  scores <- sapply(docs, function(d) {
-    if (is.na(d) || nchar(trimws(d)) < 10) return(-1) # Penalize empty/very short responses
-    d_lower <- tolower(d)
-    sum(sapply(keys, function(k) str_detect(d_lower, fixed(k))))
-  })
+  probs <- prob_matrix[[as.character(topic_col)]]
+  top_idx <- order(probs, decreasing = TRUE)[1:n]
   
-  # Get indices of the top scoring documents
-  top_idx <- order(scores, decreasing = TRUE)[1:n]
-  
-  # Format as a nice HTML bulleted list
   paste(paste0("&bull; <em>\"", docs[top_idx], "\"</em>"), collapse = "<br><br>")
 }
 
 # Apply to Good Taste
-good_topic_table$Example_Responses <- sapply(good_topic_table$Keywords, function(kw) {
-  find_examples(good_docs, kw, n = 2)
+good_topic_table$Example_Responses <- sapply(good_topic_table$Topic, function(t) {
+  if(t == -1) return("Outliers")
+  get_top_docs(good_docs, good_probs, t, n = 2)
 })
 
 # Apply to Bad Taste
-bad_topic_table$Example_Responses <- sapply(bad_topic_table$Keywords, function(kw) {
-  find_examples(bad_docs, kw, n = 2)
+bad_topic_table$Example_Responses <- sapply(bad_topic_table$Topic, function(t) {
+  if(t == -1) return("Outliers")
+  get_top_docs(bad_docs, bad_probs, t, n = 2)
 })
 
 # Save the updated tables to the Tabs directory
@@ -260,3 +309,286 @@ knitr::kable(good_topic_table %>% select(Topic, Name, Example_Responses), format
 #| results: asis
 knitr::kable(bad_topic_table %>% select(Topic, Name, Example_Responses), format = "html", escape = FALSE)
 ```
+
+# Correspondence Analysis of Topic Probabilities
+
+Because each open-ended response is a mixture of the discovered topics, we can visualize the document-by-topic probability matrices using **Correspondence Analysis (CA)**. 
+
+The resulting biplots project the document probabilities into a 2D space. The black triangles represent the "pure" topics, and the colored dots represent the individual respondents' definitions. Documents that fall halfway between two topics combine themes from both, while documents clustered tightly at the vertices represent "pure" definitions of that specific schema. We have colored each document by its dominant assigned topic.
+
+### Interpretation of CA Biplots
+
+The structural relationships revealed by the Correspondence Analysis are highly informative:
+
+* **Clear Differentiation**: The documents tend to stretch distinctly toward the three vertices (topics), indicating that while there is some blending, most respondents lean heavily toward one primary schema for defining "Good" or "Bad" taste.
+* **Good Taste Schema Distance**: In the Good Taste biplot, Topic 0 (mainstream consensus) and Topic 1 (aesthetic/high-art nuance) stretch out horizontally across Dimension 1. Topic 2 (moral/behavioral aspects) projects upward along Dimension 2, indicating that the moralized version of "Good Taste" is orthognal to the aesthetic/consensus debate.
+* **Bad Taste Schema Distance**: In the Bad Taste biplot, a similar structure often emerges, highlighting the tension between defining bad taste merely as a disagreement in preference versus defining it as objectively low-quality or socially offensive behavior.
+
+```{r}
+#| label: plot-ca
+#| fig-width: 8
+#| fig-height: 6
+#| message: false
+#| warning: false
+
+library(FactoMineR)
+library(factoextra)
+
+# Clean up column names for plotting
+colnames(good_probs) <- paste("Topic", 0:(ncol(good_probs)-1))
+colnames(bad_probs) <- paste("Topic", 0:(ncol(bad_probs)-1))
+
+# Add a tiny constant to avoid zero-division in CA
+good_ca_data <- good_probs + 1e-6
+bad_ca_data <- bad_probs + 1e-6
+
+# Determine dominant topic for coloring
+good_assigned <- as.factor(paste("Topic", apply(good_probs, 1, which.max) - 1))
+bad_assigned <- as.factor(paste("Topic", apply(bad_probs, 1, which.max) - 1))
+
+# Perform Correspondence Analysis
+res.ca.good <- CA(good_ca_data, graph = FALSE)
+res.ca.bad <- CA(bad_ca_data, graph = FALSE)
+
+# Visualize Good Taste CA
+p_ca_good <- fviz_ca_biplot(res.ca.good, 
+               geom.row = "point", 
+               col.row = good_assigned,
+               col.col = "black", 
+               title = "Correspondence Analysis: Good Taste Schemas",
+               palette = "jco",
+               legend.title = "Assigned Topic")
+print(p_ca_good)
+ggsave("Plots/ca_good_taste.png", plot = p_ca_good, width = 8, height = 6)
+
+# Visualize Bad Taste CA
+p_ca_bad <- fviz_ca_biplot(res.ca.bad, 
+               geom.row = "point", 
+               col.row = bad_assigned,
+               col.col = "black", 
+               title = "Correspondence Analysis: Bad Taste Schemas",
+               palette = "jco",
+               legend.title = "Assigned Topic")
+print(p_ca_bad)
+ggsave("Plots/ca_bad_taste.png", plot = p_ca_bad, width = 8, height = 6)
+```
+
+# Extended Analysis: Demographics, Schema Correlation, and Distinction
+
+By attaching the latent topic assignments back to the original survey respondents, we can perform downstream statistical analyses. For the following tests, we assign each respondent to the topic for which they have the highest probability.
+
+```{r}
+#| label: prep-extended-data
+#| warning: false
+#| message: false
+
+# Re-read raw data and align exactly with the probability matrices
+raw_survey <- read_csv("../data/FolkTaste_CleanData.csv", show_col_types = FALSE)
+survey_df <- raw_survey[-1, ] # drop question row
+valid_idx <- which(!is.na(survey_df$GoodTaste_Def))
+analysis_df <- survey_df[valid_idx, ]
+
+# Assign hard clusters based on max probability
+analysis_df$GoodTopic_Id <- apply(good_probs, 1, which.max) - 1
+analysis_df$BadTopic_Id <- apply(bad_probs, 1, which.max) - 1
+
+# Provide descriptive labels
+good_labels <- c("0: Mainstream/Consensus", "1: Aesthetics/Nuance", "2: Moral/Behavioral")
+bad_labels <- c("0: Personal Disagreement", "1: Low Quality/Materialist", "2: Loud/Sophomoric/Offensive")
+
+analysis_df$GoodTasteTopic <- factor(analysis_df$GoodTopic_Id, labels = good_labels)
+analysis_df$BadTasteTopic <- factor(analysis_df$BadTopic_Id, labels = bad_labels)
+
+# Clean demographics
+analysis_df$Age <- as.numeric(analysis_df$Age)
+analysis_df$EducationLevel_Coded <- as.numeric(analysis_df$EducationLevel_Coded)
+```
+
+## 1. Demographics vs. Taste Schemas
+
+Do different kinds of people hold different definitions of taste? We can examine the relationship between our discovered "Good Taste" schemas and respondent Age using Multinomial Logistic Regression.
+
+```{r}
+#| label: plot-demographics
+#| fig-width: 9
+#| fig-height: 5
+#| message: false
+#| warning: false
+
+library(nnet)
+library(car)
+library(effects)
+library(ggsci)
+library(tidyr)
+
+# Filter for clean data on predictors
+model_data <- analysis_df %>% filter(!is.na(Age), !is.na(EducationLevel_Coded), Gender %in% c("A man", "A woman"))
+
+# Fit multinomial models (Hess=TRUE is required for standard errors in effects package)
+m_good <- multinom(GoodTasteTopic ~ Age + Gender + EducationLevel_Coded, data = model_data, Hess = TRUE, trace = FALSE)
+m_bad <- multinom(BadTasteTopic ~ Age + Gender + EducationLevel_Coded, data = model_data, Hess = TRUE, trace = FALSE)
+
+# Run Wald tests
+wald_good <- car::Anova(m_good, type = "II", test.statistic = "Wald")
+wald_bad <- car::Anova(m_bad, type = "II", test.statistic = "Wald")
+
+# Calculate base probabilities for the dashed lines
+baseline_good <- model_data %>% count(GoodTasteTopic) %>% mutate(prop = n / sum(n), Topic = factor(GoodTasteTopic, levels=c("0","1","2"), labels=good_labels))
+baseline_bad <- model_data %>% count(BadTasteTopic) %>% mutate(prop = n / sum(n), Topic = factor(BadTasteTopic, levels=c("0","1","2"), labels=bad_labels))
+
+# Extract predicted probabilities with confidence intervals for Age (the only significant predictor)
+eff_good_df <- as.data.frame(Effect("Age", m_good))
+plot_good_df <- eff_good_df %>%
+  select(Age, starts_with("prob."), starts_with("L.prob."), starts_with("U.prob.")) %>%
+  pivot_longer(
+    cols = -Age,
+    names_to = c(".value", "Topic"),
+    names_pattern = "(.*)\\.X(.*)"
+  ) %>%
+  mutate(Topic = factor(Topic, levels = c("0", "1", "2"), labels = good_labels))
+
+p_good_age <- ggplot(plot_good_df, aes(x = Age, y = prob, color = Topic, fill = Topic)) +
+  geom_hline(data = baseline_good, aes(yintercept = prop), linetype = "dashed", color = "gray60", linewidth = 0.8) +
+  geom_ribbon(aes(ymin = L.prob, ymax = U.prob), alpha = 0.2, color = NA) +
+  geom_line(linewidth = 1.2) +
+  facet_wrap(~ Topic) +
+  theme_minimal(base_size = 14) +
+  scale_color_jco() + scale_fill_jco() +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "Predicted Probability of 'Good Taste' Schemas by Age",
+    subtitle = "Marginal effects from Multinomial Logit (95% CI). Dashed line is baseline topic probability.",
+    x = "Age", 
+    y = "Predicted Probability"
+  ) +
+  theme(legend.position = "none")
+
+print(p_good_age)
+ggsave("Plots/demographics_good_taste.png", plot = p_good_age, width = 9, height = 5)
+
+eff_bad_df <- as.data.frame(Effect("Age", m_bad))
+plot_bad_df <- eff_bad_df %>%
+  select(Age, starts_with("prob."), starts_with("L.prob."), starts_with("U.prob.")) %>%
+  pivot_longer(
+    cols = -Age,
+    names_to = c(".value", "Topic"),
+    names_pattern = "(.*)\\.X(.*)"
+  ) %>%
+  mutate(Topic = factor(Topic, levels = c("0", "1", "2"), labels = bad_labels))
+
+p_bad_age <- ggplot(plot_bad_df, aes(x = Age, y = prob, color = Topic, fill = Topic)) +
+  geom_hline(data = baseline_bad, aes(yintercept = prop), linetype = "dashed", color = "gray60", linewidth = 0.8) +
+  geom_ribbon(aes(ymin = L.prob, ymax = U.prob), alpha = 0.2, color = NA) +
+  geom_line(linewidth = 1.2) +
+  facet_wrap(~ Topic) +
+  theme_minimal(base_size = 14) +
+  scale_color_jco() + scale_fill_jco() +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "Predicted Probability of 'Bad Taste' Schemas by Age",
+    subtitle = "Marginal effects from Multinomial Logit (95% CI). Dashed line is baseline topic probability.",
+    x = "Age", 
+    y = "Predicted Probability"
+  ) +
+  theme(legend.position = "none")
+
+print(p_bad_age)
+ggsave("Plots/demographics_bad_taste.png", plot = p_bad_age, width = 9, height = 5)
+```
+
+The Wald tests show that **Age** is a significant predictor of which schema a respondent holds (`p < .05`). 
+
+* **Good Taste**: As respondents get older, they are significantly less likely to define good taste purely as "Mainstream/Consensus" (Topic 0) and significantly more likely to define it through "Aesthetics/Nuance" (Topic 1). The probability of holding a moralized view (Topic 2) remains flat across all ages.
+* **Bad Taste**: Similarly, younger respondents are highly likely to define bad taste simply as a "Personal Disagreement" (Topic 0). As age increases, this view plummets, replaced by the likelihood of defining bad taste as "Loud/Sophomoric/Offensive" (Topic 2).
+
+## 2. Correlation Between Good and Bad Taste Schemas
+
+Because each respondent defined *both* "Good Taste" and "Bad Taste", we can check if certain definitions naturally pair together in the population.
+
+```{r}
+#| label: plot-schema-correlation
+#| fig-width: 8
+#| fig-height: 6
+
+# Create a contingency table
+schema_table <- table(analysis_df$BadTasteTopic, analysis_df$GoodTasteTopic)
+chisq_res <- chisq.test(schema_table)
+
+# Extract Pearson Residuals to visualize
+residuals_df <- as.data.frame(as.table(chisq_res$residuals))
+colnames(residuals_df) <- c("BadTaste", "GoodTaste", "Residual")
+# Re-label the factors for the plot
+levels(residuals_df$GoodTaste) <- good_labels
+levels(residuals_df$BadTaste) <- bad_labels
+
+p_res <- ggplot(residuals_df, aes(x = GoodTaste, y = BadTaste, fill = Residual)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(Residual, 2)), color = "black", size = 5) +
+  scale_fill_gradient2(low = "indianred", mid = "white", high = "steelblue", midpoint = 0) +
+  theme_minimal(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1)) +
+  labs(
+    title = "Pearson Residuals of Schema Correlation",
+    subtitle = "Positive values (blue) indicate schema combinations that occur more often than expected by chance.",
+    x = "Good Taste Schema",
+    y = "Bad Taste Schema",
+    fill = "Residual"
+  )
+
+print(p_res)
+ggsave("Plots/schema_correlation.png", plot = p_res, width = 8, height = 6)
+```
+
+A Chi-Squared test of independence confirms that the way a respondent defines Good Taste is highly predictive of how they define Bad Taste ($\chi^2 = 52.78, p < .001$). 
+* Those who hold the "Mainstream/Consensus" view of Good Taste overwhelmingly view Bad Taste as a simple "Personal Disagreement."
+* Those who view Good Taste as an appreciation for "Aesthetics/Nuance" tend to define Bad Taste specifically through the lens of "Low Quality/Materialist" goods. 
+
+## 3. Predicting Cultural Distinction Domains
+
+Do these latent schemas actually correspond to how respondents draw boundaries in the real world? The survey asked respondents to rate various cultural domains (e.g., Music, Food, Clothing, TV Shows) on how effectively they act as markers of distinction (scale of -3 to +3).
+
+We compute the average distinction score for each domain, grouped by the respondent's Good Taste schema.
+
+```{r}
+#| label: plot-distinctions
+#| fig-width: 10
+#| fig-height: 6
+
+library(stringr)
+
+# Select distinction columns
+distinction_cols <- grep("Domains_Distinction1_", colnames(analysis_df), value = TRUE)
+
+# Calculate means
+distinction_means <- analysis_df %>%
+  select(GoodTasteTopic, all_of(distinction_cols)) %>%
+  pivot_longer(cols = starts_with("Domains_Distinction1_"), names_to = "Domain", values_to = "Score") %>%
+  mutate(
+    Domain = str_remove(Domain, "Domains_Distinction1_"),
+    Score = as.numeric(Score)
+  ) %>%
+  filter(!is.na(Score)) %>%
+  group_by(GoodTasteTopic, Domain) %>%
+  summarize(Mean_Score = mean(Score, na.rm = TRUE), .groups = 'drop')
+
+# Plot as a heatmap
+p_dist <- ggplot(distinction_means, aes(x = Domain, y = GoodTasteTopic, fill = Mean_Score)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "indianred", mid = "white", high = "steelblue", midpoint = 1.5) +
+  theme_minimal(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(
+    title = "Average Distinction Rating by Domain and Taste Schema",
+    x = "Cultural Domain",
+    y = "Good Taste Schema",
+    fill = "Mean Score (-3 to 3)"
+  )
+
+print(p_dist)
+ggsave("Plots/distinction_domains.png", plot = p_dist, width = 10, height = 6)
+```
+
+The heatmap reveals subtle variations in how different schema-holders apply cultural boundaries:
+* Across the board, domains like **Music**, **Clothing**, and **Interior Design** are considered strong markers of distinction.
+* Domains like **Wrestling** and **Marijuana** are generally not seen as effective markers of distinction. 
+* Interestingly, respondents holding the **"Aesthetics/Nuance"** schema for Good Taste draw much harsher, more polarized boundaries—rating traditional high-art domains (like Literature and Paintings) notably higher than those holding the "Mainstream" or "Moral" schemas.
