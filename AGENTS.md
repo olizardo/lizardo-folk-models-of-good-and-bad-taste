@@ -3,10 +3,14 @@
 ## Project Goal
 Analyze survey data regarding sociological definitions of "good taste" and "bad taste" (`FolkTaste_BruteData.csv`, `FolkTaste_CleanData.csv`). 
 
-## Key Technical Decisions
-* **Topic Modeling Algorithm**: BERTopic (Python) because it handles short survey responses (1-5 sentences) significantly better than LDA (which suffers from sparsity with short texts).
-* **R Environment**: Initialized a bare `renv` for any future R-based analysis (e.g., statistical modeling, ggplot2 visualizations).
-* **Notebook**: Created `bertopic_good_taste.ipynb` to handle the text preprocessing and BERTopic pipeline.
+## Key Technical Decisions & Analysis Pipeline
+* **Topic Modeling Algorithm**: BERTopic (Python) because it handles short survey responses (1-5 sentences) significantly better than LDA (which suffers from sparsity with short texts). Both good taste and bad taste open-text responses have been modeled.
+* **Robustness Checks**: Implemented BERTopic robustness checks (`run_bertopic_robustness.py`) across various `min_topic_size` parameters (e.g., 5, 10, 15, 20) to ensure stable topic structures, with results stored in `topic_robustness_summary.json`.
+* **R Environment**: Initialized a bare `renv` for R-based analysis.
+* **Statistical Modeling & Visualizations**:
+    * **Demographic Analysis**: Logistic regression models evaluating the predicted probability of topic assignments across various demographics. Plotting includes baseline topic probabilities as dashed lines.
+    * **Correspondence Analysis (CA)**: CA plots generated to map the relationship between topics and demographic categories.
+    * **Domain Distinction**: Analysis of specific domains defining good vs. bad taste.
 
 ## Data Structure
 * Raw data is in `data/FolkTaste_BruteData.csv` (first row is variable names, second row is full question text).
