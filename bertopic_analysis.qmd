@@ -1,0 +1,97 @@
+---
+title: "Topic Modeling for 'Good Taste' and 'Bad Taste' Definitions"
+format: html
+---
+
+::: {.callout-note}
+This report was generated using AI under general human direction. At the time of generation, the contents have not been comprehensively reviewed by a human analyst.
+:::
+
+# Introduction
+
+This report uses **BERTopic** to extract topics from open-ended survey responses defining what constitutes "Good Taste" and "Bad Taste". The BERTopic models were trained in Python and the results saved to disk. We visualize the distributions of topics below using the `tidyverse` and `ggplot2`.
+
+# Setup and data loading
+
+We load the necessary R packages and load our summarized topic data.
+
+```{r}
+#| label: load-packages
+library(dplyr)
+library(ggplot2)
+library(readr)
+```
+
+# Topic modeling results
+
+The short texts defining "Good Taste" and "Bad Taste" were clustered into 5 broad themes each using BERTopic. We load the summarized results from those models.
+
+```{r}
+#| label: load-models
+# Load the pre-computed topic info tables
+good_topic_info <- read_csv("Tabs/good_topic_info.csv", show_col_types = FALSE)
+bad_topic_info <- read_csv("Tabs/bad_topic_info.csv", show_col_types = FALSE)
+
+# Remove the Representative_Docs column which contains NaNs
+good_topic_info <- good_topic_info %>% select(-Representative_Docs)
+bad_topic_info <- bad_topic_info %>% select(-Representative_Docs)
+
+# Ensure Tabs directory exists and save the tables as HTML
+dir.create("Tabs", showWarnings = FALSE)
+
+# Write out simple HTML tables
+writeLines(
+  knitr::kable(good_topic_info, format = "html"), 
+  "Tabs/good_taste_summary_table.html"
+)
+writeLines(
+  knitr::kable(bad_topic_info, format = "html"), 
+  "Tabs/bad_taste_summary_table.html"
+)
+
+head(good_topic_info, 10)
+head(bad_topic_info, 10)
+```
+
+# Visualizing topic distributions
+
+We use `ggplot2` to visualize the distribution and prominence of each theme.
+
+*(Note: Topic `-1` in BERTopic refers to outliers that could not be confidently assigned to a cluster. We exclude it from the visualizations below.)*
+
+```{r}
+#| label: visualize-topics
+#| fig-width: 8
+#| fig-height: 6
+
+# Ensure Plots directory exists
+dir.create("Plots", showWarnings = FALSE)
+
+# Good Taste Topic Frequencies
+p_good <- ggplot(good_topic_info %>% filter(Topic != -1), aes(x = reorder(Name, Count), y = Count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  theme_minimal(base_size = 14) +
+  labs(
+    title = "Good Taste: Topic Frequencies", 
+    x = "Topic Name (Top Words)", 
+    y = "Number of Responses"
+  )
+
+print(p_good)
+ggsave("Plots/good_taste_topics.png", plot = p_good, width = 8, height = 6)
+
+# Bad Taste Topic Frequencies
+p_bad <- ggplot(bad_topic_info %>% filter(Topic != -1), aes(x = reorder(Name, Count), y = Count)) +
+  geom_bar(stat = "identity", fill = "indianred") +
+  coord_flip() +
+  theme_minimal(base_size = 14) +
+  labs(
+    title = "Bad Taste: Topic Frequencies", 
+    x = "Topic Name (Top Words)", 
+    y = "Number of Responses"
+  )
+
+print(p_bad)
+ggsave("Plots/bad_taste_topics.png", plot = p_bad, width = 8, height = 6)
+```
