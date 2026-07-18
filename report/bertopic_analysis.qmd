@@ -438,12 +438,14 @@ baseline_bad <- model_data %>% count(BadTasteTopic) %>% mutate(prop = n / sum(n)
 
 # Extract predicted probabilities with confidence intervals for Age (the only significant predictor)
 eff_good_df <- as.data.frame(Effect("Age", m_good))
+names(eff_good_df) <- gsub("\\.X([0-2]).*", ".\\1", names(eff_good_df))
+
 plot_good_df <- eff_good_df %>%
   select(Age, starts_with("prob."), starts_with("L.prob."), starts_with("U.prob.")) %>%
   pivot_longer(
     cols = -Age,
     names_to = c(".value", "Topic"),
-    names_pattern = "(.*)\\.X(.*)"
+    names_pattern = "(.*)\\.(.*)"
   ) %>%
   mutate(Topic = factor(Topic, levels = c("0", "1", "2"), labels = good_labels))
 
@@ -467,12 +469,14 @@ print(p_good_age)
 ggsave("Plots/demographics_good_taste.png", plot = p_good_age, width = 9, height = 5)
 
 eff_bad_df <- as.data.frame(Effect("Age", m_bad))
+names(eff_bad_df) <- gsub("\\.X([0-2]).*", ".\\1", names(eff_bad_df))
+
 plot_bad_df <- eff_bad_df %>%
   select(Age, starts_with("prob."), starts_with("L.prob."), starts_with("U.prob.")) %>%
   pivot_longer(
     cols = -Age,
     names_to = c(".value", "Topic"),
-    names_pattern = "(.*)\\.X(.*)"
+    names_pattern = "(.*)\\.(.*)"
   ) %>%
   mutate(Topic = factor(Topic, levels = c("0", "1", "2"), labels = bad_labels))
 
