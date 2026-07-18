@@ -3,7 +3,7 @@ import numpy as np
 import json
 import os
 from bertopic import BERTopic
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
 
 def run_and_save_bertopic(docs, taste_type, min_topic_sizes=[5, 10, 15, 20]):
     """
@@ -12,8 +12,10 @@ def run_and_save_bertopic(docs, taste_type, min_topic_sizes=[5, 10, 15, 20]):
     """
     results = []
     
-    # Initialize CountVectorizer with stop words removed
-    vectorizer_model = CountVectorizer(stop_words="english")
+    # Initialize CountVectorizer with expanded stop words
+    domain_stops = ["good", "bad", "taste", "people", "person", "think", "means", "just", "like", "things", "someone", "really"]
+    custom_stop_words = list(ENGLISH_STOP_WORDS.union(domain_stops))
+    vectorizer_model = CountVectorizer(stop_words=custom_stop_words)
     
     for size in min_topic_sizes:
         print(f"Running BERTopic for {taste_type} taste with min_topic_size={size}...")

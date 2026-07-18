@@ -28,6 +28,10 @@ library(tidytext)
 
 # Topic modeling results
 
+::: {.callout-note title="Methodological Note: Stop Words"}
+During the preprocessing phase of the BERTopic pipeline, a custom stop-word list was applied. In addition to standard English stop words (like "the", "to", and "and"), domain-specific survey terms such as "good", "bad", "taste", "people", "person", "think", "means", "just", "like", "things", and "someone" were removed. This prevents generic survey phrasing from dominating the extracted topics and allows more substantive themes to emerge.
+:::
+
 The short texts defining "Good Taste" and "Bad Taste" were clustered into 3 broad themes each using BERTopic. We load the summarized results from those models.
 
 ```{r}
@@ -402,11 +406,12 @@ analysis_df$BadTasteTopic <- factor(analysis_df$BadTopic_Id, labels = bad_labels
 # Clean demographics
 analysis_df$Age <- as.numeric(analysis_df$Age)
 analysis_df$EducationLevel_Coded <- as.numeric(analysis_df$EducationLevel_Coded)
+analysis_df$Political <- as.numeric(analysis_df$Political)
 ```
 
 ## 1. Demographics vs. Taste Schemas
 
-Do different kinds of people hold different definitions of taste? We can examine the relationship between our discovered "Good Taste" schemas and respondent Age using Multinomial Logistic Regression.
+Do different kinds of people hold different definitions of taste? We can examine the relationship between our discovered schemas and respondent demographics (Age, Gender, Education, and Political views) using Multinomial Logistic Regression.
 
 ```{r}
 #| label: plot-demographics
@@ -422,22 +427,21 @@ library(ggsci)
 library(tidyr)
 
 # Filter for clean data on predictors
-model_data <- analysis_df %>% filter(!is.na(Age), !is.na(EducationLevel_Coded), Gender %in% c("A man", "A woman"))
+model_data <- analysis_df %>% filter(!is.na(Age), !is.na(EducationLevel_Coded), !is.na(Political), Gender %in% c("A man", "A woman"))
 
 # Fit multinomial models (Hess=TRUE is required for standard errors in effects package)
-m_good <- multinom(GoodTasteTopic ~ Age + Gender + EducationLevel_Coded, data = model_data, Hess = TRUE, trace = FALSE)
-m_bad <- multinom(BadTasteTopic ~ Age + Gender + EducationLevel_Coded, data = model_data, Hess = TRUE, trace = FALSE)
+m_good <- multinom(GoodTasteTopic ~ Age + Gender + EducationLevel_Coded + Political, data = model_data, Hess = TRUE, trace = FALSE)
+m_bad <- multinom(BadTasteTopic ~ Age + Gender + EducationLevel_Coded + Political, data = model_data, Hess = TRUE, trace = FALSE)
 
 # Run Wald tests
 wald_good <- car::Anova(m_good, type = "II", test.statistic = "Wald")
 wald_bad <- car::Anova(m_bad, type = "II", test.statistic = "Wald")
 
 # Calculate base probabilities for the dashed lines
-# Note: GoodTasteTopic is already a factor with the correct labels
 baseline_good <- model_data %>% count(GoodTasteTopic) %>% mutate(prop = n / sum(n), Topic = GoodTasteTopic)
 baseline_bad <- model_data %>% count(BadTasteTopic) %>% mutate(prop = n / sum(n), Topic = BadTasteTopic)
 
-# Extract predicted probabilities with confidence intervals for Age (the only significant predictor)
+# Extract predicted probabilities with confidence intervals for Age (significant predictor)
 eff_good_df <- as.data.frame(Effect("Age", m_good))
 names(eff_good_df) <- gsub("\\.X([0-2]).*", ".\\1", names(eff_good_df))
 
@@ -460,15 +464,52 @@ p_good_age <- ggplot(plot_good_df, aes(x = Age, y = prob, color = Topic, fill = 
   scale_y_continuous(labels = scales::percent) +
   labs(
     title = "Predicted Probability of 'Good Taste' Schemas by Age",
-    subtitle = "Marginal effects from Multinomial Logit (95% CI). Dashed line is baseline topic probability.",
+    subtitle = "Marginal effects from Multinomial Logit (95% CI).",
     x = "Age", 
     y = "Predicted Probability"
   ) +
   theme(legend.position = "none")
 
 print(p_good_age)
-ggsave("Plots/demographics_good_taste.png", plot = p_good_age, width = 9, height = 5)
+ggsave("Plots/demographics_good_taste_age.png", plot = p_good_age, width = 9, height = 5)
 
+# Extract predicted probabilities with confidence intervals for Political views (significant predictor)
+eff_good_pol_df <- as.data.frame(Effect("Political", m_good))
+names(eff_good_pol_df) <- gsub("\\.X([0-2]).*", ".\\1", names(eff_good_pol_df))
+
+plot_good_pol_df <- eff_good_pol_df %>%
+  select(Political, starts_with("prob."), starts_with("L.prob."), starts_with("U.prob.")) %>%
+  pivot_longer(
+    cols = -Political,
+    names_to = c(".value", "Topic"),
+    names_pattern = "(.*)\\.(.*)"
+  ) %>%
+  mutate(Topic = factor(Topic, levels = c("0", "1", "2"), labels = good_labels))
+
+p_good_pol <- ggplot(plot_good_pol_df, aes(x = Political, y = prob, color = Topic, fill = Topic)) +
+  geom_hline(data = baseline_good, aes(yintercept = prop), linetype = "dashed", color = "gray60", linewidth = 0.8) +
+  geom_ribbon(aes(ymin = L.prob, ymax = U.prob), alpha = 0.2, color = NA) +
+  geom_line(linewidth = 1.2) +
+  facet_wrap(~ Topic) +
+  theme_minimal(base_size = 14) +
+  scale_color_jco() + scale_fill_jco() +
+  scale_x_continuous(breaks = c(1, 4, 7), labels = c("1\nVery\nLiberal", "4\nModerate", "7\nVery\nConserv.")) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title = "Predicted Probability of 'Good Taste' Schemas by Political Views",
+    subtitle = "Marginal effects from Multinomial Logit (95% CI).",
+    x = "Political Orientation", 
+    y = "Predicted Probability"
+  ) +
+  theme(
+    legend.position = "none",
+    panel.spacing = unit(2, "lines")
+  )
+
+print(p_good_pol)
+ggsave("Plots/demographics_good_taste_political.png", plot = p_good_pol, width = 9, height = 5)
+
+# Bad Taste Age Plot (for visual reference, even if not significant)
 eff_bad_df <- as.data.frame(Effect("Age", m_bad))
 names(eff_bad_df) <- gsub("\\.X([0-2]).*", ".\\1", names(eff_bad_df))
 
@@ -491,20 +532,21 @@ p_bad_age <- ggplot(plot_bad_df, aes(x = Age, y = prob, color = Topic, fill = To
   scale_y_continuous(labels = scales::percent) +
   labs(
     title = "Predicted Probability of 'Bad Taste' Schemas by Age",
-    subtitle = "Marginal effects from Multinomial Logit (95% CI). Dashed line is baseline topic probability.",
+    subtitle = "Marginal effects from Multinomial Logit (Not Statistically Significant).",
     x = "Age", 
     y = "Predicted Probability"
   ) +
   theme(legend.position = "none")
 
 print(p_bad_age)
-ggsave("Plots/demographics_bad_taste.png", plot = p_bad_age, width = 9, height = 5)
+ggsave("Plots/demographics_bad_taste_age.png", plot = p_bad_age, width = 9, height = 5)
 ```
 
-The Wald tests show that **Age** is a significant predictor of which schema a respondent holds (`p < .05`). 
+The Wald tests show that **Age** (`p = 0.033`) and **Political views** (`p = 0.038`) are significant predictors of which "Good Taste" schema a respondent holds. Neither are significantly associated with "Bad Taste" schemas.
 
-* **Good Taste**: As respondents get older, they are significantly less likely to define good taste purely as "Mainstream/Consensus" (Topic 0) and significantly more likely to define it through "Aesthetics/Nuance" (Topic 1). The probability of holding a moralized view (Topic 2) remains flat across all ages.
-* **Bad Taste**: Similarly, younger respondents are highly likely to define bad taste simply as a "Personal Disagreement" (Topic 0). As age increases, this view plummets, replaced by the likelihood of defining bad taste as "Loud/Sophomoric/Offensive" (Topic 2).
+* **Good Taste (Age)**: As respondents get older, they are less likely to define good taste purely as "Mainstream/Consensus" (Topic 0) and significantly more likely to define it through "Aesthetics/Nuance" (Topic 1). 
+* **Good Taste (Political Views)**: Political conservatism (measured from 1=Very Liberal to 7=Very Conservative) is strongly tied to how good taste is perceived. Liberals are much more likely to define it as "Aesthetics/Nuance" (Topic 1). As respondents become more conservative, the probability of holding this aesthetic view drops off, and they become highly likely to define good taste through a "Moral/Behavioral" lens (Topic 2; e.g., being respectful, not garish, interacting properly with others).
+* **Bad Taste**: Because the model is not statistically significant, any variation across age or political groups observed for Bad Taste schemas is likely due to sample noise rather than a population-level trend.
 
 ## 2. Correlation Between Good and Bad Taste Schemas
 
