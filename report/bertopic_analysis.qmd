@@ -593,7 +593,7 @@ p_dist <- ggplot(distinction_means, aes(x = GoodTasteTopic, y = Domain, fill = M
   theme_minimal(base_size = 14) +
   theme(axis.text.x = element_text(angle = 15, hjust = 1)) +
   labs(
-    title = "Average Distinction Rating by Domain and Taste Schema",
+    title = "Average Distinction Rating by Domain and Good Taste Schema",
     x = "Good Taste Schema",
     y = "Cultural Domain",
     fill = "Mean Score"
@@ -601,6 +601,35 @@ p_dist <- ggplot(distinction_means, aes(x = GoodTasteTopic, y = Domain, fill = M
 
 print(p_dist)
 ggsave("Plots/distinction_domains.png", plot = p_dist, width = 10, height = 6)
+
+# Calculate means for Bad Taste
+distinction_means_bad <- analysis_df %>%
+  select(BadTasteTopic, all_of(distinction_cols)) %>%
+  pivot_longer(cols = starts_with("Domains_Distinction1_"), names_to = "Domain", values_to = "Score") %>%
+  mutate(
+    Domain = str_remove(Domain, "Domains_Distinction1_"),
+    Score = as.numeric(Score)
+  ) %>%
+  filter(!is.na(Score)) %>%
+  group_by(BadTasteTopic, Domain) %>%
+  summarize(Mean_Score = mean(Score, na.rm = TRUE), .groups = 'drop') %>%
+  mutate(Domain = factor(Domain, levels = domain_order))
+
+# Plot Bad Taste Heatmap
+p_dist_bad <- ggplot(distinction_means_bad, aes(x = BadTasteTopic, y = Domain, fill = Mean_Score)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "steelblue", mid = "white", high = "indianred", midpoint = 1.5) +
+  theme_minimal(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1)) +
+  labs(
+    title = "Average Distinction Rating by Domain and Bad Taste Schema",
+    x = "Bad Taste Schema",
+    y = "Cultural Domain",
+    fill = "Mean Score"
+  )
+
+print(p_dist_bad)
+ggsave("Plots/distinction_domains_bad.png", plot = p_dist_bad, width = 10, height = 6)
 ```
 
 The heatmap reveals subtle variations in how different schema-holders apply cultural boundaries:
