@@ -433,8 +433,9 @@ wald_good <- car::Anova(m_good, type = "II", test.statistic = "Wald")
 wald_bad <- car::Anova(m_bad, type = "II", test.statistic = "Wald")
 
 # Calculate base probabilities for the dashed lines
-baseline_good <- model_data %>% count(GoodTasteTopic) %>% mutate(prop = n / sum(n), Topic = factor(GoodTasteTopic, levels=c("0","1","2"), labels=good_labels))
-baseline_bad <- model_data %>% count(BadTasteTopic) %>% mutate(prop = n / sum(n), Topic = factor(BadTasteTopic, levels=c("0","1","2"), labels=bad_labels))
+# Note: GoodTasteTopic is already a factor with the correct labels
+baseline_good <- model_data %>% count(GoodTasteTopic) %>% mutate(prop = n / sum(n), Topic = GoodTasteTopic)
+baseline_bad <- model_data %>% count(BadTasteTopic) %>% mutate(prop = n / sum(n), Topic = BadTasteTopic)
 
 # Extract predicted probabilities with confidence intervals for Age (the only significant predictor)
 eff_good_df <- as.data.frame(Effect("Age", m_good))
