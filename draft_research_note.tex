@@ -6,10 +6,20 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{hyperref}
+\hypersetup{
+  pdftitle={Cultural Matching and the Persistence of Social Ties},
+  pdfauthor={Omar Lizardo},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={maroon},
+  citecolor={blue},
+  urlcolor={blue}
+}
 \usepackage{titlesec}
+\usepackage[round]{natbib}
 
 \title{Folk Models of Good and Bad Taste: \\ A Computational Text Analysis}
-\author{Omar Lizardo \\ Department of Sociology}
+\author{Omar Lizardo \\ Department of Sociology, UCLA}
 \date{\today}
 
 \begin{document}
@@ -17,14 +27,14 @@
 \maketitle
 
 \begin{abstract}
-\noindent Sociological theories of cultural consumption have long debated the nature of ``good'' and ``bad'' taste, yet how lay individuals actually define these categories remains under-explored. Using open-ended survey responses, this research note applies BERTopic---a state-of-the-art topic modeling technique well-suited for short texts---to inductively map folk schemas of taste. I identify three distinct schemas for ``good taste'' (Mainstream/Consensus, Aesthetics/Nuance, and Moral/Behavioral) and three schemas for ``bad taste'' (Personal Disagreement, Low Quality/Materialist, and Loud/Sophomoric/Offensive). Multinomial logistic regression reveals that schemas of good taste are socio-demographically anchored, with age and political orientation significantly predicting schema adoption. Conversely, schemas of bad taste are not significantly associated with traditional demographic variables, suggesting a more universally distributed or idiosyncratic cultural logic.
+\noindent Sociological theories of cultural consumption have long debated the nature of ``good'' and ``bad'' taste, yet how lay individuals actually define these categories remains under-explored. Using open-ended survey responses, this research note applies BERTopic---a state-of-the-art topic modeling technique well-suited for short texts---to inductively map folk schemas of taste. I identify three distinct schemas for ``good taste'' (Mainstream/Consensus, Aesthetics/Nuance, and Moral/Behavioral) and three schemas for ``bad taste'' (Personal Disagreement, Low Quality/Materialist, and Loud/Sophomoric). Multinomial logistic regression reveals that schemas of good taste are socio-demographically anchored, with age and political orientation significantly predicting schema adoption. Conversely, schemas of bad taste are not significantly associated with traditional demographic variables, suggesting a more universally distributed or idiosyncratic cultural logic.
 \end{abstract}
 
-\doublespacing
-
+% \doublespacing
+\newpage
 \section{Introduction}
 
-The sociological study of cultural stratification has traditionally focused on how cultural consumption patterns map onto social hierarchies. However, theoretical conceptualizations of ``good'' and ``bad'' taste are rarely compared against how everyday people implicitly define these constructs. Do people view good taste as an aesthetic achievement, a moral disposition, or mere consensus? Similarly, is bad taste defined by low material quality, offensive behavior, or simply interpersonal disagreement? Understanding these folk models of taste provides vital insight into the contemporary boundaries of cultural inclusion and exclusion.
+The sociological study of cultural stratification has traditionally focused on how cultural consumption patterns map onto social hierarchies \citep{bourdieu1984distinction-835}. However, theoretical conceptualizations of ``good'' and ``bad'' taste are rarely compared against how everyday people implicitly define these constructs, although some recent interview-based work has begun to plumb this subject \citep{haak2019struggling-502, jarness2017im-001}. Do people view good taste as an aesthetic achievement, a moral disposition, or mere consensus with dominant trends? Similarly, is bad taste defined by less than refined choices in cultural consumption, offensive behavior, or simply disagreement with personal standards? Better understanding these folk models of taste can provide vital insight into the contemporary boundaries of cultural inclusion and exclusion.
 
 \section{Research Questions}
 
@@ -38,7 +48,7 @@ This research note is guided by two primary research questions:
 
 Data for this study are drawn from a survey asking respondents whether they distinguish between good and bad taste in their daily lives. Respondents who answered affirmatively were asked to provide brief, open-ended definitions of both concepts.
 
-To analyze these short, unstructured text responses (typically 1--5 sentences), I utilized \textbf{BERTopic}, an advanced topic modeling algorithm that leverages transformer-based embeddings and class-based TF-IDF. BERTopic is highly effective at overcoming the sparsity issues that traditional Latent Dirichlet Allocation (LDA) models face when applied to short texts. During preprocessing, domain-specific survey artifacts (e.g., ``good,'' ``bad,'' ``taste,'' ``people,'' ``think'') were removed to allow substantive themes to drive the clustering. Robustness checks across varying minimum topic size parameters (5, 10, 15, and 20) confirmed that the resultant cluster structure was highly stable.
+To analyze these short, unstructured text responses (typically 1--5 sentences), I used \textbf{BERTopic}, an advanced topic modeling algorithm that leverages transformer-based embeddings and class-based TF-IDF. BERTopic is highly effective at overcoming the sparsity issues that traditional Latent Dirichlet Allocation (LDA) models face when applied to short texts. During preprocessing, domain-specific survey artifacts (e.g., ``good,'' ``bad,'' ``taste,'' ``people,'' ``think'') were removed to allow substantive themes to drive the clustering. Robustness checks across varying minimum topic size parameters (5, 10, 15, and 20) confirmed that the resultant cluster structure was highly stable.
 
 Following the extraction of latent topics, respondents were assigned to the schema for which their response generated the highest predicted probability. Multinomial logistic regression was then employed to analyze the relationship between topic assignment and demographic background.
 
@@ -89,5 +99,9 @@ This text-analytic exploration yields two main preliminary conclusions regarding
 ``Bad taste,'' however, is invoked in a way that cross-cuts demographic boundaries. The lack of demographic predictors for negative taste schemas suggests that bad taste acts either as a universalized boundary mechanism or as a highly idiosyncratic interpersonal judgment rather than a property of specific sociodemographic groups. 
 
 Future research should expand on these findings by examining how these schemas interact with actual patterns of cultural consumption, and exploring whether the decoupling of ``bad taste'' from structural demographics is a robust feature of contemporary cultural omnivorousness.
+
+\newpage
+\bibliography{references}
+\bibliographystyle{apalike}
 
 \end{document}
