@@ -27,7 +27,7 @@
 \maketitle
 
 \begin{abstract}
-\noindent Sociological theories of cultural consumption have long debated the nature of ``good'' and ``bad'' taste, yet how lay individuals actually define these categories remains under-explored. Using open-ended survey responses, this research note applies BERTopic to inductively map folk cultural models of taste definitions and examples. I identify diverse cultural models for ``good taste'' (e.g., Subjectivity, Aesthetics, Fashion) and ``bad taste'' (e.g., Dislike, Poor Choices, Vulgarity). Chi-square cross-tabulations reveal that these cultural models form internally coherent cultural logics across both positive and negative evaluations. Furthermore, heatmaps mapping these cultural models onto 19 specific cultural domains reveal that while core domains like Music and Clothing are universally subjected to taste distinctions, moralized cultural models (e.g., citing Donald Trump or the Obamas) are associated with a heightened propensity to draw taste boundaries across nearly all domains.
+\noindent Sociologists have long debated the nature of ``good'' and ``bad'' taste, yet how lay individuals actually define these categories remains under-explored. Using open-ended survey responses, this research note applies BERTopic to inductively map folk cultural models of taste definitions and examples. I identify distinct cultural models for ``good taste'' (e.g., Subjectivity, Aesthetics, Fashion) and ``bad taste'' (e.g., Dislike, Poor Choices, Vulgarity). Chi-square cross-tabulations reveal that these cultural models form internally coherent cultural logics across both positive and negative evaluations. Furthermore, heatmaps mapping these cultural models onto 19 specific cultural domains reveal that while core domains like Music and Clothing are universally subjected to taste distinctions, moralized cultural models (e.g., citing Donald Trump or the Obamas) are associated with a heightened propensity to draw taste boundaries across nearly all domains.
 \end{abstract}
 
 % \doublespacing
@@ -57,7 +57,57 @@ To analyze these short, unstructured participant-level text responses (hereafter
 
 The BERTopic models identified distinct cultural models for definitions and examples. For \textbf{Good Taste}, respondents defined the concept primarily through \emph{Similarity/Subjectivity} (homophily), \emph{Aesthetics}, or \emph{Style/Quality}. When asked for concrete examples, the clusters were much richer, featuring groups who cited \emph{Fashion/Decor} (friends and spouses), \emph{Refinement/Art} (creators like Steve Jobs), \emph{Musical Knowledge}, or even specific public figures representing class like \emph{The Obamas}.
 
+\input{report/Tabs/good_taste_summary_table.tex}
+\input{report/Tabs/good_taste_examples_table.tex}
+
 For \textbf{Bad Taste}, respondents defined it through \emph{Subjective Dislike}, \emph{Poor Choices/Lack of Effort}, \emph{Tackiness/Gaudiness}, \emph{Low-Brow Media}, or \emph{Poor Manners/Immorality}. Concrete examples similarly ranged from \emph{Poor Fashion}, \emph{Derivative Media} (e.g., formulaic filmmakers), to specific instances of \emph{Vulgarity} (often citing Donald Trump).
+
+\input{report/Tabs/bad_taste_summary_table.tex}
+\input{report/Tabs/bad_taste_examples_table.tex}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.48\textwidth]{report/Plots/good_taste_topics.png}
+    \includegraphics[width=0.48\textwidth]{report/Plots/bad_taste_topics.png}
+    \caption{Topic Frequencies for Good and Bad Taste (Definitions)}
+    \label{fig:topic_frequencies_def}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.48\textwidth]{report/Plots/good_taste_example_topics.png}
+    \includegraphics[width=0.48\textwidth]{report/Plots/bad_taste_example_topics.png}
+    \caption{Topic Frequencies for Good and Bad Taste (Examples)}
+    \label{fig:topic_frequencies_ex}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=\textwidth]{report/Plots/good_taste_keywords.png}
+    \caption{Keyword Importance (c-TF-IDF) for Good Taste Topics (Definitions)}
+    \label{fig:good_keywords_def}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=\textwidth]{report/Plots/bad_taste_keywords.png}
+    \caption{Keyword Importance (c-TF-IDF) for Bad Taste Topics (Definitions)}
+    \label{fig:bad_keywords_def}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=\textwidth]{report/Plots/good_taste_example_keywords.png}
+    \caption{Keyword Importance (c-TF-IDF) for Good Taste Topics (Examples)}
+    \label{fig:good_keywords_ex}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=\textwidth]{report/Plots/bad_taste_example_keywords.png}
+    \caption{Keyword Importance (c-TF-IDF) for Bad Taste Topics (Examples)}
+    \label{fig:bad_keywords_ex}
+\end{figure}
 
 \subsection{Cross-Schema Cultural Logics}
 
@@ -65,11 +115,67 @@ To test whether these cultural models are isolated or form coherent ``logics,'' 
 
 Similarly, the examples respondents choose are highly correlated ($\chi^2 = 99.01, p < 0.001$). Respondents who cite a friend's ``Fashion/Decor'' as an example of good taste are highly likely to cite ``Poor Fashion'' as an example of bad taste. Respondents who point to ``Refinement/Art'' for good taste are much more likely to point to ``Derivative Media'' for bad taste. This symmetry indicates that people deploy consistent criteria---whether aesthetic, material, or subjective---across moral valences.
 
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.48\textwidth]{report/Plots/ca_good_taste.png}
+    \includegraphics[width=0.48\textwidth]{report/Plots/ca_bad_taste.png}
+    \caption{Correspondence Analysis of Taste Schemas (Definitions)}
+    \label{fig:ca_schemas_def}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.48\textwidth]{report/Plots/ca_good_taste_example.png}
+    \includegraphics[width=0.48\textwidth]{report/Plots/ca_bad_taste_example.png}
+    \caption{Correspondence Analysis of Taste Schemas (Examples)}
+    \label{fig:ca_schemas_ex}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{report/Plots/schema_correlation.png}
+    \caption{Pearson Residuals of Schema Correlation}
+    \label{fig:schema_corr}
+\end{figure}
+
+\subsection{Demographics}
+
+\input{report/Tabs/wald_four_models.tex}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.48\textwidth]{report/Plots/demographics_good_taste_age.png}
+    \includegraphics[width=0.48\textwidth]{report/Plots/demographics_good_taste_political.png}
+    \caption{Predicted Probability of Good Taste Schemas by Age and Political Views}
+    \label{fig:demographics_good}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.5\textwidth]{report/Plots/demographics_bad_taste_age.png}
+    \caption{Predicted Probability of Bad Taste Schemas by Age}
+    \label{fig:demographics_bad}
+\end{figure}
+
 \subsection{Domain Distinction Heatmaps}
 
 Respondents were also asked to rate whether it ``makes sense'' to distinguish good and bad taste across 19 different domains (from -3 = Strongly Disagree to +3 = Strongly Agree). 
 
 Visualizing these scores as heatmaps across our topic clusters reveals several structural universals: regardless of the schema, respondents highly agree that taste distinctions make sense for \textbf{Clothing, Interior Design, Movies, Music, and Paintings}, while rejecting taste distinctions for \textbf{Car Races and Wrestling}.
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains.png}
+    \caption{Average Distinction Rating by Domain and Good Taste Schema}
+    \label{fig:distinction_good}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains_bad.png}
+    \caption{Average Distinction Rating by Domain and Bad Taste Schema}
+    \label{fig:distinction_bad}
+\end{figure}
 
 However, there is critical variance in boundary intensity. Respondents whose examples of good taste clustered around \emph{The Obamas/Class}, and whose bad taste clustered around \emph{Trump/Vulgarity}, reported much higher propensity to draw taste distinctions across almost \emph{all} domains, including peripheral ones like Food and Literature. This suggests that when folk models of taste become moralized or politicized, the boundaries of cultural distinction harden and expand across everyday life.
 

@@ -51,7 +51,7 @@ bad_topic_info$Keywords <- sapply(bad_topic_info$Representation, clean_keywords)
 good_topic_table <- good_topic_info %>% select(Topic, Count, Name, Keywords)
 bad_topic_table <- bad_topic_info %>% select(Topic, Count, Name, Keywords)
 
-# Ensure Tabs directory exists and save the tables as HTML
+# Ensure Tabs directory exists and save the tables
 dir.create("Tabs", showWarnings = FALSE)
 
 # Write out simple HTML tables
@@ -62,6 +62,16 @@ writeLines(
 writeLines(
   knitr::kable(bad_topic_table, format = "html"), 
   "Tabs/bad_taste_summary_table.html"
+)
+
+# Write out LaTeX tables
+writeLines(
+  knitr::kable(good_topic_table, format = "latex"), 
+  "Tabs/good_taste_summary_table.tex"
+)
+writeLines(
+  knitr::kable(bad_topic_table, format = "latex"), 
+  "Tabs/bad_taste_summary_table.tex"
 )
 
 head(good_topic_info, 10)
@@ -297,6 +307,16 @@ writeLines(
 writeLines(
   knitr::kable(bad_topic_table, format = "html", escape = FALSE), 
   "Tabs/bad_taste_examples_table.html"
+)
+
+# Write out LaTeX tables as well
+writeLines(
+  knitr::kable(good_topic_table, format = "latex", escape = FALSE), 
+  "Tabs/good_taste_examples_table.tex"
+)
+writeLines(
+  knitr::kable(bad_topic_table, format = "latex", escape = FALSE), 
+  "Tabs/bad_taste_examples_table.tex"
 )
 ```
 

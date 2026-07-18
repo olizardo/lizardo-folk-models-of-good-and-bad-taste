@@ -4,13 +4,14 @@
 Analyze survey data regarding sociological definitions of "good taste" and "bad taste" (`FolkTaste_BruteData.csv`, `FolkTaste_CleanData.csv`). 
 
 ## Key Technical Decisions & Analysis Pipeline
-* **Topic Modeling Algorithm**: BERTopic (Python) because it handles short survey responses (1-5 sentences) significantly better than LDA (which suffers from sparsity with short texts). Both good taste and bad taste open-text responses have been modeled.
-* **Robustness Checks**: Implemented BERTopic robustness checks (`run_bertopic_robustness.py`) across various `min_topic_size` parameters (e.g., 5, 10, 15, 20) to ensure stable topic structures, with results stored in `topic_robustness_summary.json`.
+* **Topic Modeling Algorithm**: BERTopic (Python) because it handles short survey responses (1-5 sentences) significantly better than LDA (which suffers from sparsity with short texts). We have expanded our modeling from two general models (good taste vs bad taste) to separate models for "definitions" and "examples" (`run_bertopic_four_models.py`), as well as "combined" definitions and examples (`run_bertopic_combined.py`).
+* **Robustness Checks**: Implemented BERTopic robustness checks across various `min_topic_size` parameters (e.g., 5, 10, 15, 20) to ensure stable topic structures, with results stored in `topic_robustness_summary.json`, `topic_robustness_summary_four_models.json`, and `topic_robustness_summary_combined.json`.
 * **R Environment**: Initialized a bare `renv` for R-based analysis.
 * **Statistical Modeling & Visualizations**:
-    * **Demographic Analysis**: Logistic regression models evaluating the predicted probability of topic assignments across various demographics. Plotting includes baseline topic probabilities as dashed lines.
+    * **Demographic Analysis**: Utilizes `chi_square_analysis.py` (Python), `analyze_demographics.R`, and `get_wald.R` (R) to examine demographic distributions. Logistic regression models evaluating the predicted probability of topic assignments across various demographics. Plotting includes baseline topic probabilities as dashed lines.
     * **Correspondence Analysis (CA)**: CA plots generated to map the relationship between topics and demographic categories.
     * **Domain Distinction**: Analysis of specific domains defining good vs. bad taste.
+* **Reporting**: Initial compilation of findings is being structured into a LaTeX document (`draft_research_note.tex`).
 
 ## Data Structure
 * Raw data is in `data/FolkTaste_BruteData.csv` (first row is variable names, second row is full question text).
