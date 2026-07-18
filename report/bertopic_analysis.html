@@ -138,7 +138,8 @@ Attaching package: 'dplyr'</code></pre>
     intersect, setdiff, setequal, union</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="topic-modeling-results" class="level1">
@@ -146,49 +147,56 @@ Attaching package: 'dplyr'</code></pre>
 <p>The short texts defining “Good Taste” and “Bad Taste” were clustered into 5 broad themes each using BERTopic. We load the summarized results from those models.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the pre-computed topic info tables</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>good_topic_info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"good_topic_info.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>bad_topic_info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"bad_topic_info.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>good_topic_info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"Tabs/good_topic_info.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>bad_topic_info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"Tabs/bad_topic_info.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove the Representative_Docs column which contains NaNs</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>good_topic_info <span class="ot">&lt;-</span> good_topic_info <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Representative_Docs)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>bad_topic_info <span class="ot">&lt;-</span> bad_topic_info <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Representative_Docs)</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure Tabs directory exists and save the tables as HTML</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"Tabs"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean up the Python list formatting in the Representation column</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>clean_keywords <span class="ot">&lt;-</span> <span class="cf">function</span>(rep_str) {</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">str_remove_all</span>(rep_str, <span class="st">"</span><span class="sc">\\</span><span class="st">[|</span><span class="sc">\\</span><span class="st">]|'"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>good_topic_info<span class="sc">$</span>Keywords <span class="ot">&lt;-</span> <span class="fu">sapply</span>(good_topic_info<span class="sc">$</span>Representation, clean_keywords)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>bad_topic_info<span class="sc">$</span>Keywords <span class="ot">&lt;-</span> <span class="fu">sapply</span>(bad_topic_info<span class="sc">$</span>Representation, clean_keywords)</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Write out simple HTML tables</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(good_topic_info, <span class="at">format =</span> <span class="st">"html"</span>), </span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tabs/good_taste_summary_table.html"</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(bad_topic_info, <span class="at">format =</span> <span class="st">"html"</span>), </span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tabs/bad_taste_summary_table.html"</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(good_topic_info, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove the messy Representation and NaN Representative_Docs columns for the table</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>good_topic_table <span class="ot">&lt;-</span> good_topic_info <span class="sc">%&gt;%</span> <span class="fu">select</span>(Topic, Count, Name, Keywords)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>bad_topic_table <span class="ot">&lt;-</span> bad_topic_info <span class="sc">%&gt;%</span> <span class="fu">select</span>(Topic, Count, Name, Keywords)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensure Tabs directory exists and save the tables as HTML</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"Tabs"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Write out simple HTML tables</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(good_topic_table, <span class="at">format =</span> <span class="st">"html"</span>), </span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tabs/good_taste_summary_table.html"</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(bad_topic_table, <span class="at">format =</span> <span class="st">"html"</span>), </span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tabs/bad_taste_summary_table.html"</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(good_topic_info, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 4
-  Topic Count Name                         Representation                       
-  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                        &lt;chr&gt;                                
-1    -1    36 -1_good_taste_person_usually ['good', 'taste', 'person', 'usually…
-2     0    95 0_things_like_art_appreciate ['things', 'like', 'art', 'appreciat…
-3     1    88 1_taste_good_say_like        ['taste', 'good', 'say', 'like', 'pe…
-4     2    41 2_good_taste_person_think    ['good', 'taste', 'person', 'think',…
-5     3    18 3_means_like_good_knows      ['means', 'like', 'good', 'knows', '…</code></pre>
+<pre><code># A tibble: 5 × 6
+  Topic Count Name                   Representation Representative_Docs Keywords
+  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                  &lt;chr&gt;          &lt;lgl&gt;               &lt;chr&gt;   
+1    -1    36 -1_good_taste_person_… ['good', 'tas… NA                  good, t…
+2     0    95 0_things_like_art_app… ['things', 'l… NA                  things,…
+3     1    88 1_taste_good_say_like  ['taste', 'go… NA                  taste, …
+4     2    41 2_good_taste_person_t… ['good', 'tas… NA                  good, t…
+5     3    18 3_means_like_good_kno… ['means', 'li… NA                  means, …</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bad_topic_info, <span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 7 × 4
-  Topic Count Name                         Representation                       
-  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                        &lt;chr&gt;                                
-1    -1    76 -1_taste_bad_like_things     ['taste', 'bad', 'like', 'things', '…
-2     0    95 0_taste_bad_person_things    ['taste', 'bad', 'person', 'things',…
-3     1    44 1_like_things_just_care      ['like', 'things', 'just', 'care', '…
-4     2    25 2_person_people_things_loud  ['person', 'people', 'things', 'loud…
-5     3    16 3_art_dont_taste_bad         ['art', 'dont', 'taste', 'bad', 'lik…
-6     4    11 4_means_usually_like_quality ['means', 'usually', 'like', 'qualit…
-7     5    11 5_music_shows_enjoying_tv    ['music', 'shows', 'enjoying', 'tv',…</code></pre>
+<pre><code># A tibble: 7 × 6
+  Topic Count Name                   Representation Representative_Docs Keywords
+  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                  &lt;chr&gt;          &lt;lgl&gt;               &lt;chr&gt;   
+1    -1    76 -1_taste_bad_like_thi… ['taste', 'ba… NA                  taste, …
+2     0    95 0_taste_bad_person_th… ['taste', 'ba… NA                  taste, …
+3     1    44 1_like_things_just_ca… ['like', 'thi… NA                  like, t…
+4     2    25 2_person_people_thing… ['person', 'p… NA                  person,…
+5     3    16 3_art_dont_taste_bad   ['art', 'dont… NA                  art, do…
+6     4    11 4_means_usually_like_… ['means', 'us… NA                  means, …
+7     5    11 5_music_shows_enjoyin… ['music', 'sh… NA                  music, …</code></pre>
 </div>
 </div>
 </section>

@@ -20,6 +20,7 @@ We load the necessary R packages and load our summarized topic data.
 library(dplyr)
 library(ggplot2)
 library(readr)
+library(stringr)
 ```
 
 # Topic modeling results
@@ -32,20 +33,27 @@ The short texts defining "Good Taste" and "Bad Taste" were clustered into 5 broa
 good_topic_info <- read_csv("Tabs/good_topic_info.csv", show_col_types = FALSE)
 bad_topic_info <- read_csv("Tabs/bad_topic_info.csv", show_col_types = FALSE)
 
-# Remove the Representative_Docs column which contains NaNs
-good_topic_info <- good_topic_info %>% select(-Representative_Docs)
-bad_topic_info <- bad_topic_info %>% select(-Representative_Docs)
+# Clean up the Python list formatting in the Representation column
+clean_keywords <- function(rep_str) {
+  str_remove_all(rep_str, "\\[|\\]|'")
+}
+good_topic_info$Keywords <- sapply(good_topic_info$Representation, clean_keywords)
+bad_topic_info$Keywords <- sapply(bad_topic_info$Representation, clean_keywords)
+
+# Remove the messy Representation and NaN Representative_Docs columns for the table
+good_topic_table <- good_topic_info %>% select(Topic, Count, Name, Keywords)
+bad_topic_table <- bad_topic_info %>% select(Topic, Count, Name, Keywords)
 
 # Ensure Tabs directory exists and save the tables as HTML
 dir.create("Tabs", showWarnings = FALSE)
 
 # Write out simple HTML tables
 writeLines(
-  knitr::kable(good_topic_info, format = "html"), 
+  knitr::kable(good_topic_table, format = "html"), 
   "Tabs/good_taste_summary_table.html"
 )
 writeLines(
-  knitr::kable(bad_topic_info, format = "html"), 
+  knitr::kable(bad_topic_table, format = "html"), 
   "Tabs/bad_taste_summary_table.html"
 )
 
