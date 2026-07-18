@@ -21,6 +21,9 @@ library(dplyr)
 library(ggplot2)
 library(readr)
 library(stringr)
+library(jsonlite)
+library(tidyr)
+library(tidytext)
 ```
 
 # Topic modeling results
@@ -102,4 +105,84 @@ p_bad <- ggplot(bad_topic_info %>% filter(Topic != -1), aes(x = reorder(Name, Co
 
 print(p_bad)
 ggsave("Plots/bad_taste_topics.png", plot = p_bad, width = 8, height = 6)
+```
+
+# Keyword Importance (c-TF-IDF)
+
+To better understand *why* each topic was formed, we can look at the mathematical importance (c-TF-IDF score) of the top keywords for each topic. We extract these weights directly from the saved model metadata.
+
+```{r}
+#| label: visualize-keywords
+#| fig-width: 10
+#| fig-height: 8
+
+# Function to parse the topics.json file into a ggplot-friendly dataframe
+extract_keyword_weights <- function(json_path) {
+  # Read from root path because the Quarto file runs from the report/ dir
+  # but the string provided was relative to root in my tests.
+  topics_data <- fromJSON(json_path)$topic_representations
+  
+  # Remove the outlier topic "-1"
+  topics_data[["-1"]] <- NULL
+  
+  # Convert nested list into a dataframe
+  df_list <- lapply(names(topics_data), function(topic_id) {
+    # Each item is a matrix/array where [,1] is the word and [,2] is the score
+    mat <- topics_data[[topic_id]]
+    data.frame(
+      Topic = paste("Topic", topic_id),
+      Word = as.character(mat[,1]),
+      Score = as.numeric(mat[,2]),
+      stringsAsFactors = FALSE
+    )
+  })
+  
+  do.call(rbind, df_list)
+}
+
+# Extract for Good Taste
+good_weights <- extract_keyword_weights("../good_taste_model/topics.json")
+
+# Plot Good Taste Keywords
+p_good_keys <- good_weights %>%
+  group_by(Topic) %>%
+  top_n(8, Score) %>% # Get top 8 words per topic
+  ungroup() %>%
+  mutate(Word = reorder_within(Word, Score, Topic)) %>%
+  ggplot(aes(x = Word, y = Score, fill = Topic)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ Topic, scales = "free_y") +
+  coord_flip() +
+  scale_x_reordered() +
+  theme_minimal() +
+  labs(
+    title = "Good Taste: Keyword Importance by Topic",
+    x = NULL, y = "c-TF-IDF Score"
+  )
+
+print(p_good_keys)
+ggsave("Plots/good_taste_keywords.png", plot = p_good_keys, width = 10, height = 8)
+
+# Extract for Bad Taste
+bad_weights <- extract_keyword_weights("../bad_taste_model/topics.json")
+
+# Plot Bad Taste Keywords
+p_bad_keys <- bad_weights %>%
+  group_by(Topic) %>%
+  top_n(8, Score) %>%
+  ungroup() %>%
+  mutate(Word = reorder_within(Word, Score, Topic)) %>%
+  ggplot(aes(x = Word, y = Score, fill = Topic)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~ Topic, scales = "free_y") +
+  coord_flip() +
+  scale_x_reordered() +
+  theme_minimal() +
+  labs(
+    title = "Bad Taste: Keyword Importance by Topic",
+    x = NULL, y = "c-TF-IDF Score"
+  )
+
+print(p_bad_keys)
+ggsave("Plots/bad_taste_keywords.png", plot = p_bad_keys, width = 10, height = 8)
 ```
