@@ -28,7 +28,7 @@ library(tidytext)
 
 # Topic modeling results
 
-The short texts defining "Good Taste" and "Bad Taste" were clustered into 5 broad themes each using BERTopic. We load the summarized results from those models.
+The short texts defining "Good Taste" and "Bad Taste" were clustered into 3 broad themes each using BERTopic. We load the summarized results from those models.
 
 ```{r}
 #| label: load-models
@@ -534,7 +534,7 @@ p_res <- ggplot(residuals_df, aes(x = GoodTaste, y = BadTaste, fill = Residual))
   theme(axis.text.x = element_text(angle = 15, hjust = 1)) +
   labs(
     title = "Pearson Residuals of Schema Correlation",
-    subtitle = "Positive values (blue) indicate schema combinations that occur more often than expected by chance.",
+    subtitle = "Positive values (blue) indicate schema combinations that\noccur more often than expected by chance.",
     x = "Good Taste Schema",
     y = "Bad Taste Schema",
     fill = "Residual"
@@ -576,17 +576,27 @@ distinction_means <- analysis_df %>%
   group_by(GoodTasteTopic, Domain) %>%
   summarize(Mean_Score = mean(Score, na.rm = TRUE), .groups = 'drop')
 
+# Order domains by overall mean rating
+domain_order <- distinction_means %>%
+  group_by(Domain) %>%
+  summarize(Overall = mean(Mean_Score)) %>%
+  arrange(Overall) %>%
+  pull(Domain)
+
+distinction_means <- distinction_means %>%
+  mutate(Domain = factor(Domain, levels = domain_order))
+
 # Plot as a heatmap
-p_dist <- ggplot(distinction_means, aes(x = Domain, y = GoodTasteTopic, fill = Mean_Score)) +
+p_dist <- ggplot(distinction_means, aes(x = GoodTasteTopic, y = Domain, fill = Mean_Score)) +
   geom_tile(color = "white") +
-  scale_fill_gradient2(low = "indianred", mid = "white", high = "steelblue", midpoint = 1.5) +
+  scale_fill_gradient2(low = "steelblue", mid = "white", high = "indianred", midpoint = 1.5) +
   theme_minimal(base_size = 14) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = 15, hjust = 1)) +
   labs(
     title = "Average Distinction Rating by Domain and Taste Schema",
-    x = "Cultural Domain",
-    y = "Good Taste Schema",
-    fill = "Mean Score (-3 to 3)"
+    x = "Good Taste Schema",
+    y = "Cultural Domain",
+    fill = "Mean Score"
   )
 
 print(p_dist)
