@@ -257,6 +257,12 @@ Attaching package: 'dplyr'</code></pre>
 <section id="keyword-importance-c-tf-idf" class="level1">
 <h1>Keyword Importance (c-TF-IDF)</h1>
 <p>To better understand <em>why</em> each topic was formed, we can look at the mathematical importance (c-TF-IDF score) of the top keywords for each topic. We extract these weights directly from the saved model metadata.</p>
+<section id="interpretation" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation">Interpretation</h3>
+<ul>
+<li><strong>Good Taste</strong> themes seem heavily divided between definitions relying on external consensus or high-art aesthetics (Topic 0: <em>art, appreciate, pleasing</em>) versus definitions emphasizing alignment with personal preferences (Topic 1: <em>say, like, person</em>).</li>
+<li><strong>Bad Taste</strong> themes include lack of independence or “following the crowd” (Topic 0), enjoying “loud” or “gaudy” things (Topic 1, Topic 2), or specifically enjoying “low-brow” mass media (Topic 5: <em>music, reality tv, rap, movies</em>).</li>
+</ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to parse the topics.json file into a ggplot-friendly dataframe</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>extract_keyword_weights <span class="ot">&lt;-</span> <span class="cf">function</span>(json_path) {</span>
@@ -342,6 +348,178 @@ Attaching package: 'dplyr'</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"Plots/bad_taste_keywords.png"</span>, <span class="at">plot =</span> p_bad_keys, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</section>
+</section>
+<section id="example-responses-pseudo-representative-documents" class="level1">
+<h1>Example Responses (Pseudo-Representative Documents)</h1>
+<p>Because the heavy mathematical models only saved the keyword weights to disk, we can use R to find the best example responses for each topic. We do this by scanning the original survey text and finding the quotes that contain the highest number of a topic’s core keywords.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the original survey text</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>raw_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../data/FolkTaste_CleanData.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>valid_data <span class="ot">&lt;-</span> raw_data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Taste_Possibility <span class="sc">==</span> <span class="st">'YES'</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>good_docs <span class="ot">&lt;-</span> valid_data<span class="sc">$</span>GoodTaste_Def[<span class="sc">!</span><span class="fu">is.na</span>(valid_data<span class="sc">$</span>GoodTaste_Def)]</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>bad_docs <span class="ot">&lt;-</span> valid_data<span class="sc">$</span>BadTaste_Def[<span class="sc">!</span><span class="fu">is.na</span>(valid_data<span class="sc">$</span>BadTaste_Def)]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to score documents based on keyword matching and return the top 2</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>find_examples <span class="ot">&lt;-</span> <span class="cf">function</span>(docs, keywords_str, <span class="at">n =</span> <span class="dv">2</span>) {</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split the comma-separated keywords</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  keys <span class="ot">&lt;-</span> <span class="fu">str_split</span>(keywords_str, <span class="st">",</span><span class="sc">\\</span><span class="st">s*"</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Score each document by counting keyword occurrences</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  scores <span class="ot">&lt;-</span> <span class="fu">sapply</span>(docs, <span class="cf">function</span>(d) {</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.na</span>(d) <span class="sc">||</span> <span class="fu">nchar</span>(<span class="fu">trimws</span>(d)) <span class="sc">&lt;</span> <span class="dv">10</span>) <span class="fu">return</span>(<span class="sc">-</span><span class="dv">1</span>) <span class="co"># Penalize empty/very short responses</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    d_lower <span class="ot">&lt;-</span> <span class="fu">tolower</span>(d)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="fu">sapply</span>(keys, <span class="cf">function</span>(k) <span class="fu">str_detect</span>(d_lower, <span class="fu">fixed</span>(k))))</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get indices of the top scoring documents</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  top_idx <span class="ot">&lt;-</span> <span class="fu">order</span>(scores, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span><span class="sc">:</span>n]</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Format as a nice HTML bulleted list</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="fu">paste0</span>(<span class="st">"&amp;bull; &lt;em&gt;</span><span class="sc">\"</span><span class="st">"</span>, docs[top_idx], <span class="st">"</span><span class="sc">\"</span><span class="st">&lt;/em&gt;"</span>), <span class="at">collapse =</span> <span class="st">"&lt;br&gt;&lt;br&gt;"</span>)</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply to Good Taste</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>good_topic_table<span class="sc">$</span>Example_Responses <span class="ot">&lt;-</span> <span class="fu">sapply</span>(good_topic_table<span class="sc">$</span>Keywords, <span class="cf">function</span>(kw) {</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">find_examples</span>(good_docs, kw, <span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply to Bad Taste</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>bad_topic_table<span class="sc">$</span>Example_Responses <span class="ot">&lt;-</span> <span class="fu">sapply</span>(bad_topic_table<span class="sc">$</span>Keywords, <span class="cf">function</span>(kw) {</span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">find_examples</span>(bad_docs, kw, <span class="at">n =</span> <span class="dv">2</span>)</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Save the updated tables to the Tabs directory</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(good_topic_table, <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">escape =</span> <span class="cn">FALSE</span>), </span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tabs/good_taste_examples_table.html"</span></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="fu">writeLines</span>(</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(bad_topic_table, <span class="at">format =</span> <span class="st">"html"</span>, <span class="at">escape =</span> <span class="cn">FALSE</span>), </span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tabs/bad_taste_examples_table.html"</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="good-taste-examples" class="level3">
+<h3 class="anchored" data-anchor-id="good-taste-examples">Good Taste Examples</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">Topic</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Example_Responses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">-1</td>
+<td style="text-align: left;">-1_good_taste_person_usually</td>
+<td style="text-align: left;">• <em>"To mean it means that the someone being referred to makes or usually for the most part things which are very good in terms of quality or appearance. In reality though it effectively usually means that the person who is being referred to makes choices usually aligned with mine. A person who has good taste may also be someone who consistently chooses things which are just generally popular overall."</em><br>
+<br>
+• <em>"To me it usually means that they can think for themselves. They don't just say they like a book because it's on the bestseller list. They've read enough, listened to enough, or seen enough to form a good opinion and make up their own minds about what they like. However, their taste isn't too "out there.""</em></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">0_things_like_art_appreciate</td>
+<td style="text-align: left;">• <em>"This is subjective. When we say that someone has good taste, it could mean that they have a deep understanding of all the aspects of a certain topic and that their personal bias is one that shows a true appreciation for said subject. It could also mean that they like things that others do, so as to follow a trend."</em><br>
+<br>
+• <em>"If someone has a good taste, then they like things that many people view are "good". It's a very subjective thing to have a "good taste", I think it depends on how you grew up. In certain areas, it'd be luxury things or elegant things that are defined as good taste. In other parts, it could just be like something that isn't as "Trendy" as what most people like. I'd also say that people with "good taste", tend to think on their own and don't follow what others like."</em></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">1_taste_good_say_like</td>
+<td style="text-align: left;">• <em>"I mean the person likes things that are in the same taste as I. If I think something is attractive, then for me to say that they have good taste would say that they have the same taste in whatever subject we are talking about as I. I love old rock and roll, so if the person likes it, I would say that they have good taste."</em><br>
+<br>
+• <em>"This can mean different things based on who is saying it of course. Maybe a rich person will think good taste is having antiques, a newly rich person might think good taste is having fancy clothes/cars or a movie snob might like how movies are composed."</em></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">2_good_taste_person_think</td>
+<td style="text-align: left;">• <em>"When I think about what it means to have good taste, several things come to mind. The person may have a sense of colors that look well together. They may have ideas of design, that are appealing to many people. A specific example of having good taste might be a clothing designer who has a knack for combining the 'right' colors and creating a figure-flattering style."</em><br>
+<br>
+• <em>"To mean it means that the someone being referred to makes or usually for the most part things which are very good in terms of quality or appearance. In reality though it effectively usually means that the person who is being referred to makes choices usually aligned with mine. A person who has good taste may also be someone who consistently chooses things which are just generally popular overall."</em></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">3_means_like_good_knows</td>
+<td style="text-align: left;">• <em>"I think it means that people chose to do or see or say or dress or participate in a way that is morally good and not offensive to other people. They don't like things that are garish. They respect other people and interact with them as they would want others to interact with them. They are not exhibitionists."</em><br>
+<br>
+• <em>"I believe that it means that they have a good selection of goods or services used by them. It means other people value those choices and admire their selection of goods or services. It makes the person more desirable because of a finer choices in life."</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="bad-taste-examples" class="level3">
+<h3 class="anchored" data-anchor-id="bad-taste-examples">Bad Taste Examples</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">Topic</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Name</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Example_Responses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">-1</td>
+<td style="text-align: left;">-1_taste_bad_like_things</td>
+<td style="text-align: left;">• <em>"Bad taste can be different to everyone, for me it would be something I dislike. An example: if I dislike a piece of art and someone else likes it, I would say this person has bad taste in art."</em><br>
+<br>
+• <em>"Someone who has bad taste in my opinion would mean that my opinions of those tastes are bad. To put simply, the tastes that I dislike would make me think a person who likes them has bad taste."</em></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">0_taste_bad_person_things</td>
+<td style="text-align: left;">• <em>"When I say bad taste, it means that the person does not pay attention to the finer details of things and just decide to follow everyone without knowing why they picked it. For example, in fashion, people would pick the worst outfits that despite having unique patterns, they did it in a way that it looks cheap and does not elevate their look."</em><br>
+<br>
+• <em>"I'd say someone with a "bad taste" doesn't really like things on their own, they tend to be a follower for what's popular so they don't end up with much of a taste at all. I'd also say it's when they like a lot of things that other people tend to dislike, so they'd have a "bad taste" compared. Again though, really depends on cultures and areas they grew up, what may be bad tastes where they are, could be good tastes elsewhere."</em></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">1_like_things_just_care</td>
+<td style="text-align: left;">• <em>"Maybe they like gaudy decor or crass music, or explicit paintings. Or maybe they just like whatever is currently popular and it changes with that."</em><br>
+<br>
+• <em>"They like things that are outside the bounds of acceptability or like things that are just plain dumb."</em></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">2_person_people_things_loud</td>
+<td style="text-align: left;">• <em>"Nowadays is only a joke to people who likes things that I personally don't like or dislike. In the past I would mean it, but after time and experience, I have learned taste is a subjective aspect in the human nature."</em><br>
+<br>
+• <em>"Someone who may have their own ideas about the aesthetic qualities of objects which generally go against beliefs held by most people in society. Someone who has a sense of humor that is sophomoric and doesn't realize that others may take offense. A person who can't distinguish the qualities that make items desirable to the majority."</em></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">3_art_dont_taste_bad</td>
+<td style="text-align: left;">• <em>"When I say that someone has bad taste, I generally mean that I view negatively the art/music/literature that that person enjoys. That is, I don't think it conveys any meaning, I don't think that the person who created it has any talent, and I don't see the value in it. I have to admit that it often means that this is very subjective, in that it often means that I myself don't like the art/music/literature at all myself."</em><br>
+<br>
+• <em>"Bad taste can be different to everyone, for me it would be something I dislike. An example: if I dislike a piece of art and someone else likes it, I would say this person has bad taste in art."</em></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">4_means_usually_like_quality</td>
+<td style="text-align: left;">• <em>"It means they do not have a clue about what looks good, what is quality, what is in style, is desirable. Usually they like gaudy and tacky things that may be expensive but horrible looking."</em><br>
+<br>
+• <em>"It means something looks horrible on them or the music isn't to their liking. It depends on the person and who you're explaining it to. Each person has their own taste."</em></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">5_music_shows_enjoying_tv</td>
+<td style="text-align: left;">• <em>"When someone has a bad taste they are probably focused on a single genre and completely ignore everything else. Usually they would watch poorly scripted shows or movies, reality tv, etc."</em><br>
+<br>
+• <em>"When someone has "bad taste" I tend to think they enjoy media, books, and food made for the lowest common denominator. They are easily entertained by things like reality television, Michael Bay films with tons of explosions, and their favorite music is whatever the latest generic popular rap/pop artist has on the radio."</em></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 
 </main>

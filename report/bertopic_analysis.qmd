@@ -111,6 +111,11 @@ ggsave("Plots/bad_taste_topics.png", plot = p_bad, width = 8, height = 6)
 
 To better understand *why* each topic was formed, we can look at the mathematical importance (c-TF-IDF score) of the top keywords for each topic. We extract these weights directly from the saved model metadata.
 
+### Interpretation
+
+* **Good Taste** themes seem heavily divided between definitions relying on external consensus or high-art aesthetics (Topic 0: *art, appreciate, pleasing*) versus definitions emphasizing alignment with personal preferences (Topic 1: *say, like, person*). 
+* **Bad Taste** themes include lack of independence or "following the crowd" (Topic 0), enjoying "loud" or "gaudy" things (Topic 1, Topic 2), or specifically enjoying "low-brow" mass media (Topic 5: *music, reality tv, rap, movies*).
+
 ```{r}
 #| label: visualize-keywords
 #| fig-width: 10
@@ -185,4 +190,73 @@ p_bad_keys <- bad_weights %>%
 
 print(p_bad_keys)
 ggsave("Plots/bad_taste_keywords.png", plot = p_bad_keys, width = 10, height = 8)
+```
+
+# Example Responses (Pseudo-Representative Documents)
+
+Because the heavy mathematical models only saved the keyword weights to disk, we can use R to find the best example responses for each topic. We do this by scanning the original survey text and finding the quotes that contain the highest number of a topic's core keywords.
+
+```{r}
+#| label: extract-examples
+#| results: asis
+
+# Load the original survey text
+raw_data <- read_csv("../data/FolkTaste_CleanData.csv", show_col_types = FALSE)
+valid_data <- raw_data %>% filter(Taste_Possibility == 'YES')
+
+good_docs <- valid_data$GoodTaste_Def[!is.na(valid_data$GoodTaste_Def)]
+bad_docs <- valid_data$BadTaste_Def[!is.na(valid_data$BadTaste_Def)]
+
+# Function to score documents based on keyword matching and return the top 2
+find_examples <- function(docs, keywords_str, n = 2) {
+  # Split the comma-separated keywords
+  keys <- str_split(keywords_str, ",\\s*")[[1]]
+  
+  # Score each document by counting keyword occurrences
+  scores <- sapply(docs, function(d) {
+    if (is.na(d) || nchar(trimws(d)) < 10) return(-1) # Penalize empty/very short responses
+    d_lower <- tolower(d)
+    sum(sapply(keys, function(k) str_detect(d_lower, fixed(k))))
+  })
+  
+  # Get indices of the top scoring documents
+  top_idx <- order(scores, decreasing = TRUE)[1:n]
+  
+  # Format as a nice HTML bulleted list
+  paste(paste0("&bull; <em>\"", docs[top_idx], "\"</em>"), collapse = "<br><br>")
+}
+
+# Apply to Good Taste
+good_topic_table$Example_Responses <- sapply(good_topic_table$Keywords, function(kw) {
+  find_examples(good_docs, kw, n = 2)
+})
+
+# Apply to Bad Taste
+bad_topic_table$Example_Responses <- sapply(bad_topic_table$Keywords, function(kw) {
+  find_examples(bad_docs, kw, n = 2)
+})
+
+# Save the updated tables to the Tabs directory
+writeLines(
+  knitr::kable(good_topic_table, format = "html", escape = FALSE), 
+  "Tabs/good_taste_examples_table.html"
+)
+writeLines(
+  knitr::kable(bad_topic_table, format = "html", escape = FALSE), 
+  "Tabs/bad_taste_examples_table.html"
+)
+```
+
+### Good Taste Examples
+```{r}
+#| echo: false
+#| results: asis
+knitr::kable(good_topic_table %>% select(Topic, Name, Example_Responses), format = "html", escape = FALSE)
+```
+
+### Bad Taste Examples
+```{r}
+#| echo: false
+#| results: asis
+knitr::kable(bad_topic_table %>% select(Topic, Name, Example_Responses), format = "html", escape = FALSE)
 ```
