@@ -1,0 +1,38 @@
+{
+    "good_taste_combined_robustness": [
+        {
+            "min_topic_size": 5,
+            "num_topics": 12
+        },
+        {
+            "min_topic_size": 10,
+            "num_topics": 4
+        },
+        {
+            "min_topic_size": 15,
+            "num_topics": 2
+        },
+        {
+            "min_topic_size": 20,
+            "num_topics": 2
+        }
+    ],
+    "bad_taste_combined_robustness": [
+        {
+            "min_topic_size": 5,
+            "num_topics": 10
+        },
+        {
+            "min_topic_size": 10,
+            "num_topics": 3
+        },
+        {
+            "min_topic_size": 15,
+            "num_topics": 0
+        },
+        {
+            "min_topic_size": 20,
+            "num_topics": 0
+        }
+    ]
+}
