@@ -46,7 +46,7 @@ This research note is guided by two primary research questions:
 
 \section{Methods}
 
-Data for this study are drawn from a survey asking respondents whether they distinguish between good and bad taste in their daily lives. Respondents who answered affirmatively were asked to provide brief, open-ended definitions of both concepts.
+Data for this study are drawn from an open-access dataset originally collected by Bonard, Cova, and Humbert-Droz (2024)\footnote{Bonard, C., Cova, F., \& Humbert-Droz, S. (2024). \emph{De gustibus est disputandum: An empirical investigation of the folk concept of aesthetic taste}. PsyArXiv. \url{https://osf.io/preprints/psyarxiv/qfm3z_v1}}. In their survey, respondents were asked whether they distinguish between good and bad taste in their daily lives. Respondents who answered affirmatively were asked to provide brief, open-ended definitions of both concepts.
 
 To analyze these short, unstructured text responses (typically 1--5 sentences), I used \textbf{BERTopic}, an advanced topic modeling algorithm that leverages transformer-based embeddings and class-based TF-IDF. BERTopic is highly effective at overcoming the sparsity issues that traditional Latent Dirichlet Allocation (LDA) models face when applied to short texts. During preprocessing, domain-specific survey artifacts (e.g., ``good,'' ``bad,'' ``taste,'' ``people,'' ``think'') were removed to allow substantive themes to drive the clustering. Robustness checks across varying minimum topic size parameters (5, 10, 15, and 20) confirmed that the resultant cluster structure was highly stable.
 
