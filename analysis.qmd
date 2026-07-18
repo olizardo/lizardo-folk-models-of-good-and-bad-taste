@@ -735,7 +735,7 @@ for (i in 1:nrow(all_res)) {
   pval <- all_res$`Pr(>Chisq)`[i]
   pval_str <- if(pval < 0.001) "< 0.001" else sprintf("%.4f", pval)
   latex_str <- paste0(latex_str, sprintf("%s & %s & %.2f & %d & %s \\\\\n", 
-                                         all_res$Model[i], all_res$Predictor[i], all_res$`LR Chisq`[i], all_res$Df[i], pval_str))
+                                         all_res$Model[i], gsub("_", "\\\\_", all_res$Predictor[i]), all_res$`LR Chisq`[i], all_res$Df[i], pval_str))
 }
 
 latex_str <- paste0(latex_str, "\\bottomrule\n\\end{tabular}\n}\n\\caption{Multinomial Logistic Regression Wald Tests for Topic Predictors}\n\\label{tab:wald_four_models}\n\\end{table}\n")
