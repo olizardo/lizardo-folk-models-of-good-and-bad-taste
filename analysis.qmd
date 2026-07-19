@@ -182,6 +182,7 @@ library(car)
 library(FactoMineR)
 library(factoextra)
 library(jsonlite)
+library(corrplot)
 
 config <- fromJSON("config.json")
 good_model_dir <- config$good_model
@@ -291,70 +292,89 @@ if (nrow(tb) > 1 && ncol(tb) > 1) {
 }
 
 
-# 3. PCA of Distinction Domains and Topic ANOVA
-dist_cols <- grep("Domains_Distinction1_", names(raw_survey), value = TRUE)
-dist_data <- raw_survey %>% select(all_of(dist_cols)) %>% mutate_all(as.numeric)
-dist_data_imp <- as.data.frame(lapply(dist_data, function(x) ifelse(is.na(x), mean(x, na.rm = TRUE), x)))
-names(dist_data_imp) <- str_remove(names(dist_data_imp), "Domains_Distinction1_")
-
-res.pca <- PCA(dist_data_imp, scale.unit = TRUE, graph = FALSE)
-p_pca_var <- fviz_pca_var(res.pca, col.var = "contrib",
-             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-             repel = TRUE, title = "PCA of Cultural Domains Distinction Ratings")
-ggsave("report/Plots/pca_domain_variables.png", plot = p_pca_var, width = 8, height = 6)
-
-raw_survey$Dim1 <- res.pca$ind$coord[,1]
-raw_survey$Dim2 <- res.pca$ind$coord[,2]
-raw_survey$Dim3 <- res.pca$ind$coord[,3]
-
-df_pca <- raw_survey %>%
-  left_join(gd, by=c("python_index"="original_index")) %>%
-  left_join(bd, by=c("python_index"="original_index"))
-
-df_pca$Good_Def[df_pca$Good_Def == "-1"] <- NA
-df_pca$Bad_Def[df_pca$Bad_Def == "-1"] <- NA
-
-run_anova_for_dim <- function(dim_col) {
-  results <- list()
-  for (model_col in c("Good_Def", "Bad_Def")) {
-    test_df <- df_pca %>% select(!!sym(model_col), !!sym(dim_col)) %>% drop_na()
+run_pca_and_manova <- function(var_prefix, title_prefix, file_suffix) {
+  # 1. Prepare Data
+  dist_cols <- grep(paste0("^", var_prefix), names(raw_survey), value = TRUE)
+  if(length(dist_cols) == 0) return(NULL)
+  
+  dist_data <- raw_survey %>% select(all_of(dist_cols)) %>% mutate_all(as.numeric)
+  dist_data_imp <- as.data.frame(lapply(dist_data, function(x) ifelse(is.na(x), mean(x, na.rm = TRUE), x)))
+  names(dist_data_imp) <- str_remove(names(dist_data_imp), var_prefix)
+  
+  # 2. Run PCA
+  res.pca <- PCA(dist_data_imp, scale.unit = TRUE, graph = FALSE)
+  p_pca_var <- fviz_pca_var(res.pca, col.var = "contrib",
+               gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+               repel = TRUE, title = paste("PCA of", title_prefix, "Ratings"))
+  ggsave(paste0("report/Plots/pca_", file_suffix, ".png"), plot = p_pca_var, width = 8, height = 6)
+  
+  # 3. Add Dimensions to survey
+  raw_survey$Dim1 <- res.pca$ind$coord[,1]
+  raw_survey$Dim2 <- res.pca$ind$coord[,2]
+  raw_survey$Dim3 <- res.pca$ind$coord[,3]
+  
+  # 4. Correlation Plot
+  pca_cors <- cor(dist_data_imp, raw_survey[, c("Dim1", "Dim2", "Dim3")], use = "pairwise.complete.obs")
+  png(paste0("report/Plots/pca_correlations_", file_suffix, ".png"), width = 800, height = 1000, res=120)
+  corrplot(pca_cors, method="color", addCoef.col = "black", tl.col="black", tl.srt=45,
+           number.cex=0.7, title=paste("Correlations:", title_prefix, "and PCA Dims"), mar=c(0,0,2,0))
+  dev.off()
+  
+  # 5. Join with Topic Schemas
+  df_pca <- raw_survey %>%
+    left_join(gd, by=c("python_index"="original_index")) %>%
+    left_join(bd, by=c("python_index"="original_index"))
+  
+  df_pca$Good_Def[df_pca$Good_Def == "-1"] <- NA
+  df_pca$Bad_Def[df_pca$Bad_Def == "-1"] <- NA
+  
+  # 6. MANOVA
+  run_manova <- function(model_col) {
+    test_df <- df_pca %>% select(Dim1, Dim2, Dim3, !!sym(model_col)) %>% drop_na()
     if (length(unique(test_df[[model_col]])) > 1) {
-      formula <- as.formula(paste0("`", dim_col, "` ~ ", model_col))
-      aov_res <- aov(formula, data = test_df)
-      s <- summary(aov_res)[[1]]
-      f_val <- s[["F value"]][1]
-      p_val <- s[["Pr(>F)"]][1]
-      results[[model_col]] <- data.frame(Model=model_col, F_val=f_val, p_val=p_val)
+      Y <- cbind(test_df$Dim1, test_df$Dim2, test_df$Dim3)
+      formula <- as.formula(paste0("Y ~ ", model_col))
+      fit <- manova(formula, data = test_df)
+      s <- summary(fit, test = "Pillai")
+      
+      pillai <- s$stats[1, "Pillai"]
+      f_val <- s$stats[1, "approx F"]
+      p_val <- s$stats[1, "Pr(>F)"]
+      df1 <- s$stats[1, "num Df"]
+      df2 <- s$stats[1, "den Df"]
+      data.frame(Model=model_col, Pillai=pillai, F_val=f_val, df1=df1, df2=df2, p_val=p_val)
     }
   }
-  res_df <- bind_rows(results)
-  res_df$Dimension <- dim_col
-  res_df
+  
+  res_good <- run_manova("Good_Def")
+  res_bad <- run_manova("Bad_Def")
+  
+  all_res_pca <- bind_rows(res_good, res_bad)
+  all_res_pca$Format_F <- sprintf("%.2f", all_res_pca$F_val)
+  all_res_pca$Format_p <- sprintf("%.3f", all_res_pca$p_val)
+  all_res_pca$Format_p <- ifelse(all_res_pca$p_val < 0.001, paste0(all_res_pca$Format_p, "$^{***}$"), 
+                    ifelse(all_res_pca$p_val < 0.01, paste0(all_res_pca$Format_p, "$^{**}$"),
+                    ifelse(all_res_pca$p_val < 0.05, paste0(all_res_pca$Format_p, "$^{*}$"), all_res_pca$Format_p)))
+  
+  # 7. Write Latex Table
+  latex_str_pca <- "\\begin{table}[htpb]\n\\centering\n\\begin{tabular}{lcccccc}\n\\toprule\n"
+  latex_str_pca <- paste0(latex_str_pca, "Predictor & Pillai's Trace & approx $F$ & num Df & den Df & $p$-value \\\\\n\\midrule\n")
+  for (i in 1:nrow(all_res_pca)) {
+    m_name <- ifelse(all_res_pca$Model[i] == "Good_Def", "Good Taste Def", "Bad Taste Def")
+    latex_str_pca <- paste0(latex_str_pca, sprintf("%s & %.3f & %s & %d & %d & %s \\\\\n", 
+          m_name, all_res_pca$Pillai[i], all_res_pca$Format_F[i], all_res_pca$df1[i], all_res_pca$df2[i], all_res_pca$Format_p[i]))
+  }
+  latex_str_pca <- paste0(latex_str_pca, "\\bottomrule\n\\multicolumn{6}{l}{\\footnotesize $^{*}p<0.05; ^{**}p<0.01; ^{***}p<0.001$} \\\\\n")
+  latex_str_pca <- paste0(latex_str_pca, "\\end{tabular}\n\\caption{MANOVA Results: Differences in PCA Dimensions (1-3) of ", title_prefix, " Ratings by Taste Cultural Model.}\n\\label{tab:anova_pca_", file_suffix, "}\n\\end{table}\n")
+  
+  writeLines(latex_str_pca, paste0("report/Tabs/anova_pca_", file_suffix, ".tex"))
 }
 
-res_dim1 <- run_anova_for_dim("Dim1")
-res_dim2 <- run_anova_for_dim("Dim2")
-res_dim3 <- run_anova_for_dim("Dim3")
-
-all_res_pca <- bind_rows(res_dim1, res_dim2, res_dim3)
-all_res_pca$Format <- sprintf("%.2f (%.3f)", all_res_pca$F_val, all_res_pca$p_val)
-all_res_pca$Format <- ifelse(all_res_pca$p_val < 0.001, paste0(all_res_pca$Format, "$^{***}$"), 
-                  ifelse(all_res_pca$p_val < 0.01, paste0(all_res_pca$Format, "$^{**}$"),
-                  ifelse(all_res_pca$p_val < 0.05, paste0(all_res_pca$Format, "$^{*}$"), all_res_pca$Format)))
-
-wide_res <- all_res_pca %>% select(Dimension, Model, Format) %>%
-  pivot_wider(names_from = Model, values_from = Format)
-
-latex_str_pca <- "\\begin{table}[htpb]\n\\centering\n\\begin{tabular}{lcc}\n\\toprule\n"
-latex_str_pca <- paste0(latex_str_pca, "Dimension & Good Taste Def & Bad Taste Def \\\\\n\\midrule\n")
-for (i in 1:nrow(wide_res)) {
-  latex_str_pca <- paste0(latex_str_pca, sprintf("%s & %s & %s \\\\\n", 
-        wide_res$Dimension[i], wide_res$Good_Def[i], wide_res$Bad_Def[i]))
-}
-latex_str_pca <- paste0(latex_str_pca, "\\bottomrule\n\\multicolumn{3}{l}{\\footnotesize $^{*}p<0.05; ^{**}p<0.01; ^{***}p<0.001$} \\\\\n")
-latex_str_pca <- paste0(latex_str_pca, "\\end{tabular}\n\\caption{ANOVA Results: Mean Differences in PCA Dimensions of Distinction Ratings by Topic Schema.}\n\\label{tab:anova_pca}\n\\end{table}\n")
-
-writeLines(latex_str_pca, "report/Tabs/anova_pca.tex")
+# Run for all three sets of variables
+run_pca_and_manova("Domains_Distinction1_", "Cultural Domains Distinction 1", "distinction1")
+run_pca_and_manova("Domains_Distinction2_", "Cultural Domains Distinction 2", "distinction2")
+run_pca_and_manova("Importance_", "Cultural Domains Importance", "importance")
+run_pca_and_manova("Knowledge_", "Cultural Domains Knowledge", "knowledge")
 
 print("R script executed successfully.")
 ```
@@ -681,7 +701,7 @@ def make_summary_table(csv_path, out_tex, label):
     with open(out_tex, "w") as f:
         f.write(tex_str)
 
-make_summary_table(f"{config['good_model']}/topic_info.csv", "report/Tabs/good_taste_def_examples_table.tex", "good_taste_def_summary")
-make_summary_table(f"{config['bad_model']}/topic_info.csv", "report/Tabs/bad_taste_def_examples_table.tex", "bad_taste_def_summary")
+make_summary_table(f"{config['good_model']}/topic_info.csv", "report/Tabs/good_taste_def_summary_table.tex", "good_taste_def_summary")
+make_summary_table(f"{config['bad_model']}/topic_info.csv", "report/Tabs/bad_taste_def_summary_table.tex", "bad_taste_def_summary")
 print("Successfully generated summary tables from config.")
 ```
