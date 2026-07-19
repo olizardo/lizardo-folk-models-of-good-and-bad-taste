@@ -5,11 +5,7 @@ import os
 from bertopic import BERTopic
 from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
 
-def run_and_save_bertopic(docs, taste_type, min_topic_sizes=[5, 10, 15, 20]):
-    """
-    Run BERTopic with different min_topic_size values as a robustness check.
-    Saves the models and document-topic probability matrices.
-    """
+def run_and_save_bertopic(docs, indices, model_prefix, min_topic_sizes=[5, 10, 15, 20]):
     results = []
     
     # Initialize CountVectorizer with expanded stop words
@@ -18,7 +14,7 @@ def run_and_save_bertopic(docs, taste_type, min_topic_sizes=[5, 10, 15, 20]):
     vectorizer_model = CountVectorizer(stop_words=custom_stop_words)
     
     for size in min_topic_sizes:
-        print(f"Running BERTopic for {taste_type} taste with min_topic_size={size}...")
+        print(f"Running BERTopic for {model_prefix} with min_topic_size={size}...")
         
         # Initialize BERTopic model
         model = BERTopic(
@@ -33,15 +29,15 @@ def run_and_save_bertopic(docs, taste_type, min_topic_sizes=[5, 10, 15, 20]):
         topics, probs = model.fit_transform(docs)
         
         # Create output directory
-        out_dir = f"{taste_type}_taste_model_min{size}"
+        out_dir = f"{model_prefix}_model_min{size}"
         os.makedirs(out_dir, exist_ok=True)
         
         # Save model
         model.save(out_dir, serialization="safetensors", save_ctfidf=True)
         
         # Save the document-topic probabilities matrix
-        # docs x topics
         probs_df = pd.DataFrame(probs)
+        probs_df.insert(0, 'original_index', indices)
         probs_file = os.path.join(out_dir, "document_topic_probabilities.csv")
         probs_df.to_csv(probs_file, index=False)
         print(f"Saved document-topic probabilities to {probs_file}")
@@ -56,39 +52,46 @@ def run_and_save_bertopic(docs, taste_type, min_topic_sizes=[5, 10, 15, 20]):
         
     return results
 
+def process_column(df, col_name, model_prefix):
+    series = df[col_name].fillna('').str.strip()
+    mask = series != ''
+    docs = series[mask].tolist()
+    indices = df[mask].index.tolist()
+    
+    print(f"\n--- Processing {col_name} ---")
+    print(f"Loaded {len(docs)} valid documents (removed {len(df) - len(docs)} empty).")
+    
+    if len(docs) == 0:
+        print(f"No documents found for {col_name}, skipping.")
+        return []
+        
+    return run_and_save_bertopic(docs, indices, model_prefix)
+
 def main():
     # Load data
     data_path = "data/FolkTaste_CleanData.csv"
-    df = pd.read_csv(data_path, skiprows=[1]) # skip question row if it's there
-    
-    # We need to extract the docs carefully.
-    # The first row is headers, second is question text.
-    # We should skip the second row.
     df = pd.read_csv(data_path)
-    # drop the question row (index 0)
-    df = df.drop(0).reset_index(drop=True)
     
-    good_taste_docs = df['GoodTaste_Def'].dropna().astype(str).tolist()
-    bad_taste_docs = df['BadTaste_Def'].dropna().astype(str).tolist()
+    if "What do you mean" in str(df['GoodTaste_Def'].iloc[0]):
+        df = df.drop(0).reset_index(drop=True)
+        
+    # Restrict to participants who answered YES to Taste_Possibility
+    original_len = len(df)
+    df = df[df['Taste_Possibility'] == 'YES'].copy()
+    print(f"Filtered dataset from {original_len} to {len(df)} participants (Taste_Possibility == 'YES').")
     
-    print(f"Loaded {len(good_taste_docs)} 'Good Taste' definitions.")
-    print(f"Loaded {len(bad_taste_docs)} 'Bad Taste' definitions.")
+    summary = {}
     
-    print("\n--- Running Robustness Checks for Good Taste ---")
-    good_results = run_and_save_bertopic(good_taste_docs, "good")
+    # 1. Good Taste Definitions
+    summary["good_taste_def"] = process_column(df, 'GoodTaste_Def', 'good_taste_def')
     
-    print("\n--- Running Robustness Checks for Bad Taste ---")
-    bad_results = run_and_save_bertopic(bad_taste_docs, "bad")
+    # 2. Bad Taste Definitions
+    summary["bad_taste_def"] = process_column(df, 'BadTaste_Def', 'bad_taste_def')
     
-    # Save robustness summary
-    summary = {
-        "good_taste_robustness": good_results,
-        "bad_taste_robustness": bad_results
-    }
-    with open("topic_robustness_summary.json", "w") as f:
+    with open("topic_robustness_summary_def_only.json", "w") as f:
         json.dump(summary, f, indent=4)
         
-    print("Robustness checks complete. Summary saved to topic_robustness_summary.json.")
+    print("\nDefinitions models processed. Summary saved to topic_robustness_summary_def_only.json.")
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -11,8 +11,6 @@ raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
 
 gd_probs <- read_csv("good_taste_def_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
 bd_probs <- read_csv("bad_taste_def_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
-ge_probs <- read_csv("good_taste_example_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
-be_probs <- read_csv("bad_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
 
 get_primary <- function(probs, name) {
   tc <- setdiff(names(probs), "original_index")
@@ -24,26 +22,20 @@ get_primary <- function(probs, name) {
 
 gd <- get_primary(gd_probs, "Good_Def")
 bd <- get_primary(bd_probs, "Bad_Def")
-ge <- get_primary(ge_probs, "Good_Ex")
-be <- get_primary(be_probs, "Bad_Ex")
 
-df <- gd %>% inner_join(bd, by="original_index") %>% inner_join(ge, by="original_index") %>% inner_join(be, by="original_index")
+df <- gd %>% inner_join(bd, by="original_index")
 
 t_g_d <- c("-1"="Outlier", "0"="Similarity/Subjectivity", "1"="Aesthetics", "2"="Style/Quality")
 t_b_d <- c("-1"="Outlier", "0"="Dislike/Subjective", "1"="Poor Choices", "2"="Tacky/Loud", "3"="Low-Brow Media", "4"="Immoral", "5"="Poor Manners")
-t_g_e <- c("-1"="Outlier", "0"="Fashion/Decor", "1"="Refinement/Art", "2"="Best Friends", "3"="Musical Knowledge", "4"="Film/TV", "5"="Obamas/Class", "6"="Partners/Food")
-t_b_e <- c("-1"="Outlier", "0"="Unspecified/Music", "1"="Poor Fashion", "2"="Derivative Media", "3"="Trump/Vulgarity")
 
 df <- df %>%
-  filter(Good_Def != "-1", Bad_Def != "-1", Good_Ex != "-1", Bad_Ex != "-1") %>%
+  filter(Good_Def != "-1", Bad_Def != "-1") %>%
   mutate(
     Good_Def = t_g_d[as.character(Good_Def)],
-    Bad_Def = t_b_d[as.character(Bad_Def)],
-    Good_Ex = t_g_e[as.character(Good_Ex)],
-    Bad_Ex = t_b_e[as.character(Bad_Ex)]
+    Bad_Def = t_b_d[as.character(Bad_Def)]
   )
 
-combos <- combn(c("Good_Def", "Bad_Def", "Good_Ex", "Bad_Ex"), 2, simplify = FALSE)
+combos <- list(c("Good_Def", "Bad_Def"))
 
 for (c in combos) {
   v1 <- c[1]
@@ -75,23 +67,17 @@ for (c in combos) {
   }
 }
 
-# --- RE-GENERATE HEATMAPS (DEFINITIONS AND EXAMPLES) ---
+# --- RE-GENERATE HEATMAPS (DEFINITIONS ONLY) ---
 df_g_d <- get_primary(gd_probs, "Good_Def")
 df_b_d <- get_primary(bd_probs, "Bad_Def")
-df_g_e <- get_primary(ge_probs, "Good_Ex")
-df_b_e <- get_primary(be_probs, "Bad_Ex")
 
 raw_survey$python_index <- 0:(nrow(raw_survey)-1)
 m_df <- raw_survey %>%
   left_join(df_g_d, by=c("python_index"="original_index")) %>%
   left_join(df_b_d, by=c("python_index"="original_index")) %>%
-  left_join(df_g_e, by=c("python_index"="original_index")) %>%
-  left_join(df_b_e, by=c("python_index"="original_index")) %>%
   mutate(
     Good_Def = t_g_d[as.character(Good_Def)],
-    Bad_Def = t_b_d[as.character(Bad_Def)],
-    Good_Ex = t_g_e[as.character(Good_Ex)],
-    Bad_Ex = t_b_e[as.character(Bad_Ex)]
+    Bad_Def = t_b_d[as.character(Bad_Def)]
   )
 
 distinction_cols <- grep("Domains_Distinction1_", names(m_df), value = TRUE)
@@ -127,5 +113,3 @@ create_heatmap <- function(data, group_col, title, filename) {
 
 create_heatmap(m_df, "Good_Def", "Average Distinction Rating by Domain (Good Taste Definitions)", "report/Plots/distinction_domains.png")
 create_heatmap(m_df, "Bad_Def", "Average Distinction Rating by Domain (Bad Taste Definitions)", "report/Plots/distinction_domains_bad.png")
-create_heatmap(m_df, "Good_Ex", "Average Distinction Rating by Domain (Good Taste Examples)", "report/Plots/distinction_domains_good_ex.png")
-create_heatmap(m_df, "Bad_Ex", "Average Distinction Rating by Domain (Bad Taste Examples)", "report/Plots/distinction_domains_bad_ex.png")

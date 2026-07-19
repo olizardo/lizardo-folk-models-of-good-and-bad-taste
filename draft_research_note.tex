@@ -27,7 +27,6 @@
 \maketitle
 
 \begin{abstract}
-\noindent Sociologists have long debated the nature of ``good'' and ``bad'' taste, yet how lay individuals actually define these categories remains under-explored. Using open-ended survey responses, this research note applies BERTopic to inductively map folk cultural models of taste definitions and examples. I identify distinct cultural models for ``good taste'' (e.g., Subjectivity, Aesthetics, Fashion) and ``bad taste'' (e.g., Dislike, Poor Choices, Vulgarity). Chi-square cross-tabulations reveal that these cultural models form internally coherent cultural logics across both positive and negative evaluations. Furthermore, heatmaps mapping these cultural models onto 19 specific cultural domains reveal that while core domains like Music and Clothing are universally subjected to taste distinctions, moralized cultural models (e.g., citing Donald Trump or the Obamas) are associated with a heightened propensity to draw taste boundaries across nearly all domains.
 \end{abstract}
 
 % \doublespacing
@@ -47,7 +46,6 @@ This research note is guided by three primary research questions:
 
 \section{Methods}
 
-Data for this study are drawn from an open-access dataset originally collected by \citet{bonard2024}. In this study, researchers collected data from a representative sample of the US adult population ($N=297$) through the \textit{Prolific} Academic platform. After screening for data quality using four attention checks, the final sample comprised 241 participants (124 men, 114 women, 3 other; $M_{age} = 44.92$, $SD_{age} = 16.12$). In their survey, respondents were asked whether they distinguish between good and bad taste in their daily lives. The overwhelming majority of the sample (93\%, $N=224$) answered affirmatively. This subset was then asked to provide brief, open-ended definitions and concrete examples of both concepts.
 
 To analyze these short, unstructured participant-level text responses (hereafter ``documents''), I used \textbf{BERTopic}. During preprocessing, domain-specific survey artifacts (e.g., ``good,'' ``bad,'' ``taste,'' ``don't'') were removed from each document because these words---mostly paraphrasing the original question---were overwhelmingly common across documents and thus did little to differentiate them. We also remove common English stop words from each document (e.g., the, it, is, do, etc.). The algorithm was optimized for each of the four text fields independently to prevent vocabulary blurring. Finally, cross-tabulations and domain-distinction Likert scale heatmaps were generated to examine the coherence of these classifications.
 
@@ -55,17 +53,14 @@ To analyze these short, unstructured participant-level text responses (hereafter
 
 \subsection{Cultural Models of Taste}
 
-The BERTopic models identified distinct cultural models for definitions and examples. For \textbf{Good Taste}, respondents defined the concept primarily through \emph{Similarity/Subjectivity} (homophily), \emph{Aesthetics}, or \emph{Style/Quality}. When asked for concrete examples, the clusters were much richer, featuring groups who cited \emph{Fashion/Decor} (friends and spouses), \emph{Refinement/Art} (creators like Steve Jobs), \emph{Musical Knowledge}, or even specific public figures representing class like \emph{The Obamas}.
 
 \input{report/Tabs/good_taste_summary_table.tex}
 \input{report/Tabs/good_taste_def_examples_table.tex}
-\input{report/Tabs/good_taste_ex_examples_table.tex}
 
 For \textbf{Bad Taste}, respondents defined it through \emph{Subjective Dislike}, \emph{Poor Choices/Lack of Effort}, \emph{Tackiness/Gaudiness}, \emph{Low-Brow Media}, or \emph{Poor Manners/Immorality}. Concrete examples similarly ranged from \emph{Poor Fashion}, \emph{Derivative Media} (e.g., formulaic filmmakers), to specific instances of \emph{Vulgarity} (often citing Donald Trump).
 
 \input{report/Tabs/bad_taste_summary_table.tex}
 \input{report/Tabs/bad_taste_def_examples_table.tex}
-\input{report/Tabs/bad_taste_ex_examples_table.tex}
 
 \begin{figure}[htpb]
     \centering
@@ -77,9 +72,6 @@ For \textbf{Bad Taste}, respondents defined it through \emph{Subjective Dislike}
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.48\textwidth]{report/Plots/good_taste_example_topics.png}
-    \includegraphics[width=0.48\textwidth]{report/Plots/bad_taste_example_topics.png}
-    \caption{Topic Frequencies for Good and Bad Taste (Examples)}
     \label{fig:topic_frequencies_ex}
 \end{figure}
 
@@ -99,15 +91,11 @@ For \textbf{Bad Taste}, respondents defined it through \emph{Subjective Dislike}
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=\textwidth]{report/Plots/good_taste_example_keywords.png}
-    \caption{Keyword Importance (c-TF-IDF) for Good Taste Topics (Examples)}
     \label{fig:good_keywords_ex}
 \end{figure}
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=\textwidth]{report/Plots/bad_taste_example_keywords.png}
-    \caption{Keyword Importance (c-TF-IDF) for Bad Taste Topics (Examples)}
     \label{fig:bad_keywords_ex}
 \end{figure}
 
@@ -123,7 +111,6 @@ For \textbf{Bad Taste}, respondents defined it through \emph{Subjective Dislike}
     \centering
     \includegraphics[width=0.48\textwidth]{report/Plots/ca_good_taste_example.png}
     \includegraphics[width=0.48\textwidth]{report/Plots/ca_bad_taste_example.png}
-    \caption{Correspondence Analysis of Taste Schemas (Examples)}
     \label{fig:ca_schemas_ex}
 \end{figure}
 
@@ -137,7 +124,6 @@ Similarly, the examples respondents choose are highly correlated ($\chi^2 = 99.0
     \centering
     \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Good_Def_Bad_Def.png}
     \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Good_Ex_Bad_Ex.png}
-    \caption{Pearson Residuals of Schema Correlation for Definitions (Left) and Examples (Right)}
     \label{fig:schema_corr_main}
 \end{figure}
 
@@ -145,7 +131,6 @@ Similarly, the examples respondents choose are highly correlated ($\chi^2 = 99.0
     \centering
     \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Good_Def_Good_Ex.png}
     \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Bad_Def_Bad_Ex.png}
-    \caption{Pearson Residuals of Schema Correlation Between Definitions and Examples}
     \label{fig:schema_corr_cross}
 \end{figure}
 
@@ -195,14 +180,12 @@ Visualizing these scores as heatmaps across our topic clusters reveals several s
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains_good_ex.png}
-    \caption{Average Distinction Rating by Domain and Good Taste Schema (Examples)}
     \label{fig:distinction_good_ex}
 \end{figure}
 
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains_bad_ex.png}
-    \caption{Average Distinction Rating by Domain and Bad Taste Schema (Examples)}
     \label{fig:distinction_bad_ex}
 \end{figure}
 
