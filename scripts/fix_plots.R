@@ -187,7 +187,7 @@ for (c in combos) {
     
     p <- ggplot(r_df, aes(x = Var1, y = Var2, fill = Residual)) +
       geom_tile(color = "white") +
-      geom_text(aes(label = round(Residual, 2)), color = "black", size = 12, fontface = "bold") +
+      geom_text(aes(label = round(Residual, 2)), color = "black", size = 6, fontface = "bold") +
       scale_fill_gradient2(low = "indianred", mid = "white", high = "steelblue", midpoint = 0) +
       scale_x_discrete(position = "top") +
       theme_minimal(base_size = 14) +

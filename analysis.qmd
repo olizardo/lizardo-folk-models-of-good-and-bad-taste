@@ -455,8 +455,11 @@ writeLines(latex_str, "report/Tabs/anova_domain_counts.tex")
 
 # 5. Generate Plots
 plot_means <- function(means_data, x_col, title, filename, map_dict) {
-  # Add "Topic " prefix to make it look nicer
+  # Apply names
   means_data[[x_col]] <- map_dict[as.character(means_data[[x_col]])]
+  
+  # Format names
+  means_data[[x_col]] <- str_replace_all(means_data[[x_col]], " ", "\n")
   
   p <- ggplot(means_data, aes(x = !!sym(x_col), y = mean_val, group = 1)) +
     geom_line(color = "steelblue", linewidth = 1) +
@@ -470,9 +473,9 @@ plot_means <- function(means_data, x_col, title, filename, map_dict) {
     ) +
     theme(
       text = element_text(size = 14),
-      axis.text.x = element_text(angle = 45, hjust = 1)
+      axis.text.x = element_text(angle = 0, hjust = 0.5)
     )
-  ggsave(filename, plot = p, width = 6, height = 5)
+  ggsave(filename, plot = p, width = 8, height = 5)
 }
 
 # Extract topic names dynamically from topic_info.csv
@@ -749,7 +752,7 @@ for (c in combos) {
     
     p <- ggplot(r_df, aes(x = Var1, y = Var2, fill = Residual)) +
       geom_tile(color = "white") +
-      geom_text(aes(label = round(Residual, 2)), color = "black", size = 12, fontface = "bold") +
+      geom_text(aes(label = round(Residual, 2)), color = "black", size = 6, fontface = "bold") +
       scale_fill_gradient2(low = "indianred", mid = "white", high = "steelblue", midpoint = 0) +
       scale_x_discrete(position = "top") +
       theme_minimal(base_size = 14) +
@@ -810,8 +813,8 @@ create_heatmap <- function(data, group_col, title, filename) {
   ggsave(filename, plot = p, width = 11, height = 7)
 }
 
-create_heatmap(m_df, "Good_Def", "Average Distinction Rating by Domain (Good Taste Definitions)", "report/Plots/distinction_domains.png")
-create_heatmap(m_df, "Bad_Def", "Average Distinction Rating by Domain (Bad Taste Definitions)", "report/Plots/distinction_domains_bad.png")
+create_heatmap(m_df, "Good_Def", "Average Distinction Rating by Domain (Good Taste Definitions)", "Plots/distinction_domains.png")
+create_heatmap(m_df, "Bad_Def", "Average Distinction Rating by Domain (Bad Taste Definitions)", "Plots/distinction_domains_bad.png")
 ```
 
 # 4. Utilities
