@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex draft_research_note"] 1784429151.75413 "draft_research_note.aux" "draft_research_note.bbl" "draft_research_note" 1784429152.23486 0
+["bibtex draft_research_note"] 1784429151.75413 "draft_research_note.aux" "draft_research_note.bbl" "draft_research_note" 1784429292.0559 0
   "./references.bib" 1784418175.20489 1574 e8054a4b2c8ed59583fdeac75d04e94e ""
   "/home/omarlizardo/.TinyTeX/texmf-dist/bibtex/bst/base/apalike.bst" 1782672754.0784 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "draft_research_note.aux" 1784429152.18436 4758 1df9717dc26f6ab139e8d745dee399b4 "pdflatex"
+  "draft_research_note.aux" 1784429291.99918 4758 1df9717dc26f6ab139e8d745dee399b4 "pdflatex"
   (generated)
   "draft_research_note.bbl"
   "draft_research_note.blg"
   (rewritten before read)
-["pdflatex"] 1784429151.76678 "/home/omarlizardo/CULTURE PROJECTS/OMAR PROJECTS/lizardo-folk-models-of-good-and-bad-taste/draft_research_note.tex" "draft_research_note.pdf" "draft_research_note" 1784429152.2352 0
+["pdflatex"] 1784429291.50398 "/home/omarlizardo/CULTURE PROJECTS/OMAR PROJECTS/lizardo-folk-models-of-good-and-bad-taste/draft_research_note.tex" "draft_research_note.pdf" "draft_research_note" 1784429292.05608 0
   "/home/omarlizardo/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm" 1782672755.14941 1328 c834bbb027764024c09d3d2bf908b5f0 ""
   "/home/omarlizardo/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm" 1782672755.14441 1324 c910af8c371558dc20f2d7822f66fe64 ""
   "/home/omarlizardo/.TinyTeX/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm" 1782672755.14541 1524 4414a8315f39513458b80dfc63bff03a ""
@@ -84,11 +84,11 @@
   "/home/omarlizardo/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1782751696 490110 afd372a4502e003df73309b8cb2a84c6 ""
   "/home/omarlizardo/.TinyTeX/texmf-var/web2c/pdftex/pdflatex.fmt" 1782673841 2306334 2ab474859f481f82b81b7a3ab8e9a5be ""
   "/home/omarlizardo/.TinyTeX/texmf.cnf" 1782672756.56742 637 edd806fb06a89761a6034e1968af9017 ""
-  "/home/omarlizardo/CULTURE PROJECTS/OMAR PROJECTS/lizardo-folk-models-of-good-and-bad-taste/draft_research_note.tex" 1784429012.07661 8850 35aed5dd7db9950522ad38447226ab2d ""
-  "draft_research_note.aux" 1784429152.18436 4758 1df9717dc26f6ab139e8d745dee399b4 "pdflatex"
+  "/home/omarlizardo/CULTURE PROJECTS/OMAR PROJECTS/lizardo-folk-models-of-good-and-bad-taste/draft_research_note.tex" 1784429291.0952 8850 77cdbd6327be8313eed0acbd1e885ec2 ""
+  "draft_research_note.aux" 1784429291.99918 4758 1df9717dc26f6ab139e8d745dee399b4 "pdflatex"
   "draft_research_note.bbl" 1784429151.76437 755 bd48f09bdf0d9b0adf316a4d92bfe04b "bibtex draft_research_note"
-  "draft_research_note.out" 1784429152.18436 1422 12a6e7ee05e5e7e090999fafc4eb4cc3 "pdflatex"
-  "draft_research_note.tex" 1784429012.07661 8850 35aed5dd7db9950522ad38447226ab2d ""
+  "draft_research_note.out" 1784429291.99918 1422 12a6e7ee05e5e7e090999fafc4eb4cc3 "pdflatex"
+  "draft_research_note.tex" 1784429291.0952 8850 77cdbd6327be8313eed0acbd1e885ec2 ""
   "report/Plots/bad_taste_topics.png" 1784429012.07861 55627 968a17d1b98be5faa3394ff36a3f6d11 ""
   "report/Plots/ca_bad_taste.png" 1784429012.07961 68294 7e58015e836b229c9a6057871152f17c ""
   "report/Plots/ca_good_taste.png" 1784429012.07961 54321 0665ea27b3b8b1c290fa42f75c76f766 ""

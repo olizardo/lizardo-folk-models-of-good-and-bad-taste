@@ -1,10 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.28)  18 JUL 2026 19:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.28)  18 JUL 2026 19:48
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
-**"/home/omarlizardo/CULTURE PROJECTS/OMAR PROJECTS/lizardo-folk-models-of-good-and-bad-taste/draft_research_note.tex"
-(/home/omarlizardo/CULTURE PROJECTS/OMAR PROJECTS/lizardo-folk-models-of-good-and-bad-taste/draft_research_note.tex
+**draft_research_note.tex
+(./draft_research_note.tex
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-06-18>
 (/home/omarlizardo/.TinyTeX/texmf-dist/tex/latex/base/article.cls
@@ -356,13 +355,13 @@ Package rerunfilecheck Info: File `draft_research_note.out' has not changed.
 (rerunfilecheck)             Checksum: 12A6E7EE05E5E7E090999FAFC4EB4CC3;1422.
  ) 
 Here is how much of TeX's memory you used:
- 9673 strings out of 469097
- 154216 string characters out of 5457857
+ 9672 strings out of 469097
+ 153943 string characters out of 5457857
  584060 words of memory out of 5000000
  38546 multiletter control sequences out of 15000+600000
  633229 words of font info for 58 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 74i,10n,79p,1053b,447s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 74i,10n,79p,960b,447s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
 Output written on draft_research_note.pdf (9 pages, 829502 bytes).
 PDF statistics:
