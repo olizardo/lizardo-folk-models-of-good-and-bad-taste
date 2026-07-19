@@ -39,7 +39,7 @@ The sociological study of cultural stratification has traditionally focused on h
 
 This research note is guided by three primary research questions:
 \begin{enumerate}
-    \item What are the distinct, latent cultural models that lay individuals use to define and provide examples of ``good taste'' and ``bad taste''?
+    \item What are the distinct, latent cultural models that lay individuals use to define ``good taste\'\' and ``bad taste\'\'?
     \item How do cultural models of good taste relate to cultural models of bad taste? Are they structurally coupled into broader cultural logics?
     \item How do these taste cultural models map onto specific cultural domains (e.g., beer, classical music, wrestling)? 
 \end{enumerate}
@@ -47,19 +47,17 @@ This research note is guided by three primary research questions:
 \section{Methods}
 
 
-To analyze these short, unstructured participant-level text responses (hereafter ``documents''), I used \textbf{BERTopic}. During preprocessing, domain-specific survey artifacts (e.g., ``good,'' ``bad,'' ``taste,'' ``don't'') were removed from each document because these words---mostly paraphrasing the original question---were overwhelmingly common across documents and thus did little to differentiate them. We also remove common English stop words from each document (e.g., the, it, is, do, etc.). The algorithm was optimized for each of the four text fields independently to prevent vocabulary blurring. Finally, cross-tabulations and domain-distinction Likert scale heatmaps were generated to examine the coherence of these classifications.
+To analyze these short, unstructured participant-level text responses (hereafter ``documents''), I used \textbf{BERTopic}. During preprocessing, domain-specific survey artifacts (e.g., ``good,'' ``bad,'' ``taste,'' ``don't'') were removed from each document because these words---mostly paraphrasing the original question---were overwhelmingly common across documents and thus did little to differentiate them. We also remove common English stop words from each document (e.g., the, it, is, do, etc.). The algorithm was optimized for each of the two text fields independently to prevent vocabulary blurring. Finally, cross-tabulations and domain-distinction Likert scale heatmaps were generated to examine the coherence of these classifications.
 
 \section{Results}
 
 \subsection{Cultural Models of Taste}
 
 
-\input{report/Tabs/good_taste_summary_table.tex}
 \input{report/Tabs/good_taste_def_examples_table.tex}
 
-For \textbf{Bad Taste}, respondents defined it through \emph{Subjective Dislike}, \emph{Poor Choices/Lack of Effort}, \emph{Tackiness/Gaudiness}, \emph{Low-Brow Media}, or \emph{Poor Manners/Immorality}. Concrete examples similarly ranged from \emph{Poor Fashion}, \emph{Derivative Media} (e.g., formulaic filmmakers), to specific instances of \emph{Vulgarity} (often citing Donald Trump).
+For \textbf{Bad Taste}, respondents defined it through eight distinct schemas, including \emph{Dislike/Subjective}, \emph{Poor Choices}, \emph{Tacky/Loud}, \emph{Low-Brow Media}, \emph{Ugly Style}, \emph{Low Quality}, \emph{Immoral Art}, and \emph{Poor Manners}.
 
-\input{report/Tabs/bad_taste_summary_table.tex}
 \input{report/Tabs/bad_taste_def_examples_table.tex}
 
 \begin{figure}[htpb]
@@ -75,19 +73,9 @@ For \textbf{Bad Taste}, respondents defined it through \emph{Subjective Dislike}
     \label{fig:topic_frequencies_ex}
 \end{figure}
 
-\begin{figure}[htpb]
-    \centering
-    \includegraphics[width=\textwidth]{report/Plots/good_taste_keywords.png}
-    \caption{Keyword Importance (c-TF-IDF) for Good Taste Topics (Definitions)}
-    \label{fig:good_keywords_def}
-\end{figure}
 
-\begin{figure}[htpb]
-    \centering
-    \includegraphics[width=\textwidth]{report/Plots/bad_taste_keywords.png}
-    \caption{Keyword Importance (c-TF-IDF) for Bad Taste Topics (Definitions)}
-    \label{fig:bad_keywords_def}
-\end{figure}
+
+
 
 \begin{figure}[htpb]
     \centering
@@ -118,12 +106,10 @@ For \textbf{Bad Taste}, respondents defined it through \emph{Subjective Dislike}
 
 To test whether these cultural models are isolated or form coherent ``logics,'' I cross-tabulated respondents' primary cultural models across the four questions. The associations are highly significant. For instance, a respondent's definition of Good Taste strongly predicts their definition of Bad Taste ($\chi^2 = 111.60, p < 0.001$). Individuals who define good taste as subjective similarity overwhelmingly define bad taste simply as subjective dislike. 
 
-Similarly, the examples respondents choose are highly correlated ($\chi^2 = 99.01, p < 0.001$). Respondents who cite a friend's ``Fashion/Decor'' as an example of good taste are highly likely to cite ``Poor Fashion'' as an example of bad taste. Respondents who point to ``Refinement/Art'' for good taste are much more likely to point to ``Derivative Media'' for bad taste. This symmetry indicates that people deploy consistent criteria---whether aesthetic, material, or subjective---across moral valences.
-
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Good_Def_Bad_Def.png}
-    \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Good_Ex_Bad_Ex.png}
+    
     \label{fig:schema_corr_main}
 \end{figure}
 
@@ -138,7 +124,7 @@ Similarly, the examples respondents choose are highly correlated ($\chi^2 = 99.0
 
 To examine whether cultural taste schemas are patterned by socio-demographic factors, I fit multinomial logistic regression models predicting respondents' primary topic schema (across all four models) using their Age, Gender, Education, and Political Orientation. The Wald $\chi^2$ tests are presented below.
 
-\input{report/Tabs/wald_four_models.tex}
+\input{report/Tabs/wald_models.tex}
 
 \subsection{Domain Distinction PCA and ANOVA}
 
@@ -188,8 +174,6 @@ Visualizing these scores as heatmaps across our topic clusters reveals several s
     \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains_bad_ex.png}
     \label{fig:distinction_bad_ex}
 \end{figure}
-
-However, there is critical variance in boundary intensity. Respondents whose examples of good taste clustered around \emph{The Obamas/Class}, and whose bad taste clustered around \emph{Trump/Vulgarity}, reported much higher propensity to draw taste distinctions across almost \emph{all} domains, including peripheral ones like Food and Literature. This suggests that when folk models of taste become moralized or politicized, the boundaries of cultural distinction harden and expand across everyday life.
 
 \section{Discussion}
 

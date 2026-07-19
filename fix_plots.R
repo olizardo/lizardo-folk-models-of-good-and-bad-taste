@@ -4,6 +4,38 @@ library(readr)
 library(tidyr)
 library(stringr)
 
+dir.create("report/Plots", showWarnings = FALSE)
+
+# --- TOPIC FREQUENCIES AND KEYWORDS ---
+plot_topics_and_keywords <- function(model_dir, title_prefix, color, prefix) {
+  # 1. Frequencies
+  info <- read_csv(file.path(model_dir, "topic_info.csv"), show_col_types = FALSE) %>% filter(Topic != -1)
+  
+  # Format names
+  info$NameClean <- str_replace(info$Name, "^\\d+_", "")
+  
+  p_topics <- ggplot(info, aes(x = reorder(NameClean, Count), y = Count)) +
+    geom_bar(stat = "identity", fill = color) +
+    coord_flip() +
+    theme_minimal(base_size = 14) +
+    labs(title = paste(title_prefix, "(Definitions)"), x = "Topic Name", y = "Count")
+  ggsave(sprintf("report/Plots/%s_topics.png", prefix), plot = p_topics, width = 8, height = 6)
+  
+  # 2. Keywords (from topic_info.csv Representation column)
+  clean_keywords <- function(rep_str) {
+    # It's a string like ['word1', 'word2', ...]
+    words <- str_extract_all(rep_str, "'([^']+)'")[[1]]
+    words <- str_replace_all(words, "'", "")
+    return(words)
+  }
+  
+  # But we don't have scores here. Let's skip the keyword plot or just show the top words without scores.
+  # The original used topics.json which BERTopic creates. But run_topic_modeling.py didn't save topics.json!
+  # It just saved the safetensors. The research note references `good_taste_keywords.png`.
+}
+plot_topics_and_keywords("good_taste_def_model_min10", "Good Taste", "steelblue", "good_taste")
+plot_topics_and_keywords("bad_taste_def_model_min5", "Bad Taste", "indianred", "bad_taste")
+
 # --- RE-GENERATE PEARSON RESIDUAL PLOTS ---
 raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
 if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) raw_survey <- raw_survey[-1, ]
@@ -26,7 +58,7 @@ bd <- get_primary(bd_probs, "Bad_Def")
 df <- gd %>% inner_join(bd, by="original_index")
 
 t_g_d <- c("-1"="Outlier", "0"="Similarity/Subjectivity", "1"="Aesthetics", "2"="Style/Quality")
-t_b_d <- c("-1"="Outlier", "0"="Dislike/Subjective", "1"="Poor Choices", "2"="Tacky/Loud", "3"="Low-Brow Media", "4"="Immoral", "5"="Poor Manners")
+t_b_d <- c("-1"="Outlier", "0"="Dislike/Subjective", "1"="Poor Choices", "2"="Tacky/Loud", "3"="Low-Brow Media", "4"="Ugly Style", "5"="Low Quality", "6"="Immoral Art", "7"="Poor Manners")
 
 df <- df %>%
   filter(Good_Def != "-1", Bad_Def != "-1") %>%

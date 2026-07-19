@@ -8,8 +8,8 @@ def get_primary(prob_file):
     df['primary'] = df[topic_cols].idxmax(axis=1)
     return df[['original_index', 'primary']]
 
-gd = get_primary("good_taste_def_model_min5/document_topic_probabilities.csv").rename(columns={'primary': 'Good_Def'})
-bd = get_primary("bad_taste_def_model_min15/document_topic_probabilities.csv").rename(columns={'primary': 'Bad_Def'})
+gd = get_primary("good_taste_def_model_min10/document_topic_probabilities.csv").rename(columns={'primary': 'Good_Def'})
+bd = get_primary("bad_taste_def_model_min5/document_topic_probabilities.csv").rename(columns={'primary': 'Bad_Def'})
 
 df = gd.merge(bd, on='original_index')
 

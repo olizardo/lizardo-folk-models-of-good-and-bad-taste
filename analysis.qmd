@@ -9,105 +9,7 @@ This file consolidates the entire data analysis pipeline (topic modeling, statis
 
 # 1. Topic Modeling (Python)
 
-## 1.1 Robustness Check
-```{python, eval=FALSE}
-import pandas as pd
-import numpy as np
-import json
-import os
-from bertopic import BERTopic
-from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
-
-def run_and_save_bertopic(docs, taste_type, min_topic_sizes=[5, 10, 15, 20]):
-    """
-    Run BERTopic with different min_topic_size values as a robustness check.
-    Saves the models and document-topic probability matrices.
-    """
-    results = []
-    
-    # Initialize CountVectorizer with expanded stop words
-    domain_stops = ["don", "dont", "t", "didn", "didnt", "doesn", "doesnt", "ve", "ll", "re", "m", "isn", "isnt", "aren", "arent", "wasn", "wasnt", "weren", "werent", "haven", "havent", "hasn", "hasnt", "hadn", "hadnt", "won", "wont", "wouldn", "wouldnt", "can", "cant", "couldn", "couldnt", "shouldn", "shouldnt", "mightn", "mightnt", "mustn", "mustnt", "i've", "don't", "doesn't", "didn't", "isn't", "aren't", "wasn't", "weren't", "haven't", "hasn't", "hadn't", "won't", "wouldn't", "can't", "couldn't", "shouldn't", "mightn't", "mustn't"]
-    custom_stop_words = list(ENGLISH_STOP_WORDS.union(domain_stops))
-    vectorizer_model = CountVectorizer(stop_words=custom_stop_words)
-    
-    for size in min_topic_sizes:
-        print(f"Running BERTopic for {taste_type} taste with min_topic_size={size}...")
-        
-        # Initialize BERTopic model
-        model = BERTopic(
-            language="english",
-            vectorizer_model=vectorizer_model,
-            min_topic_size=size,
-            calculate_probabilities=True,
-            verbose=True
-        )
-        
-        # Fit model
-        topics, probs = model.fit_transform(docs)
-        
-        # Create output directory
-        out_dir = f"{taste_type}_taste_model_min{size}"
-        os.makedirs(out_dir, exist_ok=True)
-        
-        # Save model
-        model.save(out_dir, serialization="safetensors", save_ctfidf=True)
-        
-        # Save the document-topic probabilities matrix
-        # docs x topics
-        probs_df = pd.DataFrame(probs)
-        probs_file = os.path.join(out_dir, "document_topic_probabilities.csv")
-        probs_df.to_csv(probs_file, index=False)
-        print(f"Saved document-topic probabilities to {probs_file}")
-        
-        # Record number of topics (excluding outlier topic -1)
-        topic_info = model.get_topic_info()
-        num_topics = len(topic_info[topic_info['Topic'] != -1])
-        results.append({"min_topic_size": size, "num_topics": num_topics})
-        
-        # Save topic info summary
-        topic_info.to_csv(os.path.join(out_dir, "topic_info.csv"), index=False)
-        
-    return results
-
-def main():
-    # Load data
-    data_path = "data/FolkTaste_CleanData.csv"
-    df = pd.read_csv(data_path, skiprows=[1]) # skip question row if it's there
-    
-    # We need to extract the docs carefully.
-    # The first row is headers, second is question text.
-    # We should skip the second row.
-    df = pd.read_csv(data_path)
-    # drop the question row (index 0)
-    df = df.drop(0).reset_index(drop=True)
-    
-    good_taste_docs = df['GoodTaste_Def'].dropna().astype(str).tolist()
-    bad_taste_docs = df['BadTaste_Def'].dropna().astype(str).tolist()
-    
-    print(f"Loaded {len(good_taste_docs)} 'Good Taste' definitions.")
-    print(f"Loaded {len(bad_taste_docs)} 'Bad Taste' definitions.")
-    
-    print("\n--- Running Robustness Checks for Good Taste ---")
-    good_results = run_and_save_bertopic(good_taste_docs, "good")
-    
-    print("\n--- Running Robustness Checks for Bad Taste ---")
-    bad_results = run_and_save_bertopic(bad_taste_docs, "bad")
-    
-    # Save robustness summary
-    summary = {
-        "good_taste_robustness": good_results,
-        "bad_taste_robustness": bad_results
-    }
-    with open("topic_robustness_summary.json", "w") as f:
-        json.dump(summary, f, indent=4)
-        
-    print("Robustness checks complete. Summary saved to topic_robustness_summary.json.")
-
-if __name__ == "__main__":
-    main()
-```
-
-## 1.2 Four Models Setup (Definitions vs Examples)
+## 1.1 Topic Modeling Pipeline (Definitions Only)
 ```{python, eval=FALSE}
 import pandas as pd
 import numpy as np
@@ -117,10 +19,6 @@ from bertopic import BERTopic
 from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
 
 def run_and_save_bertopic(docs, indices, model_prefix, min_topic_sizes=[5, 10, 15, 20]):
-    """
-    Run BERTopic with different min_topic_size values as a robustness check.
-    Saves the models and document-topic probability matrices.
-    """
     results = []
     
     # Initialize CountVectorizer with expanded stop words
@@ -203,134 +101,18 @@ def main():
     # 2. Bad Taste Definitions
     summary["bad_taste_def"] = process_column(df, 'BadTaste_Def', 'bad_taste_def')
     
-    # 3. Good Taste Examples
-    summary["good_taste_example"] = process_column(df, 'GoodTaste_Example', 'good_taste_example')
-    
-    # 4. Bad Taste Examples
-    summary["bad_taste_example"] = process_column(df, 'BadTaste_Example', 'bad_taste_example')
-    
-    with open("topic_robustness_summary_four_models.json", "w") as f:
+    with open("topic_robustness_summary_def_only.json", "w") as f:
         json.dump(summary, f, indent=4)
         
-    print("\nAll four models processed. Summary saved to topic_robustness_summary_four_models.json.")
+    print("\nDefinitions models processed. Summary saved to topic_robustness_summary_def_only.json.")
 
-if __name__ == "__main__":
-    main()```
-
-## 1.3 Combined Models Setup
-```{python, eval=FALSE}
-import pandas as pd
-import numpy as np
-import json
-import os
-from bertopic import BERTopic
-from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
-
-def run_and_save_bertopic(docs, indices, taste_type, min_topic_sizes=[5, 10, 15, 20]):
-    """
-    Run BERTopic with different min_topic_size values as a robustness check.
-    Saves the models and document-topic probability matrices.
-    """
-    results = []
-    
-    # Initialize CountVectorizer with expanded stop words
-    domain_stops = ["don", "dont", "t", "didn", "didnt", "doesn", "doesnt", "ve", "ll", "re", "m", "isn", "isnt", "aren", "arent", "wasn", "wasnt", "weren", "werent", "haven", "havent", "hasn", "hasnt", "hadn", "hadnt", "won", "wont", "wouldn", "wouldnt", "can", "cant", "couldn", "couldnt", "shouldn", "shouldnt", "mightn", "mightnt", "mustn", "mustnt", "i've", "don't", "doesn't", "didn't", "isn't", "aren't", "wasn't", "weren't", "haven't", "hasn't", "hadn't", "won't", "wouldn't", "can't", "couldn't", "shouldn't", "mightn't", "mustn't"]
-    custom_stop_words = list(ENGLISH_STOP_WORDS.union(domain_stops))
-    vectorizer_model = CountVectorizer(stop_words=custom_stop_words)
-    
-    for size in min_topic_sizes:
-        print(f"Running BERTopic for {taste_type} taste (combined) with min_topic_size={size}...")
-        
-        # Initialize BERTopic model
-        model = BERTopic(
-            language="english",
-            vectorizer_model=vectorizer_model,
-            min_topic_size=size,
-            calculate_probabilities=True,
-            verbose=True
-        )
-        
-        # Fit model
-        topics, probs = model.fit_transform(docs)
-        
-        # Create output directory
-        out_dir = f"{taste_type}_taste_combined_model_min{size}"
-        os.makedirs(out_dir, exist_ok=True)
-        
-        # Save model
-        model.save(out_dir, serialization="safetensors", save_ctfidf=True)
-        
-        # Save the document-topic probabilities matrix
-        probs_df = pd.DataFrame(probs)
-        probs_df.insert(0, 'original_index', indices)
-        probs_file = os.path.join(out_dir, "document_topic_probabilities.csv")
-        probs_df.to_csv(probs_file, index=False)
-        print(f"Saved document-topic probabilities to {probs_file}")
-        
-        # Record number of topics (excluding outlier topic -1)
-        topic_info = model.get_topic_info()
-        num_topics = len(topic_info[topic_info['Topic'] != -1])
-        results.append({"min_topic_size": size, "num_topics": num_topics})
-        
-        # Save topic info summary
-        topic_info.to_csv(os.path.join(out_dir, "topic_info.csv"), index=False)
-        
-    return results
-
-def main():
-    # Load data
-    data_path = "data/FolkTaste_CleanData.csv"
-    df = pd.read_csv(data_path)
-    # drop the question row (index 0) if it exists, wait clean data usually doesn't have it, but original script did drop(0)
-    # Let's check if index 0 is questions in CleanData
-    if "What do you mean" in str(df['GoodTaste_Def'].iloc[0]):
-        df = df.drop(0).reset_index(drop=True)
-    
-    # Concatenate Def and Example columns
-    # Fill NA with empty strings so concatenation works
-    df['GoodTaste_Def'] = df['GoodTaste_Def'].fillna('')
-    df['GoodTaste_Example'] = df['GoodTaste_Example'].fillna('')
-    df['BadTaste_Def'] = df['BadTaste_Def'].fillna('')
-    df['BadTaste_Example'] = df['BadTaste_Example'].fillna('')
-    
-    # Create combined documents. We include a space between them.
-    good_taste_combined = (df['GoodTaste_Def'] + " " + df['GoodTaste_Example']).str.strip()
-    bad_taste_combined = (df['BadTaste_Def'] + " " + df['BadTaste_Example']).str.strip()
-    
-    # Filter out empty documents
-    good_mask = good_taste_combined != ''
-    bad_mask = bad_taste_combined != ''
-    
-    good_taste_docs = good_taste_combined[good_mask].tolist()
-    good_indices = df[good_mask].index.tolist()
-    
-    bad_taste_docs = bad_taste_combined[bad_mask].tolist()
-    bad_indices = df[bad_mask].index.tolist()
-    
-    print(f"Loaded {len(good_taste_docs)} valid 'Good Taste' combined documents (removed {len(df) - len(good_taste_docs)} empty).")
-    print(f"Loaded {len(bad_taste_docs)} valid 'Bad Taste' combined documents (removed {len(df) - len(bad_taste_docs)} empty).")
-    
-    print("\n--- Running Robustness Checks for Combined Good Taste ---")
-    good_results = run_and_save_bertopic(good_taste_docs, good_indices, "good")
-    
-    print("\n--- Running Robustness Checks for Combined Bad Taste ---")
-    bad_results = run_and_save_bertopic(bad_taste_docs, bad_indices, "bad")
-    
-    # Save robustness summary
-    summary = {
-        "good_taste_combined_robustness": good_results,
-        "bad_taste_combined_robustness": bad_results
-    }
-    with open("topic_robustness_summary_combined.json", "w") as f:
-        json.dump(summary, f, indent=4)
-        
-    print("Robustness checks complete. Summary saved to topic_robustness_summary_combined.json.")
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 ```
 
 # 2. Chi-Square Associations (Python)
+
+## 2.1 Cross-Tabulations
 ```{python, eval=FALSE}
 import pandas as pd
 from scipy.stats import chi2_contingency
@@ -344,32 +126,21 @@ def get_primary(prob_file):
 
 gd = get_primary("good_taste_def_model_min5/document_topic_probabilities.csv").rename(columns={'primary': 'Good_Def'})
 bd = get_primary("bad_taste_def_model_min15/document_topic_probabilities.csv").rename(columns={'primary': 'Bad_Def'})
-ge = get_primary("good_taste_example_model_min10/document_topic_probabilities.csv").rename(columns={'primary': 'Good_Ex'})
-be = get_primary("bad_taste_example_model_min10/document_topic_probabilities.csv").rename(columns={'primary': 'Bad_Ex'})
 
-df = gd.merge(bd, on='original_index').merge(ge, on='original_index').merge(be, on='original_index')
-
-# Optional: map numeric topics back to readable names
-topic_names = {
-    'Good_Def': {'-1': 'Outlier', '0': 'Similarity/Subjectivity', '1': 'Aesthetics', '2': 'Style/Quality'},
-    'Bad_Def': {'-1': 'Outlier', '0': 'Dislike/Subjective', '1': 'Poor Choices', '2': 'Tacky/Loud', '3': 'Low-Brow Media', '4': 'Immoral', '5': 'Poor Manners'},
-    'Good_Ex': {'-1': 'Outlier', '0': 'Fashion/Decor', '1': 'Refinement/Art', '2': 'Best Friends', '3': 'Musical Knowledge', '4': 'Film/TV', '5': 'Obamas/Class', '6': 'Partners/Food'},
-    'Bad_Ex': {'-1': 'Outlier', '0': 'Unspecified/Music', '1': 'Poor Fashion', '2': 'Derivative Media', '3': 'Trump/Vulgarity'}
-}
+df = gd.merge(bd, on='original_index')
 
 # We will drop outliers for the chi-square analysis
-for col in ['Good_Def', 'Bad_Def', 'Good_Ex', 'Bad_Ex']:
+for col in ['Good_Def', 'Bad_Def']:
     df = df[df[col] != '-1']
-    df[col] = df[col].map(topic_names[col])
+    df[col] = df[col].apply(lambda x: 'Topic ' + str(x))
 
-domains = ['Good_Def', 'Bad_Def', 'Good_Ex', 'Bad_Ex']
+domains = ['Good_Def', 'Bad_Def']
 for d1, d2 in itertools.combinations(domains, 2):
     print(f"\n======================================")
     print(f"Crosstab: {d1} vs {d2}")
     ct = pd.crosstab(df[d1], df[d2])
     print(ct)
     
-    # Only compute chi-square if the table is at least 2x2
     if ct.shape[0] > 1 and ct.shape[1] > 1:
         chi2, p, dof, ex = chi2_contingency(ct)
         print(f"\nChi-square: {chi2:.2f}, p-value: {p:.4f}, df: {dof}")
@@ -377,122 +148,408 @@ for d1, d2 in itertools.combinations(domains, 2):
         print("Not enough variation for Chi-square.")
 ```
 
-# 3. Demographic Analysis (R)
+# 3. Demographic Analysis and Visualizations (R)
 
-## 3.1 Initial Demographics
+## 3.1 Main R Analyses (Wald Tests, Demographics, PCA)
 ```{r, eval=FALSE}
 library(dplyr)
 library(tidyr)
+library(ggplot2)
+library(readr)
+library(stringr)
 library(nnet)
 library(car)
+library(FactoMineR)
+library(factoextra)
 
-survey_df <- read.csv("data/FolkTaste_CleanData.csv")
-if (grepl("What do you mean", survey_df$GoodTaste_Def[1])) {
-  survey_df <- survey_df[-1, ]
+dir.create("report/Plots", showWarnings = FALSE)
+dir.create("report/Tabs", showWarnings = FALSE)
+
+# 1. Wald Table for Demographics
+raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
+if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) {
+  raw_survey <- raw_survey[-1, ]
 }
-survey_df <- survey_df %>% filter(Taste_Possibility == "YES")
+raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
+raw_survey$Age <- as.numeric(raw_survey$Age)
+raw_survey$EducationLevel_Coded <- as.numeric(raw_survey$EducationLevel_Coded)
+raw_survey$Political <- as.numeric(raw_survey$Political)
 
-survey_df$Age <- as.numeric(survey_df$Age)
-survey_df$EducationLevel_Coded <- as.numeric(survey_df$EducationLevel_Coded)
-survey_df$Political <- as.numeric(survey_df$Political)
+# ADD python_index globally since it's used multiple times
+raw_survey$python_index <- 0:(nrow(raw_survey)-1)
 
-analyze_model <- function(prob_file, name) {
-  cat("\n==========================================\n")
-  cat("Analyzing: ", name, "\n")
-  
-  probs <- read.csv(prob_file)
-  
+run_multinom <- function(prob_file, name) {
+  probs <- read_csv(prob_file, show_col_types = FALSE)
   topic_cols <- setdiff(names(probs), "original_index")
-  probs$primary_topic <- apply(probs[, topic_cols], 1, function(row) {
-    topic_cols[which.max(row)]
-  })
+  probs$primary_topic <- apply(probs[, topic_cols], 1, function(row) topic_cols[which.max(row)])
   
-  probs_valid <- probs %>% filter(!primary_topic %in% c("-1", "X.1"))
+  probs_valid <- probs %>% filter(!primary_topic %in% c("-1"))
   
-  survey_df$python_index <- 0:(nrow(survey_df)-1)
-  
-  merged_df <- merge(survey_df, probs_valid, by.x="python_index", by.y="original_index")
+  merged_df <- merge(raw_survey, probs_valid, by.x="python_index", by.y="original_index")
   merged_df$primary_topic <- as.factor(merged_df$primary_topic)
   
-  model_data <- merged_df %>% drop_na(Age, Gender, EducationLevel_Coded, Political)
-  model_data <- model_data %>% filter(Gender %in% c("Male", "Female"))
-  
-  cat("Valid N for modeling: ", nrow(model_data), "\n")
-  cat("Topic distribution:\n")
-  print(table(model_data$primary_topic))
+  model_data <- merged_df %>% drop_na(Age, Gender, EducationLevel_Coded, Political) %>% filter(Gender %in% c("A man", "A woman"))
   
   if (length(unique(model_data$primary_topic)) > 1) {
-    # Set the largest group as reference
     model_data$primary_topic <- relevel(model_data$primary_topic, ref=names(sort(table(model_data$primary_topic), decreasing=TRUE)[1]))
-    
     m <- multinom(primary_topic ~ Age + Gender + EducationLevel_Coded + Political, data=model_data, trace=FALSE)
-    cat("\nWald Tests:\n")
-    print(Anova(m, type="III"))
-  } else {
-    cat("Only one topic left after filtering outliers/missing data.\n")
+    w <- Anova(m, type="III")
+    
+    df <- as.data.frame(w)
+    df$Predictor <- rownames(df)
+    df$Model <- name
+    return(df)
+  }
+  return(NULL)
+}
+
+res1 <- run_multinom("good_taste_def_model_min5/document_topic_probabilities.csv", "Good Taste Def")
+res2 <- run_multinom("bad_taste_def_model_min15/document_topic_probabilities.csv", "Bad Taste Def")
+
+all_res <- bind_rows(res1, res2)
+all_res <- all_res %>% select(Model, Predictor, `LR Chisq`, Df, `Pr(>Chisq)`)
+
+latex_str <- "\\begin{table}[htpb]\n\\centering\n\\resizebox{\\textwidth}{!}{\n\\begin{tabular}{llrrr}\n\\toprule\n"
+latex_str <- paste0(latex_str, "Model & Predictor & Wald $\\chi^2$ & Df & $p$-value \\\\\n\\midrule\n")
+for (i in 1:nrow(all_res)) {
+  pval <- all_res$`Pr(>Chisq)`[i]
+  pval_str <- if(pval < 0.001) "< 0.001" else sprintf("%.4f", pval)
+  latex_str <- paste0(latex_str, sprintf("%s & %s & %.2f & %d & %s \\\\\n", 
+                                         all_res$Model[i], gsub("_", "\\\\_", all_res$Predictor[i]), all_res$`LR Chisq`[i], all_res$Df[i], pval_str))
+}
+latex_str <- paste0(latex_str, "\\bottomrule\n\\end{tabular}\n}\n\\caption{Multinomial Logistic Regression Wald Tests for Topic Predictors}\n\\label{tab:wald_models}\n\\end{table}\n")
+writeLines(latex_str, "report/Tabs/wald_models.tex")
+
+
+# 2. Pearson Residual Plots
+good_def_probs <- read_csv("good_taste_def_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
+bad_def_probs <- read_csv("bad_taste_def_model_min15/document_topic_probabilities.csv", show_col_types = FALSE)
+
+get_primary <- function(probs, name) {
+  topic_cols <- setdiff(names(probs), "original_index")
+  probs$primary <- apply(probs[, topic_cols], 1, function(row) topic_cols[which.max(row)])
+  res <- probs %>% select(original_index, primary)
+  names(res)[2] <- name
+  return(res)
+}
+
+gd <- get_primary(good_def_probs, "Good_Def")
+bd <- get_primary(bad_def_probs, "Bad_Def")
+
+df <- gd %>% inner_join(bd, by="original_index")
+df <- df %>%
+  filter(Good_Def != "-1", Bad_Def != "-1") %>%
+  mutate(
+    Good_Def = paste("Topic", Good_Def),
+    Bad_Def = paste("Topic", Bad_Def)
+  )
+
+tb <- table(df$Good_Def, df$Bad_Def)
+if (nrow(tb) > 1 && ncol(tb) > 1) {
+  res <- chisq.test(tb)
+  residuals_df <- as.data.frame(as.table(res$residuals))
+  names(residuals_df) <- c("Var1", "Var2", "Residual")
+  
+  p <- ggplot(residuals_df, aes(x = Var1, y = Var2, fill = Residual)) +
+    geom_tile(color = "white") +
+    geom_text(aes(label = round(Residual, 2)), color = "black", size = 4) +
+    scale_fill_gradient2(low = "indianred", mid = "white", high = "steelblue", midpoint = 0) +
+    scale_x_discrete(position = "top") +
+    theme_minimal(base_size = 12) +
+    labs(
+      title = "Pearson Residuals: Good Def vs Bad Def",
+      x = "Good Taste Def",
+      y = "Bad Taste Def",
+      fill = "Residual"
+    )
+  ggsave("report/Plots/schema_corr_Good_Def_Bad_Def.png", plot = p, width = 8, height = 6)
+}
+
+
+# 3. PCA of Distinction Domains and Topic ANOVA
+dist_cols <- grep("Domains_Distinction1_", names(raw_survey), value = TRUE)
+dist_data <- raw_survey %>% select(all_of(dist_cols)) %>% mutate_all(as.numeric)
+dist_data_imp <- as.data.frame(lapply(dist_data, function(x) ifelse(is.na(x), mean(x, na.rm = TRUE), x)))
+names(dist_data_imp) <- str_remove(names(dist_data_imp), "Domains_Distinction1_")
+
+res.pca <- PCA(dist_data_imp, scale.unit = TRUE, graph = FALSE)
+p_pca_var <- fviz_pca_var(res.pca, col.var = "contrib",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE, title = "PCA of Cultural Domains Distinction Ratings")
+ggsave("report/Plots/pca_domain_variables.png", plot = p_pca_var, width = 8, height = 6)
+
+raw_survey$Dim1 <- res.pca$ind$coord[,1]
+raw_survey$Dim2 <- res.pca$ind$coord[,2]
+raw_survey$Dim3 <- res.pca$ind$coord[,3]
+
+df_pca <- raw_survey %>%
+  left_join(gd, by=c("python_index"="original_index")) %>%
+  left_join(bd, by=c("python_index"="original_index"))
+
+df_pca$Good_Def[df_pca$Good_Def == "-1"] <- NA
+df_pca$Bad_Def[df_pca$Bad_Def == "-1"] <- NA
+
+run_anova_for_dim <- function(dim_col) {
+  results <- list()
+  for (model_col in c("Good_Def", "Bad_Def")) {
+    test_df <- df_pca %>% select(!!sym(model_col), !!sym(dim_col)) %>% drop_na()
+    if (length(unique(test_df[[model_col]])) > 1) {
+      formula <- as.formula(paste0("`", dim_col, "` ~ ", model_col))
+      aov_res <- aov(formula, data = test_df)
+      s <- summary(aov_res)[[1]]
+      f_val <- s[["F value"]][1]
+      p_val <- s[["Pr(>F)"]][1]
+      results[[model_col]] <- data.frame(Model=model_col, F_val=f_val, p_val=p_val)
+    }
+  }
+  res_df <- bind_rows(results)
+  res_df$Dimension <- dim_col
+  res_df
+}
+
+res_dim1 <- run_anova_for_dim("Dim1")
+res_dim2 <- run_anova_for_dim("Dim2")
+res_dim3 <- run_anova_for_dim("Dim3")
+
+all_res_pca <- bind_rows(res_dim1, res_dim2, res_dim3)
+all_res_pca$Format <- sprintf("%.2f (%.3f)", all_res_pca$F_val, all_res_pca$p_val)
+all_res_pca$Format <- ifelse(all_res_pca$p_val < 0.001, paste0(all_res_pca$Format, "$^{***}$"), 
+                  ifelse(all_res_pca$p_val < 0.01, paste0(all_res_pca$Format, "$^{**}$"),
+                  ifelse(all_res_pca$p_val < 0.05, paste0(all_res_pca$Format, "$^{*}$"), all_res_pca$Format)))
+
+wide_res <- all_res_pca %>% select(Dimension, Model, Format) %>%
+  pivot_wider(names_from = Model, values_from = Format)
+
+latex_str_pca <- "\\begin{table}[htpb]\n\\centering\n\\begin{tabular}{lcc}\n\\toprule\n"
+latex_str_pca <- paste0(latex_str_pca, "Dimension & Good Taste Def & Bad Taste Def \\\\\n\\midrule\n")
+for (i in 1:nrow(wide_res)) {
+  latex_str_pca <- paste0(latex_str_pca, sprintf("%s & %s & %s \\\\\n", 
+        wide_res$Dimension[i], wide_res$Good_Def[i], wide_res$Bad_Def[i]))
+}
+latex_str_pca <- paste0(latex_str_pca, "\\bottomrule\n\\multicolumn{3}{l}{\\footnotesize $^{*}p<0.05; ^{**}p<0.01; ^{***}p<0.001$} \\\\\n")
+latex_str_pca <- paste0(latex_str_pca, "\\end{tabular}\n\\caption{ANOVA Results: Mean Differences in PCA Dimensions of Distinction Ratings by Topic Schema.}\n\\label{tab:anova_pca}\n\\end{table}\n")
+
+writeLines(latex_str_pca, "report/Tabs/anova_pca.tex")
+
+print("R script executed successfully.")
+```
+
+## 3.2 ANOVA for Distinction Domains
+```{r, eval=FALSE}
+library(dplyr)
+library(readr)
+library(stringr)
+library(tidyr)
+
+# 1. Load Data
+raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
+if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) {
+  raw_survey <- raw_survey[-1, ]
+}
+raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
+raw_survey$python_index <- 0:(nrow(raw_survey)-1)
+
+# 2. Get Primary Topics
+get_primary <- function(path, name) {
+  probs <- read_csv(path, show_col_types = FALSE)
+  tc <- setdiff(names(probs), "original_index")
+  probs[[name]] <- apply(probs[, tc], 1, function(row) tc[which.max(row)])
+  probs %>% select(original_index, !!sym(name))
+}
+
+gd <- get_primary("good_taste_def_model_min10/document_topic_probabilities.csv", "Good_Def")
+bd <- get_primary("bad_taste_def_model_min5/document_topic_probabilities.csv", "Bad_Def")
+
+df <- raw_survey %>%
+  left_join(gd, by=c("python_index"="original_index")) %>%
+  left_join(bd, by=c("python_index"="original_index"))
+
+# Remove outliers for ANOVA
+df$Good_Def[df$Good_Def == "-1"] <- NA
+df$Bad_Def[df$Bad_Def == "-1"] <- NA
+
+dist_cols <- grep("Domains_Distinction1_", names(df), value = TRUE)
+
+run_anova_for_model <- function(topic_col) {
+  results <- list()
+  for (col in dist_cols) {
+    domain_name <- str_remove(col, "Domains_Distinction1_")
+    
+    test_df <- df %>% select(!!sym(topic_col), !!sym(col)) %>% drop_na()
+    test_df[[col]] <- as.numeric(test_df[[col]])
+    
+    if (length(unique(test_df[[topic_col]])) > 1) {
+      formula <- as.formula(paste0("`", col, "` ~ ", topic_col))
+      aov_res <- aov(formula, data = test_df)
+      s <- summary(aov_res)[[1]]
+      f_val <- s[["F value"]][1]
+      p_val <- s[["Pr(>F)"]][1]
+      results[[domain_name]] <- data.frame(Domain=domain_name, F_val=f_val, p_val=p_val)
+    }
+  }
+  res_df <- bind_rows(results)
+  res_df$p_adj <- p.adjust(res_df$p_val, method="BH")
+  res_df
+}
+
+res_gd <- run_anova_for_model("Good_Def")
+res_bd <- run_anova_for_model("Bad_Def")
+
+# Format into a single table
+combined <- res_gd %>% select(Domain)
+format_cell <- function(f, p_adj) {
+  sig <- ifelse(p_adj < 0.001, "***", ifelse(p_adj < 0.01, "**", ifelse(p_adj < 0.05, "*", "")))
+  sprintf("%.2f%s (%.3f)", f, sig, p_adj)
+}
+
+combined$Good_Def <- format_cell(res_gd$F_val, res_gd$p_adj)
+combined$Bad_Def <- format_cell(res_bd$F_val, res_bd$p_adj)
+
+dir.create("report/Tabs", showWarnings = FALSE)
+
+# Write to LaTeX
+latex_str <- "\\begin{table}[htpb]\n\\centering\n\\resizebox{\\textwidth}{!}{\n\\begin{tabular}{lcc}\n\\toprule\n"
+latex_str <- paste0(latex_str, "Domain & Good Taste Def & Bad Taste Def \\\\\n")
+latex_str <- paste0(latex_str, "& $F$ ($p_{adj}$) & $F$ ($p_{adj}$) \\\\\n\\midrule\n")
+
+for (i in 1:nrow(combined)) {
+  # Add significance asterisks nicely formatted in math mode
+  g_d <- str_replace_all(combined$Good_Def[i], "\\*\\*\\*", "$^{***}$")
+  g_d <- str_replace_all(g_d, "(?<!\\$)\\*\\*(?!\\$)", "$^{**}$")
+  g_d <- str_replace_all(g_d, "(?<!\\$)\\*(?!\\$)", "$^{*}$")
+  
+  b_d <- str_replace_all(combined$Bad_Def[i], "\\*\\*\\*", "$^{***}$")
+  b_d <- str_replace_all(b_d, "(?<!\\$)\\*\\*(?!\\$)", "$^{**}$")
+  b_d <- str_replace_all(b_d, "(?<!\\$)\\*(?!\\$)", "$^{*}$")
+  
+  latex_str <- paste0(latex_str, sprintf("%s & %s & %s \\\\\n", 
+                                         str_replace_all(combined$Domain[i], "_", "\\\\_"), 
+                                         g_d, b_d))
+}
+
+latex_str <- paste0(latex_str, "\\bottomrule\n\\multicolumn{3}{l}{\\footnotesize $^{*}p<0.05; ^{**}p<0.01; ^{***}p<0.001$ (Benjamini-Hochberg FDR corrected)} \\\\\n")
+latex_str <- paste0(latex_str, "\\end{tabular}\n}\n\\caption{One-Way ANOVA Results: Mean Differences in Domain Distinction Ratings by Topic Schema. Values are $F$-statistics with FDR-adjusted $p$-values in parentheses.}\n\\label{tab:anova_distinction}\n\\end{table}\n")
+
+writeLines(latex_str, "report/Tabs/anova_distinction.tex")
+```
+
+## 3.3 Pearson Residuals and Heatmaps
+```{r, eval=FALSE}
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(tidyr)
+library(stringr)
+
+# --- RE-GENERATE PEARSON RESIDUAL PLOTS ---
+raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
+if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) raw_survey <- raw_survey[-1, ]
+raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
+
+gd_probs <- read_csv("good_taste_def_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
+bd_probs <- read_csv("bad_taste_def_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
+
+get_primary <- function(probs, name) {
+  tc <- setdiff(names(probs), "original_index")
+  probs$primary <- apply(probs[, tc], 1, function(row) tc[which.max(row)])
+  res <- probs %>% select(original_index, primary)
+  names(res)[2] <- name
+  res
+}
+
+gd <- get_primary(gd_probs, "Good_Def")
+bd <- get_primary(bd_probs, "Bad_Def")
+
+df <- gd %>% inner_join(bd, by="original_index")
+
+t_g_d <- c("-1"="Outlier", "0"="Similarity/Subjectivity", "1"="Aesthetics", "2"="Style/Quality")
+t_b_d <- c("-1"="Outlier", "0"="Dislike/Subjective", "1"="Poor Choices", "2"="Tacky/Loud", "3"="Low-Brow Media", "4"="Immoral", "5"="Poor Manners")
+
+df <- df %>%
+  filter(Good_Def != "-1", Bad_Def != "-1") %>%
+  mutate(
+    Good_Def = t_g_d[as.character(Good_Def)],
+    Bad_Def = t_b_d[as.character(Bad_Def)]
+  )
+
+combos <- list(c("Good_Def", "Bad_Def"))
+
+for (c in combos) {
+  v1 <- c[1]
+  v2 <- c[2]
+  tb <- table(df[[v1]], df[[v2]])
+  if(nrow(tb)>1 && ncol(tb)>1) {
+    res <- chisq.test(tb)
+    r_df <- as.data.frame(as.table(res$residuals))
+    names(r_df) <- c("Var1", "Var2", "Residual")
+    
+    # Format labels with newlines so they fit horizontally
+    r_df$Var1 <- str_replace_all(r_df$Var1, "/", "/\n")
+    r_df$Var1 <- str_replace_all(r_df$Var1, " ", "\n")
+    
+    p <- ggplot(r_df, aes(x = Var1, y = Var2, fill = Residual)) +
+      geom_tile(color = "white") +
+      geom_text(aes(label = round(Residual, 2)), color = "black", size = 4) +
+      scale_fill_gradient2(low = "indianred", mid = "white", high = "steelblue", midpoint = 0) +
+      scale_x_discrete(position = "top") +
+      theme_minimal(base_size = 12) +
+      theme(axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 0)) +
+      labs(
+        title = sprintf("Pearson Residuals: %s vs %s", str_replace(v1, "_", " "), str_replace(v2, "_", " ")),
+        x = str_replace(v1, "_", " "),
+        y = str_replace(v2, "_", " "),
+        fill = "Residual"
+      )
+    ggsave(sprintf("report/Plots/schema_corr_%s_%s.png", v1, v2), plot=p, width=10, height=7)
   }
 }
 
-analyze_model("good_taste_def_model_min5/document_topic_probabilities.csv", "Good Taste Def")
-analyze_model("bad_taste_def_model_min15/document_topic_probabilities.csv", "Bad Taste Def")
-analyze_model("good_taste_example_model_min10/document_topic_probabilities.csv", "Good Taste Example")
-analyze_model("bad_taste_example_model_min10/document_topic_probabilities.csv", "Bad Taste Example")
-```
+# --- RE-GENERATE HEATMAPS (DEFINITIONS ONLY) ---
+df_g_d <- get_primary(gd_probs, "Good_Def")
+df_b_d <- get_primary(bd_probs, "Bad_Def")
 
-## 3.2 Wald Tests
-```{r, eval=FALSE}
-library(dplyr)
-library(tidyr)
-library(readr)
-library(nnet)
-library(car)
+raw_survey$python_index <- 0:(nrow(raw_survey)-1)
+m_df <- raw_survey %>%
+  left_join(df_g_d, by=c("python_index"="original_index")) %>%
+  left_join(df_b_d, by=c("python_index"="original_index")) %>%
+  mutate(
+    Good_Def = t_g_d[as.character(Good_Def)],
+    Bad_Def = t_b_d[as.character(Bad_Def)]
+  )
 
-# Load data
-raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
-survey_df <- raw_survey[-1, ] # drop question row
-valid_idx <- which(!is.na(survey_df$GoodTaste_Def))
-analysis_df <- survey_df[valid_idx, ]
+distinction_cols <- grep("Domains_Distinction1_", names(m_df), value = TRUE)
 
-# Load probabilities
-good_probs <- read_csv("good_taste_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
-bad_probs <- read_csv("bad_taste_model_min15/document_topic_probabilities.csv", show_col_types = FALSE)
-
-# Assign hard clusters
-analysis_df$GoodTopic_Id <- apply(good_probs, 1, which.max) - 1
-analysis_df$BadTopic_Id <- apply(bad_probs, 1, which.max) - 1
-
-good_labels <- c("0: Mainstream/Consensus", "1: Aesthetics/Nuance", "2: Moral/Behavioral")
-bad_labels <- c("0: Personal Disagreement", "1: Low Quality/Materialist", "2: Loud/Sophomoric/Offensive")
-
-analysis_df$GoodTasteTopic <- factor(analysis_df$GoodTopic_Id, labels = good_labels)
-analysis_df$BadTasteTopic <- factor(analysis_df$BadTopic_Id, labels = bad_labels)
-
-analysis_df$Age <- as.numeric(analysis_df$Age)
-analysis_df$EducationLevel_Coded <- as.numeric(analysis_df$EducationLevel_Coded)
-analysis_df$Political <- as.numeric(analysis_df$Political)
-
-model_data <- analysis_df %>% filter(!is.na(Age), !is.na(EducationLevel_Coded), !is.na(Political), Gender %in% c("A man", "A woman"))
-
-m_good <- multinom(GoodTasteTopic ~ Age + Gender + EducationLevel_Coded + Political, data = model_data, Hess = TRUE, trace = FALSE)
-m_bad <- multinom(BadTasteTopic ~ Age + Gender + EducationLevel_Coded + Political, data = model_data, Hess = TRUE, trace = FALSE)
-
-wald_good <- car::Anova(m_good, type = "II", test.statistic = "Wald")
-wald_bad <- car::Anova(m_bad, type = "II", test.statistic = "Wald")
-
-# Format output as markdown table
-cat("### Good Taste Model Predictors\n\n")
-cat("| Predictor | Wald Chisq | Df | Pr(>Chisq) |\n")
-cat("|---|---|---|---|\n")
-for(i in 1:nrow(wald_good)) {
-  cat(sprintf("| %s | %.3f | %d | %.4f |\n", rownames(wald_good)[i], wald_good$`LR Chisq`[i], wald_good$Df[i], wald_good$`Pr(>Chisq)`[i]))
+create_heatmap <- function(data, group_col, title, filename) {
+  d_clean <- data %>% filter(!is.na(!!sym(group_col)) & !!sym(group_col) != "Outlier")
+  
+  dist_means <- d_clean %>%
+    select(all_of(group_col), all_of(distinction_cols)) %>%
+    pivot_longer(cols = starts_with("Domains_Distinction1_"), names_to = "Domain", values_to = "Score") %>%
+    mutate(Domain = str_remove(Domain, "Domains_Distinction1_"), Score = as.numeric(Score)) %>%
+    filter(!is.na(Score)) %>%
+    group_by(!!sym(group_col), Domain) %>%
+    summarize(Mean_Score = mean(Score, na.rm = TRUE), .groups = 'drop')
+  
+  domain_order <- dist_means %>% group_by(Domain) %>% summarize(Overall = mean(Mean_Score)) %>% arrange(Overall) %>% pull(Domain)
+  dist_means <- dist_means %>% mutate(Domain = factor(Domain, levels = domain_order))
+  
+  # Add newlines to make sure they fit horizontally
+  dist_means[[group_col]] <- str_replace_all(dist_means[[group_col]], "/", "/\n")
+  dist_means[[group_col]] <- str_replace_all(dist_means[[group_col]], " ", "\n")
+  
+  p <- ggplot(dist_means, aes(x = !!sym(group_col), y = Domain, fill = Mean_Score)) +
+    geom_tile(color = "white") +
+    scale_fill_gradient2(low = "steelblue", mid = "white", high = "indianred", midpoint = 1.5) +
+    scale_x_discrete(position = "top") +
+    theme_minimal(base_size = 14) +
+    theme(axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 0)) +
+    labs(title = title, x = "Topic Schema", y = "Cultural Domain", fill = "Mean Score")
+  
+  ggsave(filename, plot = p, width = 11, height = 7)
 }
 
-cat("\n### Bad Taste Model Predictors\n\n")
-cat("| Predictor | Wald Chisq | Df | Pr(>Chisq) |\n")
-cat("|---|---|---|---|\n")
-for(i in 1:nrow(wald_bad)) {
-  cat(sprintf("| %s | %.3f | %d | %.4f |\n", rownames(wald_bad)[i], wald_bad$`LR Chisq`[i], wald_bad$Df[i], wald_bad$`Pr(>Chisq)`[i]))
-}
+create_heatmap(m_df, "Good_Def", "Average Distinction Rating by Domain (Good Taste Definitions)", "report/Plots/distinction_domains.png")
+create_heatmap(m_df, "Bad_Def", "Average Distinction Rating by Domain (Bad Taste Definitions)", "report/Plots/distinction_domains_bad.png")
 ```
 
 # 4. Utilities
@@ -579,497 +636,4 @@ for file in html_files:
         print(f"Converted {file} to {tex_file}")
     except Exception as e:
         print(f"Failed to convert {file}: {e}")
-```
-
-## 3.3 Example Models Visualizations and Wald Tests
-```{r, eval=FALSE}
-library(dplyr)
-library(ggplot2)
-library(readr)
-library(stringr)
-library(jsonlite)
-library(tidyr)
-library(tidytext)
-library(FactoMineR)
-library(factoextra)
-library(nnet)
-library(car)
-
-dir.create("report/Plots", showWarnings = FALSE)
-dir.create("report/Tabs", showWarnings = FALSE)
-
-# 1. Topic Frequencies for Examples
-good_ex_info <- read_csv("good_taste_example_model_min10/topic_info.csv", show_col_types = FALSE)
-bad_ex_info <- read_csv("bad_taste_example_model_min10/topic_info.csv", show_col_types = FALSE)
-
-clean_keywords <- function(rep_str) {
-  str_remove_all(rep_str, "\\[|\\]|'")
-}
-good_ex_info$Keywords <- sapply(good_ex_info$Representation, clean_keywords)
-bad_ex_info$Keywords <- sapply(bad_ex_info$Representation, clean_keywords)
-
-p_good_ex <- ggplot(good_ex_info %>% filter(Topic != -1), aes(x = reorder(Name, Count), y = Count)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
-  coord_flip() +
-  theme_minimal(base_size = 14) +
-  labs(title = "Good Taste Examples: Topic Frequencies", x = "Topic Name", y = "Count")
-ggsave("report/Plots/good_taste_example_topics.png", plot = p_good_ex, width = 8, height = 6)
-
-p_bad_ex <- ggplot(bad_ex_info %>% filter(Topic != -1), aes(x = reorder(Name, Count), y = Count)) +
-  geom_bar(stat = "identity", fill = "indianred") +
-  coord_flip() +
-  theme_minimal(base_size = 14) +
-  labs(title = "Bad Taste Examples: Topic Frequencies", x = "Topic Name", y = "Count")
-ggsave("report/Plots/bad_taste_example_topics.png", plot = p_bad_ex, width = 8, height = 6)
-
-
-# 2. Keyword Importance for Examples
-extract_keyword_weights <- function(json_path) {
-  topics_data <- fromJSON(json_path)$topic_representations
-  topics_data[["-1"]] <- NULL
-  df_list <- lapply(names(topics_data), function(topic_id) {
-    mat <- topics_data[[topic_id]]
-    data.frame(Topic = paste("Topic", topic_id), Word = as.character(mat[,1]), Score = as.numeric(mat[,2]), stringsAsFactors = FALSE)
-  })
-  do.call(rbind, df_list)
-}
-
-good_ex_weights <- extract_keyword_weights("good_taste_example_model_min10/topics.json")
-p_good_ex_keys <- good_ex_weights %>%
-  group_by(Topic) %>% top_n(8, Score) %>% ungroup() %>%
-  mutate(Word = reorder_within(Word, Score, Topic)) %>%
-  ggplot(aes(x = Word, y = Score, fill = Topic)) +
-  geom_col(show.legend = FALSE) + facet_wrap(~ Topic, scales = "free_y") +
-  coord_flip() + scale_x_reordered() + theme_minimal() +
-  labs(title = "Good Taste Examples: Keyword Importance", x = NULL, y = "c-TF-IDF Score")
-ggsave("report/Plots/good_taste_example_keywords.png", plot = p_good_ex_keys, width = 10, height = 8)
-
-bad_ex_weights <- extract_keyword_weights("bad_taste_example_model_min10/topics.json")
-p_bad_ex_keys <- bad_ex_weights %>%
-  group_by(Topic) %>% top_n(8, Score) %>% ungroup() %>%
-  mutate(Word = reorder_within(Word, Score, Topic)) %>%
-  ggplot(aes(x = Word, y = Score, fill = Topic)) +
-  geom_col(show.legend = FALSE) + facet_wrap(~ Topic, scales = "free_y") +
-  coord_flip() + scale_x_reordered() + theme_minimal() +
-  labs(title = "Bad Taste Examples: Keyword Importance", x = NULL, y = "c-TF-IDF Score")
-ggsave("report/Plots/bad_taste_example_keywords.png", plot = p_bad_ex_keys, width = 10, height = 8)
-
-
-# 3. CA Plots for Examples
-good_ex_probs <- read_csv("good_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
-bad_ex_probs <- read_csv("bad_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
-
-good_ex_probs_clean <- good_ex_probs %>% select(-original_index)
-bad_ex_probs_clean <- bad_ex_probs %>% select(-original_index)
-
-colnames(good_ex_probs_clean) <- paste("Topic", 0:(ncol(good_ex_probs_clean)-1))
-colnames(bad_ex_probs_clean) <- paste("Topic", 0:(ncol(bad_ex_probs_clean)-1))
-
-good_ex_ca_data <- good_ex_probs_clean + 1e-6
-bad_ex_ca_data <- bad_ex_probs_clean + 1e-6
-
-good_ex_assigned <- as.factor(paste("Topic", apply(good_ex_probs_clean, 1, which.max) - 1))
-bad_ex_assigned <- as.factor(paste("Topic", apply(bad_ex_probs_clean, 1, which.max) - 1))
-
-res.ca.good.ex <- CA(good_ex_ca_data, graph = FALSE)
-p_ca_good_ex <- fviz_ca_biplot(res.ca.good.ex, geom.row = "point", col.row = good_ex_assigned, col.col = "black", 
-                               title = "CA: Good Taste Example Schemas", palette = "jco", legend.title = "Assigned Topic")
-ggsave("report/Plots/ca_good_taste_example.png", plot = p_ca_good_ex, width = 8, height = 6)
-
-res.ca.bad.ex <- CA(bad_ex_ca_data, graph = FALSE)
-p_ca_bad_ex <- fviz_ca_biplot(res.ca.bad.ex, geom.row = "point", col.row = bad_ex_assigned, col.col = "black", 
-                              title = "CA: Bad Taste Example Schemas", palette = "jco", legend.title = "Assigned Topic")
-ggsave("report/Plots/ca_bad_taste_example.png", plot = p_ca_bad_ex, width = 8, height = 6)
-
-
-# 4. Wald Table for Demographics across Four Models
-raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
-if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) {
-  raw_survey <- raw_survey[-1, ]
-}
-raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
-raw_survey$Age <- as.numeric(raw_survey$Age)
-raw_survey$EducationLevel_Coded <- as.numeric(raw_survey$EducationLevel_Coded)
-raw_survey$Political <- as.numeric(raw_survey$Political)
-
-run_multinom <- function(prob_file, name) {
-  probs <- read_csv(prob_file, show_col_types = FALSE)
-  topic_cols <- setdiff(names(probs), "original_index")
-  probs$primary_topic <- apply(probs[, topic_cols], 1, function(row) topic_cols[which.max(row)])
-  
-  probs_valid <- probs %>% filter(!primary_topic %in% c("-1"))
-  raw_survey$python_index <- 0:(nrow(raw_survey)-1)
-  
-  merged_df <- merge(raw_survey, probs_valid, by.x="python_index", by.y="original_index")
-  merged_df$primary_topic <- as.factor(merged_df$primary_topic)
-  
-  model_data <- merged_df %>% drop_na(Age, Gender, EducationLevel_Coded, Political) %>% filter(Gender %in% c("A man", "A woman"))
-  
-  if (length(unique(model_data$primary_topic)) > 1) {
-    model_data$primary_topic <- relevel(model_data$primary_topic, ref=names(sort(table(model_data$primary_topic), decreasing=TRUE)[1]))
-    m <- multinom(primary_topic ~ Age + Gender + EducationLevel_Coded + Political, data=model_data, trace=FALSE)
-    w <- Anova(m, type="III")
-    
-    # Return as dataframe
-    df <- as.data.frame(w)
-    df$Predictor <- rownames(df)
-    df$Model <- name
-    return(df)
-  }
-  return(NULL)
-}
-
-res1 <- run_multinom("good_taste_def_model_min5/document_topic_probabilities.csv", "Good Taste Def")
-res2 <- run_multinom("bad_taste_def_model_min15/document_topic_probabilities.csv", "Bad Taste Def")
-res3 <- run_multinom("good_taste_example_model_min10/document_topic_probabilities.csv", "Good Taste Example")
-res4 <- run_multinom("bad_taste_example_model_min10/document_topic_probabilities.csv", "Bad Taste Example")
-
-all_res <- bind_rows(res1, res2, res3, res4)
-all_res <- all_res %>% select(Model, Predictor, `LR Chisq`, Df, `Pr(>Chisq)`)
-
-# Write to LaTeX
-latex_str <- "\\begin{table}[htpb]\n\\centering\n\\resizebox{\\textwidth}{!}{\n\\begin{tabular}{llrrr}\n\\toprule\n"
-latex_str <- paste0(latex_str, "Model & Predictor & Wald $\\chi^2$ & Df & $p$-value \\\\\n\\midrule\n")
-
-for (i in 1:nrow(all_res)) {
-  pval <- all_res$`Pr(>Chisq)`[i]
-  pval_str <- if(pval < 0.001) "< 0.001" else sprintf("%.4f", pval)
-  latex_str <- paste0(latex_str, sprintf("%s & %s & %.2f & %d & %s \\\\\n", 
-                                         all_res$Model[i], gsub("_", "\\\\_", all_res$Predictor[i]), all_res$`LR Chisq`[i], all_res$Df[i], pval_str))
-}
-
-latex_str <- paste0(latex_str, "\\bottomrule\n\\end{tabular}\n}\n\\caption{Multinomial Logistic Regression Wald Tests for Topic Predictors}\n\\label{tab:wald_four_models}\n\\end{table}\n")
-
-writeLines(latex_str, "report/Tabs/wald_four_models.tex")
-```
-
-## 2.1 Pearson Residual Plots for Schema Combinations
-```{r, eval=FALSE}
-library(dplyr)
-library(ggplot2)
-library(readr)
-library(tidyr)
-library(stringr)
-
-# Load data and assigned topics
-raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
-if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) {
-  raw_survey <- raw_survey[-1, ]
-}
-raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
-
-# Probabilities
-good_def_probs <- read_csv("good_taste_def_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
-bad_def_probs <- read_csv("bad_taste_def_model_min15/document_topic_probabilities.csv", show_col_types = FALSE)
-good_ex_probs <- read_csv("good_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
-bad_ex_probs <- read_csv("bad_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
-
-get_primary <- function(probs, name) {
-  topic_cols <- setdiff(names(probs), "original_index")
-  probs$primary <- apply(probs[, topic_cols], 1, function(row) topic_cols[which.max(row)])
-  res <- probs %>% select(original_index, primary)
-  names(res)[2] <- name
-  return(res)
-}
-
-gd <- get_primary(good_def_probs, "Good_Def")
-bd <- get_primary(bad_def_probs, "Bad_Def")
-ge <- get_primary(good_ex_probs, "Good_Ex")
-be <- get_primary(bad_ex_probs, "Bad_Ex")
-
-df <- gd %>% inner_join(bd, by="original_index") %>% inner_join(ge, by="original_index") %>% inner_join(be, by="original_index")
-
-# Mapping
-topic_names <- list(
-    Good_Def = c("-1"="Outlier", "0"="Similarity/Subjectivity", "1"="Aesthetics", "2"="Style/Quality"),
-    Bad_Def = c("-1"="Outlier", "0"="Dislike/Subjective", "1"="Poor Choices", "2"="Tacky/Loud", "3"="Low-Brow Media", "4"="Immoral", "5"="Poor Manners"),
-    Good_Ex = c("-1"="Outlier", "0"="Fashion/Decor", "1"="Refinement/Art", "2"="Best Friends", "3"="Musical Knowledge", "4"="Film/TV", "5"="Obamas/Class", "6"="Partners/Food"),
-    Bad_Ex = c("-1"="Outlier", "0"="Unspecified/Music", "1"="Poor Fashion", "2"="Derivative Media", "3"="Trump/Vulgarity")
-)
-
-df <- df %>%
-  filter(Good_Def != "-1", Bad_Def != "-1", Good_Ex != "-1", Bad_Ex != "-1") %>%
-  mutate(
-    Good_Def = topic_names$Good_Def[as.character(Good_Def)],
-    Bad_Def = topic_names$Bad_Def[as.character(Bad_Def)],
-    Good_Ex = topic_names$Good_Ex[as.character(Good_Ex)],
-    Bad_Ex = topic_names$Bad_Ex[as.character(Bad_Ex)]
-  )
-
-domains <- c("Good_Def", "Bad_Def", "Good_Ex", "Bad_Ex")
-combos <- combn(domains, 2, simplify = FALSE)
-
-dir.create("report/Plots", showWarnings = FALSE)
-
-cat("Chi-square results:\n\n")
-
-for (combo in combos) {
-  v1 <- combo[1]
-  v2 <- combo[2]
-  
-  tb <- table(df[[v1]], df[[v2]])
-  if (nrow(tb) > 1 && ncol(tb) > 1) {
-    res <- chisq.test(tb)
-    cat(sprintf("%s vs %s: X-squared = %.2f, df = %d, p-value = %.4f\n", v1, v2, res$statistic, res$parameter, res$p.value))
-    
-    residuals_df <- as.data.frame(as.table(res$residuals))
-    names(residuals_df) <- c("Var1", "Var2", "Residual")
-    
-    # Format labels to fit horizontally
-    residuals_df$Var1 <- str_replace_all(residuals_df$Var1, "/", "/\n")
-    residuals_df$Var1 <- str_replace_all(residuals_df$Var1, " ", "\n")
-    
-    p <- ggplot(residuals_df, aes(x = Var1, y = Var2, fill = Residual)) +
-      geom_tile(color = "white") +
-      geom_text(aes(label = round(Residual, 2)), color = "black", size = 4) +
-      scale_fill_gradient2(low = "indianred", mid = "white", high = "steelblue", midpoint = 0) +
-      scale_x_discrete(position = "top") +
-      theme_minimal(base_size = 12) +
-      theme(axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 0)) +
-      labs(
-        title = sprintf("Pearson Residuals: %s vs %s", str_replace(v1, "_", " "), str_replace(v2, "_", " ")),
-        x = str_replace(v1, "_", " "),
-        y = str_replace(v2, "_", " "),
-        fill = "Residual"
-      )
-    
-    file_name <- sprintf("report/Plots/schema_corr_%s_%s.png", v1, v2)
-    ggsave(file_name, plot = p, width = 8, height = 6)
-  }
-}
-
-```
-
-## 3.4 Example Models Domain Distinction Heatmaps
-```{r, eval=FALSE}
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(readr)
-library(stringr)
-
-# 1. Load Data
-raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
-if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) {
-  raw_survey <- raw_survey[-1, ]
-}
-raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
-
-# 2. Load Probs
-good_ex_probs <- read_csv("good_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
-bad_ex_probs <- read_csv("bad_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
-
-topic_cols_g <- setdiff(names(good_ex_probs), "original_index")
-good_ex_probs$Good_Ex_Id <- apply(good_ex_probs[, topic_cols_g], 1, function(row) topic_cols_g[which.max(row)])
-
-topic_cols_b <- setdiff(names(bad_ex_probs), "original_index")
-bad_ex_probs$Bad_Ex_Id <- apply(bad_ex_probs[, topic_cols_b], 1, function(row) topic_cols_b[which.max(row)])
-
-df_g <- good_ex_probs %>% select(original_index, Good_Ex_Id)
-df_b <- bad_ex_probs %>% select(original_index, Bad_Ex_Id)
-
-raw_survey$python_index <- 0:(nrow(raw_survey)-1)
-merged_df <- raw_survey %>% 
-  left_join(df_g, by=c("python_index"="original_index")) %>%
-  left_join(df_b, by=c("python_index"="original_index"))
-
-# Labels
-topic_names_g <- c("-1"="Outlier", "0"="Fashion/Decor", "1"="Refinement/Art", "2"="Best Friends", "3"="Musical Knowledge", "4"="Film/TV", "5"="Obamas/Class", "6"="Partners/Food")
-topic_names_b <- c("-1"="Outlier", "0"="Unspecified/Music", "1"="Poor Fashion", "2"="Derivative Media", "3"="Trump/Vulgarity")
-
-merged_df <- merged_df %>%
-  mutate(
-    Good_Ex = topic_names_g[as.character(Good_Ex_Id)],
-    Bad_Ex = topic_names_b[as.character(Bad_Ex_Id)]
-  ) %>%
-  filter(!is.na(Good_Ex) & Good_Ex != "Outlier" & !is.na(Bad_Ex) & Bad_Ex != "Outlier")
-
-distinction_cols <- grep("Domains_Distinction1_", names(merged_df), value = TRUE)
-
-dir.create("report/Plots", showWarnings = FALSE)
-
-# Function to create heatmap
-create_heatmap <- function(data, group_col, title, filename) {
-  dist_means <- data %>%
-    select(all_of(group_col), all_of(distinction_cols)) %>%
-    pivot_longer(cols = starts_with("Domains_Distinction1_"), names_to = "Domain", values_to = "Score") %>%
-    mutate(Domain = str_remove(Domain, "Domains_Distinction1_"), Score = as.numeric(Score)) %>%
-    filter(!is.na(Score)) %>%
-    group_by(!!sym(group_col), Domain) %>%
-    summarize(Mean_Score = mean(Score, na.rm = TRUE), .groups = 'drop')
-  
-  domain_order <- dist_means %>%
-    group_by(Domain) %>%
-    summarize(Overall = mean(Mean_Score)) %>%
-    arrange(Overall) %>%
-    pull(Domain)
-  
-  dist_means <- dist_means %>% mutate(Domain = factor(Domain, levels = domain_order))
-  
-  p <- ggplot(dist_means, aes(x = !!sym(group_col), y = Domain, fill = Mean_Score)) +
-    geom_tile(color = "white") +
-    scale_fill_gradient2(low = "steelblue", mid = "white", high = "indianred", midpoint = 1.5) +
-    theme_minimal(base_size = 14) +
-    theme(axis.text.x = element_text(angle = 30, hjust = 1)) +
-    labs(title = title, x = "Topic Schema", y = "Cultural Domain", fill = "Mean Score")
-  
-  ggsave(filename, plot = p, width = 10, height = 6)
-  cat(paste0("Generated: ", filename, "\n"))
-}
-
-create_heatmap(merged_df, "Good_Ex", "Average Distinction Rating by Domain (Good Taste Examples)", "report/Plots/distinction_domains_good_ex.png")
-create_heatmap(merged_df, "Bad_Ex", "Average Distinction Rating by Domain (Bad Taste Examples)", "report/Plots/distinction_domains_bad_ex.png")
-
-```
-
-## 3.5 Predicted Probabilities for Demographics (Archived)
-```{r, eval=FALSE}
-library(dplyr)
-library(tidyr)
-library(nnet)
-library(car)
-library(effects)
-library(ggplot2)
-library(ggsci)
-
-# Re-run the model for Good Taste Examples specifically
-raw_survey <- read.csv("data/FolkTaste_CleanData.csv")
-if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) raw_survey <- raw_survey[-1, ]
-raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
-
-good_ex_probs <- read.csv("good_taste_example_model_min10/document_topic_probabilities.csv")
-topic_cols <- setdiff(names(good_ex_probs), "original_index")
-good_ex_probs$primary_topic <- apply(good_ex_probs[, topic_cols], 1, function(row) topic_cols[which.max(row)])
-good_ex_probs <- good_ex_probs %>% filter(!primary_topic %in% "-1")
-
-raw_survey$python_index <- 0:(nrow(raw_survey)-1)
-merged_df <- merge(raw_survey, good_ex_probs, by.x="python_index", by.y="original_index")
-
-# Mapping
-topic_names_g <- c("0"="Fashion/Decor", "1"="Refinement/Art", "2"="Best Friends", "3"="Musical Knowledge", "4"="Film/TV", "5"="Obamas/Class", "6"="Partners/Food")
-merged_df$Topic <- as.factor(topic_names_g[as.character(merged_df$primary_topic)])
-
-merged_df$Age <- as.numeric(merged_df$Age)
-merged_df$EducationLevel_Coded <- as.numeric(merged_df$EducationLevel_Coded)
-merged_df$Political <- as.numeric(merged_df$Political)
-
-model_data <- merged_df %>% drop_na(Age, Gender, EducationLevel_Coded, Political) %>% filter(Gender %in% c("A man", "A woman"))
-m_good_ex <- multinom(Topic ~ Age + Gender + EducationLevel_Coded + Political, data = model_data, Hess = TRUE, trace = FALSE)
-
-# Generate effect plots for Age (significant predictor)
-eff_age <- Effect("Age", m_good_ex)
-plot_df <- as.data.frame(eff_age)
-
-# (Visualization code would go here to plot `plot_df` probabilities by age across the 7 topics)
-```
-
-## 3.6 PCA of Distinction Domains and Topic ANOVA
-```{r, eval=FALSE}
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(readr)
-library(stringr)
-library(FactoMineR)
-library(factoextra)
-
-# 1. Load Data
-raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
-if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) {
-  raw_survey <- raw_survey[-1, ]
-}
-raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
-raw_survey$python_index <- 0:(nrow(raw_survey)-1)
-
-# 2. Impute and Run PCA
-dist_cols <- grep("Domains_Distinction1_", names(raw_survey), value = TRUE)
-dist_data <- raw_survey %>% select(all_of(dist_cols)) %>% mutate_all(as.numeric)
-
-# Simple mean imputation to retain all valid rows
-dist_data_imp <- as.data.frame(lapply(dist_data, function(x) ifelse(is.na(x), mean(x, na.rm = TRUE), x)))
-
-# Clean column names for the plot
-names(dist_data_imp) <- str_remove(names(dist_data_imp), "Domains_Distinction1_")
-
-res.pca <- PCA(dist_data_imp, scale.unit = TRUE, graph = FALSE)
-
-dir.create("report/Plots", showWarnings = FALSE)
-p_pca_var <- fviz_pca_var(res.pca, col.var = "contrib",
-             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
-             repel = TRUE, title = "PCA of Cultural Domains Distinction Ratings")
-ggsave("report/Plots/pca_domain_variables.png", plot = p_pca_var, width = 8, height = 6)
-
-# Extract first 3 dimensions
-raw_survey$Dim1 <- res.pca$ind$coord[,1]
-raw_survey$Dim2 <- res.pca$ind$coord[,2]
-raw_survey$Dim3 <- res.pca$ind$coord[,3]
-
-# 3. Load Topics and Merge
-get_primary <- function(path, name) {
-  probs <- read_csv(path, show_col_types = FALSE)
-  tc <- setdiff(names(probs), "original_index")
-  probs[[name]] <- apply(probs[, tc], 1, function(row) tc[which.max(row)])
-  probs %>% select(original_index, !!sym(name))
-}
-
-gd <- get_primary("good_taste_def_model_min5/document_topic_probabilities.csv", "Good_Def")
-bd <- get_primary("bad_taste_def_model_min15/document_topic_probabilities.csv", "Bad_Def")
-ge <- get_primary("good_taste_example_model_min10/document_topic_probabilities.csv", "Good_Ex")
-be <- get_primary("bad_taste_example_model_min10/document_topic_probabilities.csv", "Bad_Ex")
-
-df <- raw_survey %>%
-  left_join(gd, by=c("python_index"="original_index")) %>%
-  left_join(bd, by=c("python_index"="original_index")) %>%
-  left_join(ge, by=c("python_index"="original_index")) %>%
-  left_join(be, by=c("python_index"="original_index"))
-
-df$Good_Def[df$Good_Def == "-1"] <- NA
-df$Bad_Def[df$Bad_Def == "-1"] <- NA
-df$Good_Ex[df$Good_Ex == "-1"] <- NA
-df$Bad_Ex[df$Bad_Ex == "-1"] <- NA
-
-run_anova_for_dim <- function(dim_col) {
-  results <- list()
-  for (model_col in c("Good_Def", "Bad_Def", "Good_Ex", "Bad_Ex")) {
-    test_df <- df %>% select(!!sym(model_col), !!sym(dim_col)) %>% drop_na()
-    if (length(unique(test_df[[model_col]])) > 1) {
-      formula <- as.formula(paste0("`", dim_col, "` ~ ", model_col))
-      aov_res <- aov(formula, data = test_df)
-      s <- summary(aov_res)[[1]]
-      f_val <- s[["F value"]][1]
-      p_val <- s[["Pr(>F)"]][1]
-      results[[model_col]] <- data.frame(Model=model_col, F_val=f_val, p_val=p_val)
-    }
-  }
-  res_df <- bind_rows(results)
-  res_df$Dimension <- dim_col
-  res_df
-}
-
-res_dim1 <- run_anova_for_dim("Dim1")
-res_dim2 <- run_anova_for_dim("Dim2")
-res_dim3 <- run_anova_for_dim("Dim3")
-
-all_res <- bind_rows(res_dim1, res_dim2, res_dim3)
-
-# Format to wide table for LaTeX
-all_res$Format <- sprintf("%.2f (%.3f)", all_res$F_val, all_res$p_val)
-all_res$Format <- ifelse(all_res$p_val < 0.001, paste0(all_res$Format, "$^{***}$"), 
-                  ifelse(all_res$p_val < 0.01, paste0(all_res$Format, "$^{**}$"),
-                  ifelse(all_res$p_val < 0.05, paste0(all_res$Format, "$^{*}$"), all_res$Format)))
-
-wide_res <- all_res %>% select(Dimension, Model, Format) %>%
-  pivot_wider(names_from = Model, values_from = Format)
-
-dir.create("report/Tabs", showWarnings = FALSE)
-latex_str <- "\\begin{table}[htpb]\n\\centering\n\\begin{tabular}{lcccc}\n\\toprule\n"
-latex_str <- paste0(latex_str, "Dimension & Good Taste Def & Bad Taste Def & Good Taste Ex & Bad Taste Ex \\\\\n\\midrule\n")
-for (i in 1:nrow(wide_res)) {
-  latex_str <- paste0(latex_str, sprintf("%s & %s & %s & %s & %s \\\\\n", 
-        wide_res$Dimension[i], wide_res$Good_Def[i], wide_res$Bad_Def[i], wide_res$Good_Ex[i], wide_res$Bad_Ex[i]))
-}
-latex_str <- paste0(latex_str, "\\bottomrule\n\\multicolumn{5}{l}{\\footnotesize $^{*}p<0.05; ^{**}p<0.01; ^{***}p<0.001$} \\\\\n")
-latex_str <- paste0(latex_str, "\\end{tabular}\n\\caption{ANOVA Results: Mean Differences in PCA Dimensions of Distinction Ratings by Topic Schema.}\n\\label{tab:anova_pca}\n\\end{table}\n")
-
-writeLines(latex_str, "report/Tabs/anova_pca.tex")
 ```

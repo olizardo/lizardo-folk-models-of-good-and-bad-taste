@@ -50,8 +50,8 @@ run_multinom <- function(prob_file, name) {
   return(NULL)
 }
 
-res1 <- run_multinom("good_taste_def_model_min5/document_topic_probabilities.csv", "Good Taste Def")
-res2 <- run_multinom("bad_taste_def_model_min15/document_topic_probabilities.csv", "Bad Taste Def")
+res1 <- run_multinom("good_taste_def_model_min10/document_topic_probabilities.csv", "Good Taste Def")
+res2 <- run_multinom("bad_taste_def_model_min5/document_topic_probabilities.csv", "Bad Taste Def")
 
 all_res <- bind_rows(res1, res2)
 all_res <- all_res %>% select(Model, Predictor, `LR Chisq`, Df, `Pr(>Chisq)`)
@@ -69,8 +69,8 @@ writeLines(latex_str, "report/Tabs/wald_models.tex")
 
 
 # 2. Pearson Residual Plots
-good_def_probs <- read_csv("good_taste_def_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
-bad_def_probs <- read_csv("bad_taste_def_model_min15/document_topic_probabilities.csv", show_col_types = FALSE)
+good_def_probs <- read_csv("good_taste_def_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
+bad_def_probs <- read_csv("bad_taste_def_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
 
 get_primary <- function(probs, name) {
   topic_cols <- setdiff(names(probs), "original_index")
