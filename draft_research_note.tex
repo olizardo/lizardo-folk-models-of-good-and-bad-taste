@@ -58,12 +58,14 @@ To analyze these short, unstructured participant-level text responses (hereafter
 The BERTopic models identified distinct cultural models for definitions and examples. For \textbf{Good Taste}, respondents defined the concept primarily through \emph{Similarity/Subjectivity} (homophily), \emph{Aesthetics}, or \emph{Style/Quality}. When asked for concrete examples, the clusters were much richer, featuring groups who cited \emph{Fashion/Decor} (friends and spouses), \emph{Refinement/Art} (creators like Steve Jobs), \emph{Musical Knowledge}, or even specific public figures representing class like \emph{The Obamas}.
 
 \input{report/Tabs/good_taste_summary_table.tex}
-\input{report/Tabs/good_taste_examples_table.tex}
+\input{report/Tabs/good_taste_def_examples_table.tex}
+\input{report/Tabs/good_taste_ex_examples_table.tex}
 
 For \textbf{Bad Taste}, respondents defined it through \emph{Subjective Dislike}, \emph{Poor Choices/Lack of Effort}, \emph{Tackiness/Gaudiness}, \emph{Low-Brow Media}, or \emph{Poor Manners/Immorality}. Concrete examples similarly ranged from \emph{Poor Fashion}, \emph{Derivative Media} (e.g., formulaic filmmakers), to specific instances of \emph{Vulgarity} (often citing Donald Trump).
 
 \input{report/Tabs/bad_taste_summary_table.tex}
-\input{report/Tabs/bad_taste_examples_table.tex}
+\input{report/Tabs/bad_taste_def_examples_table.tex}
+\input{report/Tabs/bad_taste_ex_examples_table.tex}
 
 \begin{figure}[htpb]
     \centering
@@ -109,12 +111,6 @@ For \textbf{Bad Taste}, respondents defined it through \emph{Subjective Dislike}
     \label{fig:bad_keywords_ex}
 \end{figure}
 
-\subsection{Cross-Schema Cultural Logics}
-
-To test whether these cultural models are isolated or form coherent ``logics,'' I cross-tabulated respondents' primary cultural models across the four questions. The associations are highly significant. For instance, a respondent's definition of Good Taste strongly predicts their definition of Bad Taste ($\chi^2 = 111.60, p < 0.001$). Individuals who define good taste as subjective similarity overwhelmingly define bad taste simply as subjective dislike. 
-
-Similarly, the examples respondents choose are highly correlated ($\chi^2 = 99.01, p < 0.001$). Respondents who cite a friend's ``Fashion/Decor'' as an example of good taste are highly likely to cite ``Poor Fashion'' as an example of bad taste. Respondents who point to ``Refinement/Art'' for good taste are much more likely to point to ``Derivative Media'' for bad taste. This symmetry indicates that people deploy consistent criteria---whether aesthetic, material, or subjective---across moral valences.
-
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.48\textwidth]{report/Plots/ca_good_taste.png}
@@ -131,31 +127,48 @@ Similarly, the examples respondents choose are highly correlated ($\chi^2 = 99.0
     \label{fig:ca_schemas_ex}
 \end{figure}
 
+\subsection{Cross-Schema Cultural Logics}
+
+To test whether these cultural models are isolated or form coherent ``logics,'' I cross-tabulated respondents' primary cultural models across the four questions. The associations are highly significant. For instance, a respondent's definition of Good Taste strongly predicts their definition of Bad Taste ($\chi^2 = 111.60, p < 0.001$). Individuals who define good taste as subjective similarity overwhelmingly define bad taste simply as subjective dislike. 
+
+Similarly, the examples respondents choose are highly correlated ($\chi^2 = 99.01, p < 0.001$). Respondents who cite a friend's ``Fashion/Decor'' as an example of good taste are highly likely to cite ``Poor Fashion'' as an example of bad taste. Respondents who point to ``Refinement/Art'' for good taste are much more likely to point to ``Derivative Media'' for bad taste. This symmetry indicates that people deploy consistent criteria---whether aesthetic, material, or subjective---across moral valences.
+
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.8\textwidth]{report/Plots/schema_correlation.png}
-    \caption{Pearson Residuals of Schema Correlation}
-    \label{fig:schema_corr}
+    \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Good_Def_Bad_Def.png}
+    \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Good_Ex_Bad_Ex.png}
+    \caption{Pearson Residuals of Schema Correlation for Definitions (Left) and Examples (Right)}
+    \label{fig:schema_corr_main}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Good_Def_Good_Ex.png}
+    \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Bad_Def_Bad_Ex.png}
+    \caption{Pearson Residuals of Schema Correlation Between Definitions and Examples}
+    \label{fig:schema_corr_cross}
 \end{figure}
 
 \subsection{Demographics}
 
+To examine whether cultural taste schemas are patterned by socio-demographic factors, I fit multinomial logistic regression models predicting respondents' primary topic schema (across all four models) using their Age, Gender, Education, and Political Orientation. The Wald $\chi^2$ tests are presented below.
+
 \input{report/Tabs/wald_four_models.tex}
 
-\begin{figure}[htpb]
-    \centering
-    \includegraphics[width=0.48\textwidth]{report/Plots/demographics_good_taste_age.png}
-    \includegraphics[width=0.48\textwidth]{report/Plots/demographics_good_taste_political.png}
-    \caption{Predicted Probability of Good Taste Schemas by Age and Political Views}
-    \label{fig:demographics_good}
-\end{figure}
+\subsection{Domain Distinction PCA and ANOVA}
+
+To analyze respondents' propensity to draw cultural boundaries across domains without testing 19 individual domains simultaneously, I conducted a Principal Component Analysis (PCA) on the distinction ratings. The first dimension captures a general propensity to draw distinctions across all domains (as all variables load positively). The subsequent dimensions capture domain-specific clusters (e.g., separating traditional high-brow arts from pop culture or recreational activities).
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.5\textwidth]{report/Plots/demographics_bad_taste_age.png}
-    \caption{Predicted Probability of Bad Taste Schemas by Age}
-    \label{fig:demographics_bad}
+    \includegraphics[width=0.8\textwidth]{report/Plots/pca_domain_variables.png}
+    \caption{Correlation Circle of Distinction Domains with Principal Components}
+    \label{fig:pca_vars}
 \end{figure}
+
+I extracted the individual respondent scores for the first three PCA dimensions and ran One-Way ANOVAs to test whether mean scores differ significantly depending on the respondent's topic schema assignment. The results demonstrate how different schemas of taste correspond to distinct configurations of cultural boundary-drawing.
+
+\input{report/Tabs/anova_pca.tex}
 
 \subsection{Domain Distinction Heatmaps}
 
@@ -163,18 +176,34 @@ Respondents were also asked to rate whether it ``makes sense'' to distinguish go
 
 Visualizing these scores as heatmaps across our topic clusters reveals several structural universals: regardless of the schema, respondents highly agree that taste distinctions make sense for \textbf{Clothing, Interior Design, Movies, Music, and Paintings}, while rejecting taste distinctions for \textbf{Car Races and Wrestling}.
 
+\input{report/Tabs/anova_distinction.tex}
+
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains.png}
-    \caption{Average Distinction Rating by Domain and Good Taste Schema}
-    \label{fig:distinction_good}
+    \caption{Average Distinction Rating by Domain and Good Taste Schema (Definitions)}
+    \label{fig:distinction_good_def}
 \end{figure}
 
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains_bad.png}
-    \caption{Average Distinction Rating by Domain and Bad Taste Schema}
-    \label{fig:distinction_bad}
+    \caption{Average Distinction Rating by Domain and Bad Taste Schema (Definitions)}
+    \label{fig:distinction_bad_def}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains_good_ex.png}
+    \caption{Average Distinction Rating by Domain and Good Taste Schema (Examples)}
+    \label{fig:distinction_good_ex}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains_bad_ex.png}
+    \caption{Average Distinction Rating by Domain and Bad Taste Schema (Examples)}
+    \label{fig:distinction_bad_ex}
 \end{figure}
 
 However, there is critical variance in boundary intensity. Respondents whose examples of good taste clustered around \emph{The Obamas/Class}, and whose bad taste clustered around \emph{Trump/Vulgarity}, reported much higher propensity to draw taste distinctions across almost \emph{all} domains, including peripheral ones like Food and Literature. This suggests that when folk models of taste become moralized or politicized, the boundaries of cultural distinction harden and expand across everyday life.
