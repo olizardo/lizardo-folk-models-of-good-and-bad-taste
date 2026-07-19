@@ -24,12 +24,29 @@ if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) {
   raw_survey <- raw_survey[-1, ]
 }
 raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
+raw_survey$python_index <- 0:(nrow(raw_survey)-1)
+
 raw_survey$Age <- as.numeric(raw_survey$Age)
-raw_survey$EducationLevel_Coded <- as.numeric(raw_survey$EducationLevel_Coded)
+raw_survey$EducationLevel_Coded <- as.factor(raw_survey$EducationLevel_Coded)
+raw_survey$ParentEducation_Coded <- as.factor(raw_survey$ParentEducation_Coded)
 raw_survey$Political <- as.numeric(raw_survey$Political)
 
+# Impute unrealistic ages using a linear model based on other demographics
+imp_data <- raw_survey %>% select(python_index, Age, Gender, EducationLevel_Coded, ParentEducation_Coded, Political)
+imp_data$Age[imp_data$Age < 18] <- NA
+age_mod <- lm(Age ~ Gender + EducationLevel_Coded + ParentEducation_Coded + Political, data = imp_data)
+# get the python_indices of the rows that need imputation
+to_impute_idx <- imp_data$python_index[is.na(imp_data$Age)]
+pred_ages <- predict(age_mod, newdata = imp_data[is.na(imp_data$Age), ])
+
+# match the predictions to the rows safely
+for (i in seq_along(to_impute_idx)) {
+  raw_survey$Age[raw_survey$python_index == to_impute_idx[i]] <- pred_ages[i]
+}
+
+
 # ADD python_index globally since it's used multiple times
-raw_survey$python_index <- 0:(nrow(raw_survey)-1)
+# (already added above)
 
 run_multinom <- function(prob_file, name) {
   probs <- read_csv(prob_file, show_col_types = FALSE)
@@ -41,11 +58,11 @@ run_multinom <- function(prob_file, name) {
   merged_df <- merge(raw_survey, probs_valid, by.x="python_index", by.y="original_index")
   merged_df$primary_topic <- as.factor(merged_df$primary_topic)
   
-  model_data <- merged_df %>% drop_na(Age, Gender, EducationLevel_Coded, Political) %>% filter(Gender %in% c("A man", "A woman"))
+  model_data <- merged_df %>% drop_na(Age, Gender, EducationLevel_Coded, ParentEducation_Coded, Political) %>% filter(Gender %in% c("A man", "A woman"))
   
   if (length(unique(model_data$primary_topic)) > 1) {
     model_data$primary_topic <- relevel(model_data$primary_topic, ref=names(sort(table(model_data$primary_topic), decreasing=TRUE)[1]))
-    m <- multinom(primary_topic ~ Age + Gender + EducationLevel_Coded + Political, data=model_data, trace=FALSE)
+    m <- multinom(primary_topic ~ poly(Age, 2) + Gender + EducationLevel_Coded + ParentEducation_Coded + Political, data=model_data, trace=FALSE)
     w <- Anova(m, type="III")
     
     df <- as.data.frame(w)
@@ -63,14 +80,14 @@ all_res <- bind_rows(res1, res2)
 all_res <- all_res %>% select(Model, Predictor, `LR Chisq`, Df, `Pr(>Chisq)`)
 
 latex_str <- "\\begin{table}[htpb]\n\\centering\n\\resizebox{\\textwidth}{!}{\n\\begin{tabular}{llrrr}\n\\toprule\n"
-latex_str <- paste0(latex_str, "Model & Predictor & Wald $\\chi^2$ & Df & $p$-value \\\\\n\\midrule\n")
+latex_str <- paste0(latex_str, "Model & Predictor & LR $\\chi^2$ & Df & $p$-value \\\\\n\\midrule\n")
 for (i in 1:nrow(all_res)) {
   pval <- all_res$`Pr(>Chisq)`[i]
   pval_str <- if(pval < 0.001) "< 0.001" else sprintf("%.4f", pval)
   latex_str <- paste0(latex_str, sprintf("%s & %s & %.2f & %d & %s \\\\\n", 
                                          all_res$Model[i], gsub("_", "\\\\_", all_res$Predictor[i]), all_res$`LR Chisq`[i], all_res$Df[i], pval_str))
 }
-latex_str <- paste0(latex_str, "\\bottomrule\n\\end{tabular}\n}\n\\caption{Multinomial Logistic Regression Wald Tests for Topic Predictors}\n\\label{tab:wald_models}\n\\end{table}\n")
+latex_str <- paste0(latex_str, "\\bottomrule\n\\end{tabular}\n}\n\\caption{Multinomial Logistic Regression Likelihood Ratio Tests for Topic Predictors}\n\\label{tab:wald_models}\n\\end{table}\n")
 writeLines(latex_str, "report/Tabs/wald_models.tex")
 
 
@@ -105,10 +122,14 @@ if (nrow(tb) > 1 && ncol(tb) > 1) {
   
   p <- ggplot(residuals_df, aes(x = Var1, y = Var2, fill = Residual)) +
     geom_tile(color = "white") +
-    geom_text(aes(label = round(Residual, 2)), color = "black", size = 4) +
+    geom_text(aes(label = round(Residual, 2)), color = "black", size = 8, fontface="bold") +
     scale_fill_gradient2(low = "indianred", mid = "white", high = "steelblue", midpoint = 0) +
     scale_x_discrete(position = "top") +
-    theme_minimal(base_size = 12) +
+    theme_minimal(base_size = 14) +
+    theme(
+      axis.text.x = element_text(size = 12, face = "bold"),
+      axis.text.y = element_text(size = 12, face = "bold")
+    ) +
     labs(
       title = "Pearson Residuals: Good Def vs Bad Def",
       x = "Good Taste Def",

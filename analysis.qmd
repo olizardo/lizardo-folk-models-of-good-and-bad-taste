@@ -17,7 +17,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer, ENGLISH_STOP_WORDS
 from sklearn.decomposition import NMF
 
 def evaluate_nmf(docs, name, min_k=2, max_k=10):
-    domain_stops = ["don", "dont", "t", "didn", "didnt", "doesn", "doesnt", "ve", "ll", "re", "m", "isn", "isnt", "aren", "arent", "wasn", "wasnt", "weren", "werent", "haven", "havent", "hasn", "hasnt", "hadn", "hadnt", "won", "wont", "wouldn", "wouldnt", "can", "cant", "couldn", "couldnt", "shouldn", "shouldnt", "mightn", "mightnt", "mustn", "mustnt", "do", "does", "did", "doing", "done", "don't", "doesn't", "didn't", "taste", "good", "bad", "people", "person", "think", "things", "just", "like", "mean", "means"]
+    domain_stops = ["taste", "good", "bad", "people", "person", "think", "things", "just", "like", "mean", "means"]
     custom_stop_words = list(ENGLISH_STOP_WORDS.union(domain_stops))
     
     tfidf_vectorizer = TfidfVectorizer(stop_words=custom_stop_words, max_df=0.95, min_df=2)
@@ -36,7 +36,7 @@ def evaluate_nmf(docs, name, min_k=2, max_k=10):
     res_df.to_csv(f'report/Tabs/nmf_reconstruction_{name}.csv', index=False)
 
 def run_nmf_k4(docs, indices, model_prefix):
-    domain_stops = ["don", "dont", "t", "didn", "didnt", "doesn", "doesnt", "ve", "ll", "re", "m", "isn", "isnt", "aren", "arent", "wasn", "wasnt", "weren", "werent", "haven", "havent", "hasn", "hasnt", "hadn", "hadnt", "won", "wont", "wouldn", "wouldnt", "can", "cant", "couldn", "couldnt", "shouldn", "shouldnt", "mightn", "mightnt", "mustn", "mustnt", "do", "does", "did", "doing", "done", "don't", "doesn't", "didn't", "taste", "good", "bad", "people", "person", "think", "things", "just", "like", "mean", "means"]
+    domain_stops = ["taste", "good", "bad", "people", "person", "think", "things", "just", "like", "mean", "means"]
     custom_stop_words = list(ENGLISH_STOP_WORDS.union(domain_stops))
     
     tfidf_vectorizer = TfidfVectorizer(stop_words=custom_stop_words, max_df=0.95, min_df=2)
@@ -236,14 +236,14 @@ all_res <- bind_rows(res1, res2)
 all_res <- all_res %>% select(Model, Predictor, `LR Chisq`, Df, `Pr(>Chisq)`)
 
 latex_str <- "\\begin{table}[htpb]\n\\centering\n\\resizebox{\\textwidth}{!}{\n\\begin{tabular}{llrrr}\n\\toprule\n"
-latex_str <- paste0(latex_str, "Model & Predictor & Wald $\\chi^2$ & Df & $p$-value \\\\\n\\midrule\n")
+latex_str <- paste0(latex_str, "Model & Predictor & LR $\\chi^2$ & Df & $p$-value \\\\\n\\midrule\n")
 for (i in 1:nrow(all_res)) {
   pval <- all_res$`Pr(>Chisq)`[i]
   pval_str <- if(pval < 0.001) "< 0.001" else sprintf("%.4f", pval)
   latex_str <- paste0(latex_str, sprintf("%s & %s & %.2f & %d & %s \\\\\n", 
                                          all_res$Model[i], gsub("_", "\\\\_", all_res$Predictor[i]), all_res$`LR Chisq`[i], all_res$Df[i], pval_str))
 }
-latex_str <- paste0(latex_str, "\\bottomrule\n\\end{tabular}\n}\n\\caption{Multinomial Logistic Regression Wald Tests for Topic Predictors}\n\\label{tab:wald_models}\n\\end{table}\n")
+latex_str <- paste0(latex_str, "\\bottomrule\n\\end{tabular}\n}\n\\caption{Multinomial Logistic Regression Likelihood Ratio Tests for Topic Predictors}\n\\label{tab:wald_models}\n\\end{table}\n")
 writeLines(latex_str, "report/Tabs/wald_models.tex")
 
 
@@ -278,10 +278,14 @@ if (nrow(tb) > 1 && ncol(tb) > 1) {
   
   p <- ggplot(residuals_df, aes(x = Var1, y = Var2, fill = Residual)) +
     geom_tile(color = "white") +
-    geom_text(aes(label = round(Residual, 2)), color = "black", size = 4) +
+    geom_text(aes(label = round(Residual, 2)), color = "black", size = 8, fontface="bold") +
     scale_fill_gradient2(low = "indianred", mid = "white", high = "steelblue", midpoint = 0) +
     scale_x_discrete(position = "top") +
-    theme_minimal(base_size = 12) +
+    theme_minimal(base_size = 14) +
+    theme(
+      axis.text.x = element_text(size = 12, face = "bold"),
+      axis.text.y = element_text(size = 12, face = "bold")
+    ) +
     labs(
       title = "Pearson Residuals: Good Def vs Bad Def",
       x = "Good Taste Def",
@@ -594,11 +598,12 @@ for (c in combos) {
     
     p <- ggplot(r_df, aes(x = Var1, y = Var2, fill = Residual)) +
       geom_tile(color = "white") +
-      geom_text(aes(label = round(Residual, 2)), color = "black", size = 4) +
+      geom_text(aes(label = round(Residual, 2)), color = "black", size = 12, fontface = "bold") +
       scale_fill_gradient2(low = "indianred", mid = "white", high = "steelblue", midpoint = 0) +
       scale_x_discrete(position = "top") +
-      theme_minimal(base_size = 12) +
-      theme(axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 0)) +
+      theme_minimal(base_size = 14) +
+      theme(axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 0, size = 12, face = "bold"),
+            axis.text.y = element_text(size = 12, face = "bold")) +
       labs(
         title = sprintf("Pearson Residuals: %s vs %s", str_replace(v1, "_", " "), str_replace(v2, "_", " ")),
         x = str_replace(v1, "_", " "),
