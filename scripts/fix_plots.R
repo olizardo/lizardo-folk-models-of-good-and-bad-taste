@@ -1,3 +1,4 @@
+library(tidytext)
 library(dplyr)
 library(ggplot2)
 library(readr)
@@ -17,26 +18,52 @@ plot_topics_and_keywords <- function(model_dir, title_prefix, color, prefix) {
   info <- read_csv(file.path(model_dir, "topic_info.csv"), show_col_types = FALSE) %>% filter(Topic != -1)
   
   # Format names
-  info$NameClean <- str_replace(info$Name, "^\\d+_", "")
+  info$NameClean <- str_replace_all(str_replace(info$Name, "^\\d+_", ""), "_", " ")
+  info$NameClean <- str_to_title(info$NameClean)
   
   p_topics <- ggplot(info, aes(x = reorder(NameClean, Count), y = Count)) +
     geom_bar(stat = "identity", fill = color) +
     coord_flip() +
     theme_minimal(base_size = 14) +
-    labs(title = paste(title_prefix, "(Definitions)"), x = "Topic Name", y = "Count")
+    labs(title = paste(title_prefix, "(Definitions)"), x = "Cultural Model", y = "Count")
   ggsave(sprintf("report/Plots/%s_topics.png", prefix), plot = p_topics, width = 8, height = 6)
   
-  # 2. Keywords (from topic_info.csv Representation column)
+  # 2. Keywords
   clean_keywords <- function(rep_str) {
-    # It's a string like ['word1', 'word2', ...]
     words <- str_extract_all(rep_str, "'([^']+)'")[[1]]
     words <- str_replace_all(words, "'", "")
     return(words)
   }
   
-  # But we don't have scores here. Let's skip the keyword plot or just show the top words without scores.
-  # The original used topics.json which BERTopic creates. But run_topic_modeling.py didn't save topics.json!
-  # It just saved the safetensors. The research note references `good_taste_keywords.png`.
+  word_list <- list()
+  for (i in 1:nrow(info)) {
+    words <- clean_keywords(info$Representation[i])
+    # Give them a dummy score decreasing from 10 to 1 for plotting order
+    scores <- seq(length(words), 1, length.out = length(words))
+    df_words <- data.frame(
+      Topic = info$NameClean[i],
+      Word = words,
+      Score = scores
+    )
+    word_list[[i]] <- df_words
+  }
+  
+  words_df <- bind_rows(word_list)
+  
+  p_keywords <- ggplot(words_df, aes(x = reorder_within(Word, Score, Topic), y = Score)) +
+    geom_bar(stat = "identity", fill = color, show.legend = FALSE) +
+    scale_x_reordered() +
+    coord_flip() +
+    facet_wrap(~ Topic, scales = "free_y") +
+    theme_minimal(base_size = 12) +
+    theme(
+      axis.title.x = element_text(margin = margin(t = 10)),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank()
+    ) +
+    labs(title = paste("Top Keywords per", title_prefix, "Cultural Model"), x = "Keyword", y = "Relative Prominence (NMF Weight)")
+  
+  ggsave(sprintf("report/Plots/%s_keywords.png", prefix), plot = p_keywords, width = 10, height = 6)
 }
 plot_topics_and_keywords(good_model_dir, "Good Taste", "steelblue", "good_taste")
 plot_topics_and_keywords(bad_model_dir, "Bad Taste", "indianred", "bad_taste")
@@ -46,16 +73,24 @@ library(FactoMineR)
 library(factoextra)
 
 plot_ca <- function(model_dir, title_prefix, prefix) {
+  # Get names for plotting
+  info <- read_csv(file.path(model_dir, "topic_info.csv"), show_col_types = FALSE)
+  names_clean <- str_replace_all(str_replace(info$Name, "^\\d+_", ""), "_", " ")
+  names_title <- str_to_title(names_clean)
+  map <- setNames(names_title, as.character(info$Topic))
+  
   probs <- read_csv(file.path(model_dir, "document_topic_probabilities.csv"), show_col_types = FALSE)
   probs_clean <- probs %>% select(-original_index)
-  colnames(probs_clean) <- paste("Topic", 0:(ncol(probs_clean)-1))
+  colnames(probs_clean) <- unname(map[as.character(0:(ncol(probs_clean)-1))])
   ca_data <- probs_clean + 1e-6
-  assigned <- as.factor(paste("Topic", apply(probs_clean, 1, which.max) - 1))
+  assigned_raw <- as.character(apply(probs_clean, 1, which.max) - 1)
+  assigned <- as.factor(unname(map[assigned_raw]))
   
   res.ca <- CA(ca_data, graph = FALSE)
   p_ca <- fviz_ca_biplot(res.ca, geom.row = "point", col.row = assigned, col.col = "black", 
-                         title = paste("CA:", title_prefix, "Taste Schemas"), palette = "jco", legend.title = "Assigned Topic")
-  ggsave(sprintf("report/Plots/%s.png", prefix), plot = p_ca, width = 8, height = 6)
+                         title = paste("CA:", title_prefix, "Taste Cultural Models"), palette = "jco", legend.title = "Assigned Cultural Model")
+  p_ca <- p_ca + theme(legend.position = "bottom", legend.direction="vertical")
+  ggsave(sprintf("report/Plots/%s.png", prefix), plot = p_ca, width = 10, height = 7)
 }
 plot_ca(good_model_dir, "Good", "ca_good_taste")
 plot_ca(bad_model_dir, "Bad", "ca_bad_taste")
@@ -167,11 +202,12 @@ create_heatmap <- function(data, group_col, title, filename) {
   
   p <- ggplot(dist_means, aes(x = !!sym(group_col), y = Domain, fill = Mean_Score)) +
     geom_tile(color = "white") +
+    geom_text(aes(label = sprintf("%.2f", Mean_Score)), color = "black", size = 4) +
     scale_fill_gradient2(low = "steelblue", mid = "white", high = "indianred", midpoint = 1.5) +
     scale_x_discrete(position = "top") +
     theme_minimal(base_size = 14) +
     theme(axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 0)) +
-    labs(title = title, x = "Topic Schema", y = "Cultural Domain", fill = "Mean Score")
+    labs(title = title, x = "Cultural Model", y = "Cultural Domain", fill = "Mean Score")
   
   ggsave(filename, plot = p, width = 11, height = 7)
 }

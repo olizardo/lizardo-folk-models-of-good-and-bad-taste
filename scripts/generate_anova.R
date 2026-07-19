@@ -86,6 +86,6 @@ for (i in 1:nrow(combined)) {
 }
 
 latex_str <- paste0(latex_str, "\\bottomrule\n\\multicolumn{3}{l}{\\footnotesize $^{*}p<0.05; ^{**}p<0.01; ^{***}p<0.001$ (Benjamini-Hochberg FDR corrected)} \\\\\n")
-latex_str <- paste0(latex_str, "\\end{tabular}\n}\n\\caption{One-Way ANOVA Results: Mean Differences in Domain Distinction Ratings by Topic Schema. Values are $F$-statistics with FDR-adjusted $p$-values in parentheses.}\n\\label{tab:anova_distinction}\n\\end{table}\n")
+latex_str <- paste0(latex_str, "\\end{tabular}\n}\n\\caption{One-Way ANOVA Results: Mean Differences in Domain Distinction Ratings by Taste Cultural Model. Values are $F$-statistics with FDR-adjusted $p$-values in parentheses.}\n\\label{tab:anova_distinction}\n\\end{table}\n")
 
 writeLines(latex_str, "report/Tabs/anova_distinction.tex")

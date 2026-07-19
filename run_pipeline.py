@@ -26,17 +26,22 @@ __CHI_SQUARE__
 
 # 3. Demographic Analysis and Visualizations (R)
 
-## 3.1 Main R Analyses (Wald Tests, Demographics, PCA)
+## 3.1 Main R Analyses (Wald Tests, Demographics)
 ```{r, eval=FALSE}
 __R_ANALYSES__
 ```
 
-## 3.2 ANOVA for Distinction Domains
+## 3.2 Domain Count ANOVA
+```{r, eval=FALSE}
+__DOMAIN_COUNT__
+```
+
+## 3.3 ANOVA for Distinction Domains
 ```{r, eval=FALSE}
 __ANOVA__
 ```
 
-## 3.3 Pearson Residuals and Heatmaps
+## 3.4 Pearson Residuals and Heatmaps
 ```{r, eval=FALSE}
 __PLOTS__
 ```
@@ -57,6 +62,7 @@ __TABLES__
     content = content.replace("__TOPIC_MODELING__", read_file("scripts/run_topic_modeling.py"))
     content = content.replace("__CHI_SQUARE__", read_file("scripts/run_chi_square.py"))
     content = content.replace("__R_ANALYSES__", read_file("scripts/run_r_analyses.R"))
+    content = content.replace("__DOMAIN_COUNT__", read_file("scripts/domain_count_anova.R"))
     content = content.replace("__ANOVA__", read_file("scripts/generate_anova.R"))
     content = content.replace("__PLOTS__", read_file("scripts/fix_plots.R"))
     content = content.replace("__TABLES__", read_file("scripts/generate_tables.py"))
@@ -67,7 +73,8 @@ __TABLES__
 steps = [
     ("Running Topic Modeling...", ["python", "scripts/run_topic_modeling.py"]),
     ("Running Chi-Square Tests...", ["python", "scripts/run_chi_square.py"]),
-    ("Running R Analyses (Multinomial, Demographics, PCA)...", ["C:/Program Files/R/R-4.5.3/bin/Rscript.exe", "scripts/run_r_analyses.R"]),
+    ("Running R Analyses (Multinomial, Demographics)...", ["C:/Program Files/R/R-4.5.3/bin/Rscript.exe", "scripts/run_r_analyses.R"]),
+    ("Running Domain Count ANOVA...", ["C:/Program Files/R/R-4.5.3/bin/Rscript.exe", "scripts/domain_count_anova.R"]),
     ("Generating ANOVA Tables...", ["C:/Program Files/R/R-4.5.3/bin/Rscript.exe", "scripts/generate_anova.R"]),
     ("Generating Plots and Heatmaps...", ["C:/Program Files/R/R-4.5.3/bin/Rscript.exe", "scripts/fix_plots.R"]),
     ("Generating TeX Summary Tables...", ["python", "scripts/generate_tables.py"]),

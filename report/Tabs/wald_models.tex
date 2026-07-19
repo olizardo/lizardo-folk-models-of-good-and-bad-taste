@@ -1,23 +1,21 @@
 \begin{table}[htpb]
 \centering
-\resizebox{\textwidth}{!}{
 \begin{tabular}{llrrr}
 \toprule
 Model & Predictor & LR $\chi^2$ & Df & $p$-value \\
 \midrule
-Good Taste Def & poly(Age, 2) & 16.46 & 6 & 0.0115 \\
+Good Taste Def & Age (Polynomial) & 16.46 & 6 & 0.0115 \\
 Good Taste Def & Gender & 15.65 & 3 & 0.0013 \\
-Good Taste Def & EducationLevel\_Coded & 38.16 & 12 & < 0.001 \\
-Good Taste Def & ParentEducation\_Coded & 29.23 & 12 & 0.0036 \\
-Good Taste Def & Political & 24.19 & 3 & < 0.001 \\
-Bad Taste Def & poly(Age, 2) & 14.96 & 6 & 0.0206 \\
+Good Taste Def & Education Level & 38.16 & 12 & $<$ 0.001 \\
+Good Taste Def & Parent's Education & 29.23 & 12 & 0.0036 \\
+Good Taste Def & Political Ideology & 24.19 & 3 & $<$ 0.001 \\
+Bad Taste Def & Age (Polynomial) & 14.96 & 6 & 0.0206 \\
 Bad Taste Def & Gender & 8.05 & 3 & 0.0451 \\
-Bad Taste Def & EducationLevel\_Coded & 26.32 & 12 & 0.0097 \\
-Bad Taste Def & ParentEducation\_Coded & 21.14 & 12 & 0.0484 \\
-Bad Taste Def & Political & 6.25 & 3 & 0.1001 \\
+Bad Taste Def & Education Level & 26.32 & 12 & 0.0097 \\
+Bad Taste Def & Parent's Education & 21.14 & 12 & 0.0484 \\
+Bad Taste Def & Political Ideology & 6.25 & 3 & 0.1001 \\
 \bottomrule
 \end{tabular}
-}
 \caption{Multinomial Logistic Regression Likelihood Ratio Tests for Topic Predictors}
 \label{tab:wald_models}
 \end{table}

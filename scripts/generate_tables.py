@@ -10,8 +10,8 @@ def make_summary_table(csv_path, out_tex, label):
     df = pd.read_csv(csv_path)
     df = df[df['Topic'] != -1]
     
-    # Clean the name provided by BERTopic (e.g. "0_taste_good" -> "Taste Good")
-    df['Name'] = df['Name'].apply(lambda x: "_".join(x.split('_')[1:]).replace('_', ' ').title())
+    # Clean the name provided by BERTopic/NMF (e.g. "0_taste_good" -> "Taste-Good")
+    df['Name'] = df['Name'].apply(lambda x: "-".join(x.split('_')[1:]).title())
     
     # Clean representation array string
     def get_words(r):
