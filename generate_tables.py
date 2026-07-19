@@ -38,6 +38,6 @@ def make_summary_table(csv_path, out_tex, label):
     with open(out_tex, "w") as f:
         f.write(tex_str)
 
-make_summary_table(f"{config['good_model']}/topic_info.csv", "report/Tabs/good_taste_def_examples_table.tex", "good_taste_def_summary")
-make_summary_table(f"{config['bad_model']}/topic_info.csv", "report/Tabs/bad_taste_def_examples_table.tex", "bad_taste_def_summary")
+make_summary_table(f"{config['good_model']}/topic_info.csv", "report/Tabs/good_taste_def_summary_table.tex", "good_taste_def_summary")
+make_summary_table(f"{config['bad_model']}/topic_info.csv", "report/Tabs/bad_taste_def_summary_table.tex", "bad_taste_def_summary")
 print("Successfully generated summary tables from config.")

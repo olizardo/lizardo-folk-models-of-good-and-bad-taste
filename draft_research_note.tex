@@ -50,15 +50,27 @@ This research note is guided by three primary research questions:
 
 To analyze these short, unstructured participant-level text responses (hereafter ``documents''), I used \textbf{BERTopic}. During preprocessing, domain-specific survey artifacts (e.g., ``good,'' ``bad,'' ``taste,'' ``don't'') were removed from each document because these words---mostly paraphrasing the original question---were overwhelmingly common across documents and thus did little to differentiate them. We also remove common English stop words from each document (e.g., the, it, is, do, etc.). The algorithm was optimized for each of the two text fields independently to prevent vocabulary blurring. Finally, cross-tabulations and domain-distinction Likert scale heatmaps were generated to examine the coherence of these classifications.
 
+\subsection{Parameter Selection and Model Robustness}
+To ensure our topic solutions were empirically robust, we evaluated BERTopic models across a range of \texttt{min\_topic\_size} parameters (5, 10, 15, and 20). The optimal configuration balances two competing demands: maximizing the granularity of semantic clusters (number of distinct topics) while minimizing the number of documents relegated to the outlier bin (Topic -1). As shown in Figure \ref{fig:robustness_check}, the 3-topic solution for Good Taste (at size 10) and the 8-topic solution for Bad Taste (at size 5) proved optimal. For Good Taste, requiring larger topic sizes rapidly collapses the model into two generic topics, whereas for Bad Taste, forcing a minimum size of 10 collapses 8 distinct schemas into a binary, stripping away important qualitative variation.
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{report/Plots/robustness_check_def.png}
+    \caption{BERTopic Parameter Robustness: Trade-off between Number of Topics and Outlier Documents across \texttt{min\_topic\_size}}
+    \label{fig:robustness_check}
+\end{figure}
+
 \section{Results}
 
 \subsection{Cultural Models of Taste}
 
-\input{report/Tabs/good_taste_def_examples_table.tex}
+\input{report/Tabs/good_taste_def_summary_table.tex}
+\input{report/Tabs/good_taste_rep_docs.tex}
 
-For \textbf{Bad Taste}, respondents defined it through eight distinct schemas, including \emph{Dislike/Subjective}, \emph{Poor Choices}, \emph{Tacky/Loud}, \emph{Low-Brow Media}, \emph{Ugly Style}, \emph{Low Quality}, \emph{Immoral Art}, and \emph{Poor Manners}.
+For \textbf{Bad Taste}, respondents defined it through eight distinct cultural models, including \emph{Dislike/Subjective}, \emph{Poor Choices}, \emph{Tacky/Loud}, \emph{Low-Brow Media}, \emph{Ugly Style}, \emph{Low Quality}, \emph{Immoral Art}, and \emph{Poor Manners}.
 
-\input{report/Tabs/bad_taste_def_examples_table.tex}
+\input{report/Tabs/bad_taste_def_summary_table.tex}
+\input{report/Tabs/bad_taste_rep_docs.tex}
 
 \begin{figure}[htpb]
     \centering
@@ -72,11 +84,11 @@ For \textbf{Bad Taste}, respondents defined it through eight distinct schemas, i
     \centering
     \includegraphics[width=0.48\textwidth]{report/Plots/ca_good_taste.png}
     \includegraphics[width=0.48\textwidth]{report/Plots/ca_bad_taste.png}
-    \caption{Correspondence Analysis of Taste Schemas (Definitions)}
+    \caption{Correspondence Analysis of Taste Cultural Models (Definitions)}
     \label{fig:ca_schemas_def}
 \end{figure}
 
-\subsection{Cross-Schema Cultural Logics}
+\subsection{Cross-Cultural Model Logics}
 
 To test whether these cultural models are isolated or form coherent ``logics,'' I cross-tabulated respondents' primary cultural models across the two questions. The associations are highly significant. For instance, a respondent's definition of Good Taste strongly predicts their definition of Bad Taste ($\chi^2 = 115.52, p < 0.001$). Individuals who define good taste as subjective similarity overwhelmingly define bad taste simply as subjective dislike. 
 
@@ -89,44 +101,72 @@ To test whether these cultural models are isolated or form coherent ``logics,'' 
 
 \subsection{Demographics}
 
-To examine whether cultural taste schemas are patterned by socio-demographic factors, I fit multinomial logistic regression models predicting respondents' primary topic schema (across both models) using their Age, Gender, Education, and Political Orientation. The Wald $\chi^2$ tests are presented below.
+To examine whether taste cultural models are patterned by socio-demographic factors, I fit multinomial logistic regression models predicting respondents' primary topic cultural model (across both models) using their Age, Gender, Education, and Political Orientation. The Wald $\chi^2$ tests are presented below.
 
 \input{report/Tabs/wald_models.tex}
 
 \subsection{Domain Distinction PCA and ANOVA}
 
-To analyze respondents' propensity to draw cultural boundaries across domains without testing 19 individual domains simultaneously, I conducted a Principal Component Analysis (PCA) on the distinction ratings. The first dimension captures a general propensity to draw distinctions across all domains (as all variables load positively). The subsequent dimensions capture domain-specific clusters (e.g., separating traditional high-brow arts from pop culture or recreational activities).
+To analyze respondents' propensity to draw cultural boundaries across domains without testing 19 individual domains simultaneously, I conducted a Principal Component Analysis (PCA) on the distinction ratings. I ran this for four different blocks of survey items: \emph{Distinction 1}, \emph{Distinction 2}, \emph{Importance}, and \emph{Knowledge}.
+
+The first dimension captures a general propensity to draw distinctions across all domains (as all variables load positively). The subsequent dimensions capture domain-specific clusters (e.g., separating traditional high-brow arts from pop culture or recreational activities).
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.8\textwidth]{report/Plots/pca_domain_variables.png}
-    \caption{Correlation Circle of Distinction Domains with Principal Components}
-    \label{fig:pca_vars}
+    \includegraphics[width=0.48\textwidth]{report/Plots/pca_distinction1.png}
+    \includegraphics[width=0.48\textwidth]{report/Plots/pca_correlations_distinction1.png}
+    \caption{PCA and Correlations for Distinction 1}
+    \label{fig:pca_dist1}
 \end{figure}
 
-I extracted the individual respondent scores for the first three PCA dimensions and ran One-Way ANOVAs to test whether mean scores differ significantly depending on the respondent's topic schema assignment. The results demonstrate how different schemas of taste correspond to distinct configurations of cultural boundary-drawing.
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.48\textwidth]{report/Plots/pca_distinction2.png}
+    \includegraphics[width=0.48\textwidth]{report/Plots/pca_correlations_distinction2.png}
+    \caption{PCA and Correlations for Distinction 2}
+    \label{fig:pca_dist2}
+\end{figure}
 
-\input{report/Tabs/anova_pca.tex}
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.48\textwidth]{report/Plots/pca_importance.png}
+    \includegraphics[width=0.48\textwidth]{report/Plots/pca_correlations_importance.png}
+    \caption{PCA and Correlations for Importance}
+    \label{fig:pca_importance}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=0.48\textwidth]{report/Plots/pca_knowledge.png}
+    \includegraphics[width=0.48\textwidth]{report/Plots/pca_correlations_knowledge.png}
+    \caption{PCA and Correlations for Knowledge}
+    \label{fig:pca_knowledge}
+\end{figure}
+
+I extracted the individual respondent scores for the first three PCA dimensions for each block and ran a MANOVA (Pillai's trace) to test whether mean scores across the three dimensions differ significantly depending on the respondent's topic cultural model assignment. The results demonstrate how different cultural models of taste correspond to distinct configurations of cultural boundary-drawing.
+
+\input{report/Tabs/anova_pca_distinction1.tex}
+\input{report/Tabs/anova_pca_distinction2.tex}
+\input{report/Tabs/anova_pca_importance.tex}
+\input{report/Tabs/anova_pca_knowledge.tex}
 
 \subsection{Domain Distinction Heatmaps}
 
 Respondents were also asked to rate whether it ``makes sense'' to distinguish good and bad taste across 19 different domains (from -3 = Strongly Disagree to +3 = Strongly Agree). 
 
-Visualizing these scores as heatmaps across our topic clusters reveals several structural universals: regardless of the schema, respondents highly agree that taste distinctions make sense for \textbf{Clothing, Interior Design, Movies, Music, and Paintings}, while rejecting taste distinctions for \textbf{Car Races and Wrestling}.
-
-\input{report/Tabs/anova_distinction.tex}
+Visualizing these scores as heatmaps across our topic clusters reveals several structural universals: regardless of the cultural model, respondents highly agree that taste distinctions make sense for \textbf{Clothing, Interior Design, Movies, Music, and Paintings}, while rejecting taste distinctions for \textbf{Car Races and Wrestling}.
 
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains.png}
-    \caption{Average Distinction Rating by Domain and Good Taste Schema (Definitions)}
+    \caption{Average Distinction Rating by Domain and Good Taste Cultural Model (Definitions)}
     \label{fig:distinction_good_def}
 \end{figure}
 
 \begin{figure}[htpb]
     \centering
     \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains_bad.png}
-    \caption{Average Distinction Rating by Domain and Bad Taste Schema (Definitions)}
+    \caption{Average Distinction Rating by Domain and Bad Taste Cultural Model (Definitions)}
     \label{fig:distinction_bad_def}
 \end{figure}
 
