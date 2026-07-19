@@ -27,6 +27,8 @@
 \maketitle
 
 \begin{abstract}
+
+oindent Sociologists have long debated the nature of ``good'' and ``bad'' taste, yet how lay individuals actually define these categories remains under-explored. Using open-ended survey responses, this research note applies BERTopic to inductively map folk cultural models of taste definitions. I identify distinct cultural models for ``good taste'' (e.g., Subjectivity, Aesthetics, Style) and ``bad taste'' (e.g., Dislike, Poor Choices, Poor Manners). Chi-square cross-tabulations reveal that these cultural models form internally coherent cultural logics across both positive and negative evaluations. Furthermore, heatmaps mapping these cultural models onto 19 specific cultural domains reveal that while core domains like Music and Clothing are universally subjected to taste distinctions, moralized cultural models are associated with a heightened propensity to draw taste boundaries across nearly all domains.
 \end{abstract}
 
 % \doublespacing
@@ -39,20 +41,18 @@ The sociological study of cultural stratification has traditionally focused on h
 
 This research note is guided by three primary research questions:
 \begin{enumerate}
-    \item What are the distinct, latent cultural models that lay individuals use to define ``good taste\'\' and ``bad taste\'\'?
+    \item What are the distinct, latent cultural models that lay individuals use to define ``good taste'' and ``bad taste''?
     \item How do cultural models of good taste relate to cultural models of bad taste? Are they structurally coupled into broader cultural logics?
     \item How do these taste cultural models map onto specific cultural domains (e.g., beer, classical music, wrestling)? 
 \end{enumerate}
 
 \section{Methods}
 
-
 To analyze these short, unstructured participant-level text responses (hereafter ``documents''), I used \textbf{BERTopic}. During preprocessing, domain-specific survey artifacts (e.g., ``good,'' ``bad,'' ``taste,'' ``don't'') were removed from each document because these words---mostly paraphrasing the original question---were overwhelmingly common across documents and thus did little to differentiate them. We also remove common English stop words from each document (e.g., the, it, is, do, etc.). The algorithm was optimized for each of the two text fields independently to prevent vocabulary blurring. Finally, cross-tabulations and domain-distinction Likert scale heatmaps were generated to examine the coherence of these classifications.
 
 \section{Results}
 
 \subsection{Cultural Models of Taste}
-
 
 \input{report/Tabs/good_taste_def_examples_table.tex}
 
@@ -70,41 +70,15 @@ For \textbf{Bad Taste}, respondents defined it through eight distinct schemas, i
 
 \begin{figure}[htpb]
     \centering
-    \label{fig:topic_frequencies_ex}
-\end{figure}
-
-
-
-
-
-\begin{figure}[htpb]
-    \centering
-    \label{fig:good_keywords_ex}
-\end{figure}
-
-\begin{figure}[htpb]
-    \centering
-    \label{fig:bad_keywords_ex}
-\end{figure}
-
-\begin{figure}[htpb]
-    \centering
     \includegraphics[width=0.48\textwidth]{report/Plots/ca_good_taste.png}
     \includegraphics[width=0.48\textwidth]{report/Plots/ca_bad_taste.png}
     \caption{Correspondence Analysis of Taste Schemas (Definitions)}
     \label{fig:ca_schemas_def}
 \end{figure}
 
-\begin{figure}[htpb]
-    \centering
-    \includegraphics[width=0.48\textwidth]{report/Plots/ca_good_taste_example.png}
-    \includegraphics[width=0.48\textwidth]{report/Plots/ca_bad_taste_example.png}
-    \label{fig:ca_schemas_ex}
-\end{figure}
-
 \subsection{Cross-Schema Cultural Logics}
 
-To test whether these cultural models are isolated or form coherent ``logics,'' I cross-tabulated respondents' primary cultural models across the four questions. The associations are highly significant. For instance, a respondent's definition of Good Taste strongly predicts their definition of Bad Taste ($\chi^2 = 111.60, p < 0.001$). Individuals who define good taste as subjective similarity overwhelmingly define bad taste simply as subjective dislike. 
+To test whether these cultural models are isolated or form coherent ``logics,'' I cross-tabulated respondents' primary cultural models across the two questions. The associations are highly significant. For instance, a respondent's definition of Good Taste strongly predicts their definition of Bad Taste ($\chi^2 = 111.60, p < 0.001$). Individuals who define good taste as subjective similarity overwhelmingly define bad taste simply as subjective dislike. 
 
 \begin{figure}[htpb]
     \centering
@@ -113,16 +87,9 @@ To test whether these cultural models are isolated or form coherent ``logics,'' 
     \label{fig:schema_corr_main}
 \end{figure}
 
-\begin{figure}[htpb]
-    \centering
-    \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Good_Def_Good_Ex.png}
-    \includegraphics[width=0.48\textwidth]{report/Plots/schema_corr_Bad_Def_Bad_Ex.png}
-    \label{fig:schema_corr_cross}
-\end{figure}
-
 \subsection{Demographics}
 
-To examine whether cultural taste schemas are patterned by socio-demographic factors, I fit multinomial logistic regression models predicting respondents' primary topic schema (across all four models) using their Age, Gender, Education, and Political Orientation. The Wald $\chi^2$ tests are presented below.
+To examine whether cultural taste schemas are patterned by socio-demographic factors, I fit multinomial logistic regression models predicting respondents' primary topic schema (across both models) using their Age, Gender, Education, and Political Orientation. The Wald $\chi^2$ tests are presented below.
 
 \input{report/Tabs/wald_models.tex}
 
@@ -161,18 +128,6 @@ Visualizing these scores as heatmaps across our topic clusters reveals several s
     \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains_bad.png}
     \caption{Average Distinction Rating by Domain and Bad Taste Schema (Definitions)}
     \label{fig:distinction_bad_def}
-\end{figure}
-
-\begin{figure}[htpb]
-    \centering
-    \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains_good_ex.png}
-    \label{fig:distinction_good_ex}
-\end{figure}
-
-\begin{figure}[htpb]
-    \centering
-    \includegraphics[width=0.8\textwidth]{report/Plots/distinction_domains_bad_ex.png}
-    \label{fig:distinction_bad_ex}
 \end{figure}
 
 \section{Discussion}

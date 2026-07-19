@@ -3,6 +3,11 @@ library(ggplot2)
 library(readr)
 library(tidyr)
 library(stringr)
+library(jsonlite)
+
+config <- fromJSON("config.json")
+good_model_dir <- config$good_model
+bad_model_dir <- config$bad_model
 
 dir.create("report/Plots", showWarnings = FALSE)
 
@@ -33,16 +38,33 @@ plot_topics_and_keywords <- function(model_dir, title_prefix, color, prefix) {
   # The original used topics.json which BERTopic creates. But run_topic_modeling.py didn't save topics.json!
   # It just saved the safetensors. The research note references `good_taste_keywords.png`.
 }
-plot_topics_and_keywords("good_taste_def_model_min10", "Good Taste", "steelblue", "good_taste")
-plot_topics_and_keywords("bad_taste_def_model_min5", "Bad Taste", "indianred", "bad_taste")
+plot_topics_and_keywords(good_model_dir, "Good Taste", "steelblue", "good_taste")
+plot_topics_and_keywords(bad_model_dir, "Bad Taste", "indianred", "bad_taste")
 
-# --- RE-GENERATE PEARSON RESIDUAL PLOTS ---
+# --- RE-GENERATE CA PLOTS ---
+library(FactoMineR)
+library(factoextra)
+
+plot_ca <- function(model_dir, title_prefix, prefix) {
+  probs <- read_csv(file.path(model_dir, "document_topic_probabilities.csv"), show_col_types = FALSE)
+  probs_clean <- probs %>% select(-original_index)
+  colnames(probs_clean) <- paste("Topic", 0:(ncol(probs_clean)-1))
+  ca_data <- probs_clean + 1e-6
+  assigned <- as.factor(paste("Topic", apply(probs_clean, 1, which.max) - 1))
+  
+  res.ca <- CA(ca_data, graph = FALSE)
+  p_ca <- fviz_ca_biplot(res.ca, geom.row = "point", col.row = assigned, col.col = "black", 
+                         title = paste("CA:", title_prefix, "Taste Schemas"), palette = "jco", legend.title = "Assigned Topic")
+  ggsave(sprintf("report/Plots/%s.png", prefix), plot = p_ca, width = 8, height = 6)
+}
+plot_ca(good_model_dir, "Good", "ca_good_taste")
+plot_ca(bad_model_dir, "Bad", "ca_bad_taste")
 raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
 if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) raw_survey <- raw_survey[-1, ]
 raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
 
-gd_probs <- read_csv("good_taste_def_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
-bd_probs <- read_csv("bad_taste_def_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
+gd_probs <- read_csv(file.path(good_model_dir, "document_topic_probabilities.csv"), show_col_types = FALSE)
+bd_probs <- read_csv(file.path(bad_model_dir, "document_topic_probabilities.csv"), show_col_types = FALSE)
 
 get_primary <- function(probs, name) {
   tc <- setdiff(names(probs), "original_index")
@@ -57,8 +79,18 @@ bd <- get_primary(bd_probs, "Bad_Def")
 
 df <- gd %>% inner_join(bd, by="original_index")
 
-t_g_d <- c("-1"="Outlier", "0"="Similarity/Subjectivity", "1"="Aesthetics", "2"="Style/Quality")
-t_b_d <- c("-1"="Outlier", "0"="Dislike/Subjective", "1"="Poor Choices", "2"="Tacky/Loud", "3"="Low-Brow Media", "4"="Ugly Style", "5"="Low Quality", "6"="Immoral Art", "7"="Poor Manners")
+# Extract topic names dynamically from topic_info.csv
+get_topic_names <- function(model_dir) {
+  info <- read_csv(file.path(model_dir, "topic_info.csv"), show_col_types = FALSE)
+  names_clean <- str_replace_all(str_replace(info$Name, "^\\d+_", ""), "_", " ")
+  names_title <- str_to_title(names_clean)
+  map <- setNames(names_title, as.character(info$Topic))
+  map["-1"] <- "Outlier"
+  map
+}
+
+t_g_d <- get_topic_names(good_model_dir)
+t_b_d <- get_topic_names(bad_model_dir)
 
 df <- df %>%
   filter(Good_Def != "-1", Bad_Def != "-1") %>%

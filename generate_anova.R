@@ -2,6 +2,11 @@ library(dplyr)
 library(readr)
 library(stringr)
 library(tidyr)
+library(jsonlite)
+
+config <- fromJSON("config.json")
+good_model_dir <- config$good_model
+bad_model_dir <- config$bad_model
 
 # 1. Load Data
 raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
@@ -19,8 +24,8 @@ get_primary <- function(path, name) {
   probs %>% select(original_index, !!sym(name))
 }
 
-gd <- get_primary("good_taste_def_model_min10/document_topic_probabilities.csv", "Good_Def")
-bd <- get_primary("bad_taste_def_model_min5/document_topic_probabilities.csv", "Bad_Def")
+gd <- get_primary(file.path(good_model_dir, "document_topic_probabilities.csv"), "Good_Def")
+bd <- get_primary(file.path(bad_model_dir, "document_topic_probabilities.csv"), "Bad_Def")
 
 df <- raw_survey %>%
   left_join(gd, by=c("python_index"="original_index")) %>%

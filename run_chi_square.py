@@ -1,6 +1,10 @@
 import pandas as pd
 from scipy.stats import chi2_contingency
 import itertools
+import json
+
+with open("config.json", "r") as f:
+    config = json.load(f)
 
 def get_primary(prob_file):
     df = pd.read_csv(prob_file)
@@ -8,15 +12,30 @@ def get_primary(prob_file):
     df['primary'] = df[topic_cols].idxmax(axis=1)
     return df[['original_index', 'primary']]
 
-gd = get_primary("good_taste_def_model_min10/document_topic_probabilities.csv").rename(columns={'primary': 'Good_Def'})
-bd = get_primary("bad_taste_def_model_min5/document_topic_probabilities.csv").rename(columns={'primary': 'Bad_Def'})
+def get_topic_names(model_dir):
+    info = pd.read_csv(f"{model_dir}/topic_info.csv")
+    mapping = {}
+    for _, row in info.iterrows():
+        t = row['Topic']
+        if t == -1:
+            mapping[str(t)] = "Outlier"
+        else:
+            clean_name = "_".join(row['Name'].split('_')[1:]).replace('_', ' ').title()
+            mapping[str(t)] = clean_name
+    return mapping
+
+gd_names = get_topic_names(config["good_model"])
+bd_names = get_topic_names(config["bad_model"])
+
+gd = get_primary(f"{config['good_model']}/document_topic_probabilities.csv").rename(columns={'primary': 'Good_Def'})
+bd = get_primary(f"{config['bad_model']}/document_topic_probabilities.csv").rename(columns={'primary': 'Bad_Def'})
 
 df = gd.merge(bd, on='original_index')
 
-# We will drop outliers for the chi-square analysis
-for col in ['Good_Def', 'Bad_Def']:
-    df = df[df[col] != '-1']
-    df[col] = df[col].apply(lambda x: 'Topic ' + str(x))
+# Apply mapped names and drop outliers
+df = df[(df['Good_Def'] != '-1') & (df['Bad_Def'] != '-1')].copy()
+df['Good_Def'] = df['Good_Def'].apply(lambda x: gd_names.get(str(x), str(x)))
+df['Bad_Def'] = df['Bad_Def'].apply(lambda x: bd_names.get(str(x), str(x)))
 
 domains = ['Good_Def', 'Bad_Def']
 for d1, d2 in itertools.combinations(domains, 2):

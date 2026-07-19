@@ -8,6 +8,11 @@ library(nnet)
 library(car)
 library(FactoMineR)
 library(factoextra)
+library(jsonlite)
+
+config <- fromJSON("config.json")
+good_model_dir <- config$good_model
+bad_model_dir <- config$bad_model
 
 dir.create("report/Plots", showWarnings = FALSE)
 dir.create("report/Tabs", showWarnings = FALSE)
@@ -50,8 +55,8 @@ run_multinom <- function(prob_file, name) {
   return(NULL)
 }
 
-res1 <- run_multinom("good_taste_def_model_min10/document_topic_probabilities.csv", "Good Taste Def")
-res2 <- run_multinom("bad_taste_def_model_min5/document_topic_probabilities.csv", "Bad Taste Def")
+res1 <- run_multinom(file.path(good_model_dir, "document_topic_probabilities.csv"), "Good Taste Def")
+res2 <- run_multinom(file.path(bad_model_dir, "document_topic_probabilities.csv"), "Bad Taste Def")
 
 all_res <- bind_rows(res1, res2)
 all_res <- all_res %>% select(Model, Predictor, `LR Chisq`, Df, `Pr(>Chisq)`)
@@ -69,8 +74,8 @@ writeLines(latex_str, "report/Tabs/wald_models.tex")
 
 
 # 2. Pearson Residual Plots
-good_def_probs <- read_csv("good_taste_def_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
-bad_def_probs <- read_csv("bad_taste_def_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
+good_def_probs <- read_csv(file.path(good_model_dir, "document_topic_probabilities.csv"), show_col_types = FALSE)
+bad_def_probs <- read_csv(file.path(bad_model_dir, "document_topic_probabilities.csv"), show_col_types = FALSE)
 
 get_primary <- function(probs, name) {
   topic_cols <- setdiff(names(probs), "original_index")

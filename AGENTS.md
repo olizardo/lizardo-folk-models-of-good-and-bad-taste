@@ -4,18 +4,22 @@
 Analyze survey data regarding sociological definitions of "good taste" and "bad taste" (`FolkTaste_BruteData.csv`, `FolkTaste_CleanData.csv`). 
 
 ## Key Technical Decisions & Analysis Pipeline
-* **Topic Modeling Algorithm**: BERTopic (Python) because it handles short survey responses (1-5 sentences) significantly better than LDA (which suffers from sparsity with short texts). We have expanded our modeling from two general models (good taste vs bad taste) to separate models for "definitions" and "examples" (`run_bertopic_four_models.py`), as well as "combined" definitions and examples (`run_bertopic_combined.py`).
-* **Robustness Checks**: Implemented BERTopic robustness checks across various `min_topic_size` parameters (e.g., 5, 10, 15, 20) to ensure stable topic structures, with results stored in `topic_robustness_summary.json`, `topic_robustness_summary_four_models.json`, and `topic_robustness_summary_combined.json`.
+* **Scope Change**: The analysis has been restricted **exclusively to definitions** of good and bad taste. All legacy analysis of "examples" or "combined" responses has been permanently removed to focus the narrative.
+* **Topic Modeling Algorithm**: BERTopic (Python) because it handles short survey responses (1-5 sentences) significantly better than LDA. Implemented robustness checks across `min_topic_size` parameters (5, 10, 15, 20).
+* **Pipeline Automation & Configuration**: 
+    * The pipeline is entirely automated and dynamic. `config.json` dictates which optimal models to use (currently `good_taste_def_model_min10` and `bad_taste_def_model_min5`). 
+    * Python and R scripts (`run_chi_square.py`, `run_r_analyses.R`, `generate_anova.R`, `fix_plots.R`) parse `topic_info.csv` dynamically to fetch topic names—do not hardcode label names.
+    * Use `python run_pipeline.py` to re-execute the entire project (Topic Modeling -> Chi-Square -> R Stats/Plots -> LaTeX table generation).
 * **R Environment**: Initialized a bare `renv` for R-based analysis.
 * **Statistical Modeling & Visualizations**:
-    * **Demographic Analysis**: Utilizes `chi_square_analysis.py` (Python), `analyze_demographics.R`, and `get_wald.R` (R) to examine demographic distributions. Logistic regression models evaluating the predicted probability of topic assignments across various demographics. Plotting includes baseline topic probabilities as dashed lines.
-    * **Correspondence Analysis (CA)**: CA plots generated to map the relationship between topics and demographic categories.
-    * **Domain Distinction**: Analysis of specific domains defining good vs. bad taste.
-* **Reporting**: Initial compilation of findings is being structured into a LaTeX document (`draft_research_note.tex`).
+    * **Demographic Analysis**: Multinomial logistic regression (Wald tests) evaluating the probability of topic assignments across demographics.
+    * **Correspondence Analysis (CA)**: CA plots mapping the schemas against each other.
+    * **Domain Distinction**: PCA and ANOVAs of specific domains where respondents draw boundaries, visualized via heatmaps.
+* **Reporting**: Findings are structured in `draft_research_note.tex`. The master analytical steps are consolidated in `analysis.qmd`, which is auto-rebuilt by `run_pipeline.py`.
 
 ## Data Structure
 * Raw data is in `data/FolkTaste_BruteData.csv` (first row is variable names, second row is full question text).
-* `Q1` determines if respondents have ever distinguished between good and bad taste. Those who answered "YES" provided open-text definitions in `GoodTaste` and `BadTaste`.
+* `Taste_Possibility` (Q1) determines if respondents distinguish between good and bad taste. Those who answered "YES" provided open-text definitions in `GoodTaste_Def` and `BadTaste_Def`.
 
 ## Operational Rules
 * **Rendering & Installation Restrictions:** DO NOT render documents, execute pipelines, or run `pip install` commands that involve heavy dependencies (like PyTorch or downloading gigabytes of libraries) without explicitly asking the user for permission first. 
