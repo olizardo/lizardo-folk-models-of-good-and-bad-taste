@@ -1,0 +1,1603 @@
+
+--- Page 1 ---
+ 
+          1 De gustibus est disputandum - an empirical 
+investigation of the folk concept of aesthetic 
+taste  
+ 
+Penultimate draft  
+Final version to appear in : Wya tt, J., Zakk ou, J. &  Zeman, D. (Eds.), Perspectives on Taste . 
+Routledge.  
+ 
+Constant Bonard  
+Swiss National Science Foundation & Institut Jean Nicod, École Normale Supérieure, Paris  
+orcid.org/0000 -0003 -4925 -6042  
+ 
+Florian Cova  
+Department of Philosophy, University of Geneva  
+orcid.org/0000 -0001 -9360 -8290   
+ 
+Steve Humbert -Droz1 
+Department of Philosophy, University of Geneva  
+orcid.org/0000 -0002 -0680 -649X  
+ 
+Abstract  
+Past research on folk aesthetics has suggested that most people are subjectivists when it 
+comes to aesthetic jud gment. However, most people also make a distinction between good 
+and bad aesthetic taste. To understand the extent to which these two observations conflict 
+with one another, we need a better understanding of people's everyday concept of aesthetic 
+taste. In  this paper, we present the results of a study in which participants drawn from a 
+representative sample of the US population were asked whether they usually distinguish 
+between good and bad taste, how they define them, and whether aesthetic taste can be 
+improved. Those who answered positively to the first question were asked to provide their 
+definition of good and bad taste, while those who answered positively to the third question 
+were asked to detail by what means taste can be improved. Our results sugges t that most 
+people distinguish between good and bad taste, and think taste can be improved. People's 
+definitions of good and bad taste were varied, and were torn between very subjectivist 
+conceptions of taste and others that lent themselves to a more objec tivist interpretation. 
+Overall, our results suggest that the tension Hume observed in conceptions of aesthetic taste 
+is still present today.  
+ 
+1. Introduction: the search for folk aesthetics  
+ 
+ 
+1 Authors are listed in alphabetical order.  
+--- Page 2 ---
+ 
+          2 In the past decade, experimental philosophers have been investiga ting how people think about 
+aesthetics and aesthetic questions (Cova, Garcia & Liao, 2015; Cova & Réhault, 2018). A lot 
+of this research has focused on whether people tend to be aesthetic objectivists  — i.e., 
+whether they consider that aesthetic predicates  (such as ‘beautiful‘ or ‘ugly‘) actually refer to 
+mind -independent, objective properties of objects — or at least aesthetic universalists  — i.e., 
+whether they consider that aesthetic judgments are, as Kant put it, "universally valid" 
+(1790/1914, p.33).  
+So far, all studies seem to converge towards the following conclusion: most people 
+seem to think that aesthetic properties only exist in the eyes of the beholder (Beebe et al., 
+2015, 2016; Cova, 2018; Cova & Pain, 2012; Cova et al., 2019 ; Goodwin & Darley, 2008, 
+2012; Murray, 2020; Rabb et al., 2020). Indeed, when presented with two people making 
+contradictory aesthetic judgments, most people consider either that “both people are right” or 
+that “neither is right and neither is wrong”, bec ause it makes no sense to speak of being right 
+or wrong about such things. (For a methodological criticism of these studies, see Moss & Bush, 
+2021).  
+However, as some have pointed out (Zangwill, 2018; Goffin & Cova, 2019), the fact 
+that people explicitly  reject the existence of objective, mind -independent properties doesn’t 
+mean that they don’t endorse their existence at a more implicit  level. After all, one could argue 
+that a lot of our aesthetic practices only make sense if we suppose that, at some level, we do 
+think that there are objective aesthetic properties.  
+An example of such practices would be our tendency to speak of people as having 
+‘good‘ or ‘bad‘ aesthetic taste. At first sight, it seems that the most obvious way of making 
+sense of this tendency is to ascribe to us the beliefs that (i) certain objects are, aesthetically 
+speaking, objectively better than others and (ii) some people are better than others at detecting 
+and appreciating this objective aesthetic value.  
+However, this argument presuppose s that people think about aesthetic taste as an 
+ability to discriminate the value of works of art. But, as we will see, ascribing such a conception 
+of aesthetic taste does not go without some problems. Indeed, the notion of aesthetic taste 
+raises an intere sting paradox.  
+While contemporary philosophers have worked on elucidating notions such as 
+knowledge, free will, or consciousness, very few have tried to provide an analysis of the notion 
+of aesthetic taste that would help to shed light on our everyday use of this notion. This stands 
+in contrast to the numerous studies conducted on aesthetic judgments, aesthetic experiences, 
+or aesthetic properties. This is all the more  surprising given that the classical philosophical 
+debate in aesthetics was c entered on taste and that, according to Schellekens, “[t]he paradox 
+of taste, as found in Hume and Kant, is […] highly relevant to contemporary metaphysical 
+debate within aesthetics.” (2009, p. 734)  
+ 
+2. Some philosophical questions about aesthetic taste  
+ 
+2.1 The paradox of taste  
+Though the notions of good and bad aesthetic taste are now part of our everyday language, 
+the notion of aesthetic taste has a venerable history. In Europe, the use of the term ‘taste’ in 
+relation to the appreciation of works of ar t arose through the XVIth and XVIIth centuries, before 
+becoming a topic of philosophical investigation in the XVIIIth century (Korsmeyer, 2013).  
+--- Page 3 ---
+ 
+          3  In the beginning, the metaphor of taste was applied to our appreciation of aesthetic 
+qualities to point to (an d sometimes to explain) some of its peculiarities. The first was its 
+immediacy : appreciation of works of art does not depend on prior reasoning, nor is it a 
+conclusion reached through the application of explicit rules and principles. The second was its 
+need for acquaintance:  in the same way one has to taste a certain kind of food to know whether 
+one really likes it, one needs to experience a work of art to truly appreciate its value. Thus, 
+aesthetic appreciation seems to be an immediate perception of aesthe tic qualities, in the same 
+way that taste is an immediate perception of gustatory qualities.  
+However, as we will see, the metaphor of taste is double -edged. We will refer to this 
+as the paradox of taste (Mothersill,1989).  
+On the one hand, speaking of taste  seems to emphasize the subjectivity  of aesthetic 
+preferences: as for food, we each have our own taste, our own preferences. If I like spinach 
+but another person does not, who am I to think that my taste is better ? This idiosyncratic 
+conception of taste is  emphasized by sayings such as de gustibus, non est disputandum .  
+On the other hand, as one of our five senses, taste allows us to make certain 
+distinctions: between sugary and salty, or sour and bitter. A person whose sense of taste is 
+well-trained and de veloped is more capable of identifying the ingredients that compose a dish. 
+From this angle, the metaphor of taste seems to stress the objectivity of taste (we can be right 
+or wrong in saying e.g. that an object is very salty or that it is very bitter) and  the fact that 
+certain individuals’ tastes are better than those of other individuals. This idea comes out in 
+Hume’s famous tale about Sancho Panza’s relatives. Their ability to detect a key tied to a 
+leather thong in a barrel of wine shows their (objectiv e) superiority of judgment regarding wine 
+(1757/1987, p.146).  
+The paradox of taste – as well as one solution of it – was famously introduced by Hume 
+in Of the Standard of Taste . At the beginning of his essay, he introduces the all -too-familiar 
+subjective c onceptions of taste:  
+ 
+All sentiment is right; because sentiment has a reference to nothing beyond itself, and is always 
+real, wherever a man is conscious of it. [...] a thousand different sentiments, excited by the 
+same object, are all right: Because no se ntiment represents what is really in the object. [...] 
+Beauty is no quality in things themselves: It exists merely in the mind which contemplates them; 
+and each mind perceives a different beauty. (1757/1987, pp.143 -4) 
+ 
+However, just after observing that th is deeply subjectivist point of view has passed into 
+common sense as a proverb, he also observes that common sense doesn’t seem ready to 
+follow this line of thought down to its ultimate consequences:  
+ 
+Whoever would assert an equality of genius and elegance  between OGILBY and MILTON, or 
+BUNYAN and ADDISON, would be thought to defend no less an extravagance, than if he had 
+maintained a mole -hill to be as high as TENERIFFE, or a pond as extensive as the ocean. 
+Though there may be found persons, who give the pr eference to the former authors; no one 
+pays attention to such a taste; and we pronounce without scruple the sentiment of these 
+pretended critics to be absurd and ridiculous. The principle of the natural equality of tastes is 
+then totally forgot, and while we admit it on some occasions, where the objects seem near an 
+equality, it appears an extravagant paradox, or rather a palpable absurdity, where objects so 
+disproportioned are compared together. (1757/1987, p.144)  
+ 
+Thus, according to Hume, the notion of ae sthetic taste is Janus -faced, as common sense is 
+torn between two ideas: on the one hand, it is tempted to think of aesthetic taste as a mere 
+--- Page 4 ---
+ 
+          4 subjective preference, while, on the other hand, it cannot but recognize that certain aesthetic 
+tastes are clearly  better than others. This raises a first question: is common sense really torn 
+between these two conceptions of aesthetic taste?  Or is it content to adopt a pure subjectivist 
+stance according to which no taste is better than another, as previous studies in  experimental 
+philosophy might suggest?  
+2.2 Taste as an active ability  
+Hume’s solution to the paradox of taste is to ground aesthetic properties in the abilities of ideal 
+judges . Judgments of aesthetic taste can thus be said to be subjective – in the sense that they 
+are mind -dependent, as their correctness is determined by the taste of these judges – as well 
+as objective – in the sense that the ideal judges have the ‘correct’ opinion on these mind -
+dependent properties. To use Hume’s own words:  
+ 
+[A pers on of good taste possesses a] strong sense, united to delicate sentiment, improved by 
+practice, perfected by comparison, and cleared of all prejudice (1757/1987, p. 150).  
+ 
+A central idea of Hume is that the ideal judge is free from her bias, though her tas te 
+remains a passive trait, similar to sense perception. As Noël Carroll puts it:  
+ 
+Hume portrays the aesthetic response as a passive response to the artwork […] In "Of the 
+Standard of Taste," the notion that the aesthetic response is a simple causal effect – a 
+sentiment consequent to a stimulus – predominates. (1984, p.186)  
+ 
+Edmund Burke, by contrast, insists on the active abilities that good taste requires. He 
+also diverges from Hume – as well as Hutcheson (1727/2008) – by understanding taste to be 
+a kind of judgment  as opposed to a distinct faculty of the mind:  
+ 
+I cannot help taking notice of an opinion which many persons entertain, as if the Taste were a 
+separate faculty of the mind, and distinct from the judgment and imagination; a species of 
+instinct by which we are struck naturally, and at the first glance, without any previous reasoning 
+with the excellencies, or the defects of a composition. […] It is known that the Taste (whatever 
+it is) is improved exactly as we improve our judgment, by extendi ng our knowledge, by a steady 
+attention to our object, and by frequent exercise . (1757/1998, p.25, our emphasis)  
+ 
+This raises a second question: does common sense think of taste as a passive or as 
+an active ability?  
+ 
+2.3 Judgments of taste and of the agree able 
+Of course, no historical survey of philosophers’ views on aesthetic taste would be complete 
+without mentioning Kant’s account. A key distinction in Kant’s conception of aesthetic taste is 
+that judgments of taste (“Roses in general are beautiful”, 1790 /1914, p.61) contrast sharply 
+with mere judgments of the agreeable (“The rose is agreeable (to smell)”, 1790/1914 , p.62). 
+Indeed, the judgment of taste is a “logical judgement based on an aesthetical one” (1790/1914, 
+p.61, see also Ginsborg, 2019, §2.1). A s an argument in favor of this distinction, Kant points 
+out that we tend to claim universal validity for our aesthetic judgments (i.e. others should  share 
+our judgments), while we are happy to embrace diversity and relativity when it comes to 
+judgments abo ut what is agreeable. The distinction is also based on the idea that aesthetic 
+--- Page 5 ---
+ 
+          5 judgments, unlike judgments of the agreeable, don’t involve a desire for the object. This raises 
+a third question: when it comes to distinguishing good from bad taste, does comm on sense 
+treat judgments about beauty and art differently from judgments of the agreeable?  
+ 
+2.4 Bourdieu’s high taste  
+Finally, let’s end this historical tour with ideas that are not often taken into account in analytical 
+aesthetics but are relevant to our study: Pierre Bourdieu’s sociological hypotheses on taste. 
+In Distinction (1979/1984), Bourdieu observes that what is considered to be of good taste 
+usually coincides with the taste of the dominant class. According to him, the reason is because 
+“culture an d aesthetics are used [structurally, but non -intentionally] by the dominant class as 
+one of the means to naturalise (and thus perpetuate) their superiority in relation to the 
+dominated class” (Lizardo, 2014, p.336).  
+Moreover, for Bourdieu, ‘high’ aestheti c taste does not consist only in appreciating the 
+‘right’ objects, but also in appreciating them in the ‘right’ way: good aesthetic taste requires a 
+particular aesthetic outlook, a ‘disinterested’ contemplation that makes one able to appreciate 
+the aesthet ic value of an object without reference to other kinds of satisfaction, such as moral 
+satisfaction.  
+Thus, both the kind of things we love and how we love them signal our socio -economic 
+status while justifying it. Given the success of Bourdieu’s ideas, we w onder whether people 
+might have developed a conception of aesthetic taste that serves as a socio -economic marker. 
+This raises a fourth question: do people define good aesthetic taste by referring to what it 
+signals about people themselves, rather than the objects of their enjoyment?  
+ 
+Such are the questions raised by past philosophical discussions of the notion of 
+aesthetic taste. Of course, some of these discussions are rooted in everyday concepts of 
+aesthetic taste from three centuries ago, and one may per haps consider that common opinion 
+has changed since then. For example, it could be that the contemporary concept of aesthetic 
+taste is more subjectivist than the one that was common during the Enlightenment. Or maybe 
+people’s opinions have been influenced by postmodern philosophy. Either way, these 
+questions only stress that we still have much to learn and understand about the folk concept 
+of aesthetic taste. In this paper, we present and discuss the results of a first study aiming at 
+probing people’s conce ptions of good and bad aesthetic taste.  
+3. Materials and Methods  
+ 
+Participants were redirected to an online questionnaire. After filling out an online consent form 
+and answering a question about how much of a potential £100 bonus they were willing to give 
+to a list of several charities, they were presented with the following question:  
+ 
+(Taste_Possibility) When we speak of people’s preferences about works of art (such 
+as novels, paintings, music, songs, movies, TV shows, etc.), we sometimes make a 
+difference  between people who have “good taste” and those who have “bad taste”.  
+Has it ever happened to you to say or think that a certain person had better taste than 
+another one in this sense? (YES/NO)  
+ 
+Participants who answered NO were then presented with the following open -ended question:  
+--- Page 6 ---
+ 
+          6  
+(NoTaste_Justification) Please, explain why you never say or think this sort of 
+things.  
+ 
+Participants who answered YES were presented with the four following open -ended questions:  
+ 
+(GoodTaste_Def) What do you mean when you say that someone has good taste? 
+Please, explain in a few sentences.  
+ 
+(BadTaste_Def) What do you mean when you say that someone has bad taste? 
+Please, explain in a few sentences.  
+ 
+(GoodTaste_Example) Can you think of a person who, according to you, has  good 
+taste? Describe in a few sentences why you think this person has good taste.  
+ 
+(BadTaste_Example) Can you think of a person who, according to you, has bad (or 
+poor) taste? Describe in a few sentences why you think this person has poor taste.  
+ 
+After th at, we sought to explore in more detail participants’ conceptions of good and bad taste 
+by asking them about particular domains. Half of the participants received the following 
+question:  
+ 
+(Domains_v1) For each of the following domains, indicate whether (ac cording to you), 
+it makes sense to say someone has good or bad tastes in this domain:  (on a scale 
+from -3 = “No sense at all” to 3 = “Completely sense”)  
+ 
+The other half received the following question:  
+ 
+(Domains_v2) For each of the following domains, indic ate whether (according to you), 
+it makes sense to distinguish between good or bad tastes in this domain:  (on a scale 
+from -3 = “No sense at all” to 3 = “Completely sense”)  
+ 
+In both cases, the full list of domains was: beer, car races, clothing, comic books , food, graphic 
+design, interior design, jewelry, literature, marijuana, movies, music, paintings, sculpture, 
+sports, TV shows, videogames, wine, and wrestling.  
+ After that, participants were once again presented with the same list of domains and 
+asked:  
+ 
+(Importance) For each of the following domains, indicate to which extent it is important 
+to have good taste in this domain according to you:  (on a scale from 0 = “Not important 
+at all” to 6 = “Extremely important”)2 
+ 
+ 
+2 Throughout the study, we use scales ranging from -3 to 3 when answers can be interpreted as 
+representing the participant’s attitudes towards a certain proposition (against / in between / in favour), 
+and scales r anging from 0 to 6 when participants are asked to estimate a certain quantity for which 
+negative values would not make sense (e.g. importance or knowledge).  
+--- Page 7 ---
+ 
+          7 Then participants were asked the following question about the possibility of improving one’s 
+taste:  
+ 
+(Improve_Question) Do you think people can improve their taste relative to fine arts 
+(e.g. music, paintings, literature, cinema)?  (YES/NO)  
+ 
+Participants who answered YES were presented wit h the following open -ended question:  
+ 
+(Improve_Possible) How can people improve their taste? Explain in a few sentences.  
+ 
+Participants who answered NO were presented with the following open -ended question:  
+ 
+(Improve_Impossible) Why can't people improve th eir taste? Explain in a few 
+sentences.  
+ 
+Finally, to better investigate participants’ conceptions of a person with good taste, they were 
+asked to rate their agreement with eight statements about the kinds of things a person who 
+has good taste would like (on  a 7-point scale ranging from “Strongly disagree” to “Strongly 
+agree”).  
+At the end of the questionnaire, participants were asked a series of questions about 
+themselves. Some of them (such as those about participants’ tendency to experience various 
+positive  emotions, and the kinds of charities they usually give money to) were collected for 
+other purposes and are not relevant for the current study. Others were more directly relevant. 
+First, we asked participants to rate how knowledgeable they were in each of the 19 domains 
+presented in the (Domains) and (Importance) questions (on a scale from 0 = “Not 
+knowledgeable at all” to 6 = “Very knowledgeable”). Second, we asked participants to rate 
+how often they went (i) to the museum, (ii) to art exhibitions, (iii) t o classical music concerts, 
+(iv) to popular music concerts, and (v) to the cinema (on a 5 -point scale from “Daily” to 
+“Never”).  
+We also asked participants about their age, gender, native language, current country 
+of residence, country of birth, job, study level, and political orientation. Participants who were 
+still students were asked to provide their parents' highest education level. Participants' 
+education level and/or their parent's education level served as a proxy for socio -economic 
+status.  
+All materi als and data can be found at osf.io/ckx2z/   
+4. Participants  
+ 
+A representative sample of the US population was collected through Prolific Academic. 
+Participants were paid £2.38 for their participation. In total, 297 participants completed our 
+survey. After exclusion based on 4 attention checks, we were left with 241 participants (124 
+identified as men, 114 as women, and 3 as ‘other’; Mage = 44.92, SD age = 16.12).  
+ 
+5. Folk conceptions of aesthetic taste  
+ 
+--- Page 8 ---
+ 
+          8 To our first question (Taste_Possibility: Has it ever happened to you to say or think that a 
+certain person had better taste than another one in this sense? ), 224 participants (93%) 
+answered ‘YES’ and 17 participants (7%) answered ‘NO’. Thus, a crushing ma jority of 
+participants acknowledged having already said or thought that one person had better aesthetic 
+taste than another.  
+ The 224 participants who answered YES were then asked to provide a definition of 
+good taste (GoodTaste_Def) and a definition of bad  taste (BadTaste_Def). To analyze their 
+answers, all three authors went through participants’ open -ended answers and, on the basis 
+of this survey, created general categories in which participants’ answers fell. These categories, 
+along with examples of part icipants’ answers falling in these categories, are presented in Table 
+1 for definitions of good taste, and in Table 2 for definitions of bad taste.  
+ 
+5.1. Participants’ definitions of good taste  
+ 
+Category  Definition of good taste  Examples of 
+participants’ answers  % (N)  
+RELATIVISM  Participant stresses that the 
+notions ‘good’ and ‘bad’ tastes 
+are relative, or that it depends 
+on the person, or that it’s all 
+‘subjective’.  “Good taste is a relative 
+term.  It means that a 
+particular work of art 
+appeals to an individual for 
+one reason or another.  It 
+also means that the same 
+work of art may not appeal 
+to a different observer.”  08.5%  
+(19) 
+Agreement  41.1%  
+(92) 
+SUBJECTIVISM  A person who has good taste is 
+a person who likes the kinds of 
+things the participant likes.  “Normally when I describe 
+things of being of good 
+taste or bad taste, I really 
+just mean to say that those 
+who have good taste like 
+the things that I like in a 
+joking manner. Taste is 
+subjective and judging 
+whether or not someone 
+has good or bad taste runs 
+the risk of classism.”  25.0%  
+(56) 
+CONSENSUS  A person who has good taste is 
+a person whose preferences 
+are shared or approved by most 
+people, or a person who likes 
+things that have stood the test 
+of time.  “Someone with good taste 
+is someone with a 
+culturally and societally 
+good taste. Means that if 
+you say the Office is good, 
+most people would agree. 
+Since it is expected from a 
+lot of people.”  14.7%  
+(33) 
+--- Page 9 ---
+ 
+          9 EXPERTS  A person who has good taste is 
+a person whose preferences 
+are in accordance with the 
+verdict of experts.  “They like something that 
+is usually critically 
+acclaimed. It may be seen 
+as intelligent or very 
+insightful.”  01.3%  
+(3) 
+CHOOSER  A person who has good taste is 
+able to choose and guess what 
+will please other people.  “Someone that can 
+appreciate the things that 
+can bring happiness to 
+other people that people 
+without good taste cannot 
+see.”  06.7%  
+(15) 
+TREND -
+SETTERS  A person who has good taste is 
+a person whose taste sets 
+trends or is imitated by others.  “When I think of someone 
+who has good taste, I think 
+of someone who is trendy, 
+and most people would 
+admire them for their good 
+taste.  I think they would 
+take pride in their 
+appearance and their 
+surroundings.  They just 
+look good overall.  
+Trendsetters.”  
+ 00.8%  
+(2) 
+Taster’s non -aesthetic dispositions and virtues  19.6%  
+(44) 
+REASONABLEN
+ESS A person who has good taste is 
+a person whose tastes are 
+reasonable, understandable.  “When I say someone has 
+good taste I mean that 
+generally the person is not 
+overly brash or overly 
+timid. Someone with good 
+taste values things on a 
+logical and emotional 
+level. People with good 
+taste don't try to show off 
+or simply follow trends.”  04.5%  
+(10) 
+JUSTIFICATION  A person who has good taste is 
+able to explain and justify their 
+taste OR is a person whose 
+taste is the product of reflection 
+on their own tastes, and not a 
+passively acquired disposition.  “If someone has good 
+tastes, they can explain 
+why they like something 
+and be able to defend their 
+position.”  
+ 
+ 06.7%  
+(15) 
+OPENNESS  A person who has good taste is 
+a person who is able to 
+appreciate a wide variety of 
+things, or who has been 
+exposed to a wide variety of 
+things.  “Someone who has an eye 
+for different arts, music, 
+and elements of life. 
+Those who choose to try 
+new arts out, and branch 
+their tastes into new 04.5%  
+(10) 
+--- Page 10 ---
+ 
+          10 places.”  
+BACKGROUND 
+KNOWLEDGE  A person who has good taste is 
+a person who has enough 
+background knowledge (e.g. 
+academic or historical 
+knowledge) about the works of 
+art and their creators.  “This person has a sense 
+of high culture, a refined 
+aesthetic sensibility, an 
+acquired taste. Good taste 
+is typically something that 
+has to be earned through 
+study at a university or 
+college. There is usually 
+depth and intelligence in 
+good taste.”  04.0%  
+(9) 
+INDEPENDENT 
+MIND  The taste of a person with good 
+taste is really their own  and not 
+the result of mere conformism.  “It means that their taste is 
+distinguished and different 
+from the masses. They 
+think and express 
+themselves outside of the 
+box” 04.5%  
+(10) 
+Detection of aesthetic or aesthetically relevant properties  29.9%  
+(67) 
+DISTINCTION  A person who has good taste is 
+able to distinguish good art from 
+bad art, what is appealing from 
+what is not, quality over 
+quantity. This is a person who 
+likes works that have positive 
+aesthetic values.  “People who have good 
+taste have more refined 
+senses. Their sense of 
+aesthetic is more mature. 
+They pick up on the more 
+subtler beauty in the 
+world.”  25.9%  
+(58) 
+DEPTH  A person who has good taste is 
+able to perceive properties of 
+works of art that are not 
+perceptible at first sight. They 
+are able to pay attention to 
+small details. They do not stop 
+at the surface of works of art, 
+but are able to perceive their 
+depth . “Good taste is being able 
+to take in multiple aspects 
+of a work, including history 
+as well as aesthetic and 
+appreciate something as a 
+whole even if it's not 
+immediately beautiful”  
+ 
+ 05.8%  
+(13) 
+Non-aesthetic properties of works of art  13.4%  
+(30) 
+GENTLE  A person who has good taste 
+does not like things that are 
+harmful, immoral or offensive.  “I think it means that 
+people chose to do or see 
+or say or dress or 
+participate in a way that is 
+morally good and not 05.4%  
+(12) 
+--- Page 11 ---
+ 
+          11 offensive to other people. 
+They don't like  things that 
+are garish. They respect 
+other people and interact 
+with them as they would 
+want others to interact with 
+them. They are not 
+exhibitionists.”  
+INTELLECTUAL  A person who has good taste 
+likes educational works of art, or 
+works of art with high 
+intellectual value, rather than 
+dumb, non -intellectual stuff.  “Liking shows that have an 
+involved plot to them or 
+are dispensing 
+educational information. 
+Murder mysteries, 
+detective shows, and 
+some superhero shows 
+are good examples of the 
+former. Documentaries 
+about geology, history, 
+and animals are examples 
+of the latter.”  04.9%  
+(11) 
+EXPENSIVE  A person who has good taste 
+likes expensive things, luxury 
+goods.  “A person who has a good 
+taste is a person who likes 
+nice and expensive stuff. 
+For example, he/she likes 
+"Rolex" watch, that's mean 
+he/she has a good taste in 
+watch particularly. Another 
+example, he/she likes 
+expensive painting like 
+"Picasso" for art.”  03.1%  
+(7) 
+Others (agent -based)  18.3%  
+(41) 
+DESIGNER  A person who has good taste is 
+a person able to compose 
+beautiful things or to match 
+things together (clothes, 
+decoration, etc.)  “Obviously having "good 
+taste" is subjective to a 
+certain degree. But for 
+example, to me having 
+good taste when referring 
+to clothing means that  an 
+individual knows how to 
+properly mix and match 
+articles of clothing in a way 
+that is visually appealing.”  10.7%  
+(24) 
+PLEASANT  A person who has good taste is 
+pleasant to be around, either 
+because they are not rude, 
+immodest, loud or wear kitsch 
+or garish clothes.  “I tend to assume 
+someone has good taste if 
+they present themselves in 
+a pleasant and coherent 
+manner, if they speak with 
+good vocabulary, if their 
+jokes are clever, if they are 07.6%  
+(17) 
+--- Page 12 ---
+ 
+          12 pleasant to look at and to 
+listen to.”  
+Table 1. Participants’ definitions of good taste. First column indicates the name of the 
+category. Second column gives the category’s definition, as used by coders. Third column 
+gives an example of participants' answers corresponding to this category. Four th column gives 
+the % of participants’ answers falling into this category (as well as the raw number of 
+participants who gave this answer). Bold, italicized text indicates higher -order categories.  
+ 
+After categories for participants’ definitions of good tas te were created, two coders (FC and 
+SHD) independently went through participants’ answers and indicated for each answer into 
+which categories the answer fell. The same answer could fall into several categories. Inter -
+rater agreement was good (Cohen’s kappa  = 0.64 [0.59, 0.68]). Remaining disagreements 
+were settled by a third coder (CB). Final results are presented in Table 1 (rightmost column) 
+and Figure 1.  
+5.2. Participants’ definitions of bad taste  
+Participants’ definitions of bad taste were analyzed foll owing the same method as their 
+definitions of good taste. After categories were created (see Table 2), two coders (FC and CB) 
+independently went through participants’ answers and indicated for each answer in which 
+categories this answer fell. Inter -rater a greement was good (Cohen’s kappa = 0.70 [0.67, 
+0.74]). Remaining disagreements were settled by a third coder (SHD). Final results are 
+presented in Table 2 (rightmost column).  
+ 
+ 
+Category  Definition of bad taste  Example  % (N)  
+RELATIVISM  Participant stresses the fact that 
+‘good’ and ‘bad’ tastes are 
+relative notions, or that it 
+depends on the person, or that 
+it’s all ‘subjective’.  “Nowadays is only a joke 
+to people who likes things 
+that I personally don't like 
+or dislike. In the past I 
+would mean it, but after 
+time and experience, I 
+have learned taste is a 
+subjective aspect in the 
+human nature.”  06.3%  
+(14) 
+Agreement  34.8%  
+(78) 
+SUBJECTIVISM  A person who has bad taste is a 
+person who likes things the 
+participant doesn’t like.  “When I say someone has 
+bad taste I usually am just 
+referring to when we 
+disagree on something or 
+they don’t value something 
+the same amount as I do.”  
+ 20.1%  
+(45) 
+--- Page 13 ---
+ 
+          13 DISSENSUS  A person who has bad taste is 
+either a person who has 
+preferences that are not shared 
+by most people or a person who 
+has preferences of which most 
+people disapprove.  “If majority of people think 
+what they think is good is 
+bad then it usually means 
+they have bad taste 
+compared to everyone.”  
+ 15.2%  
+(34) 
+OUT -OF-
+FASHION  A person who has bad taste is a 
+person whose taste is outdated 
+or is not in line with current 
+trends.  “A person has bad taste 
+when they don't follow 
+current trends. They are 
+unable to think outside the 
+box and refuse to see 
+things from different points 
+of view. They get stuck in 
+one th ing and end up 
+getting left behind.”  02.7%  
+(6) 
+Taster’s non -aesthetic dispositions and virtues  17.4% 
+(39) 
+ALIEN  A person who has bad taste is a 
+person whose tastes are weird, 
+hard to understand, 
+unreasonable.  “It would make me think 
+about what is going on in 
+their head. I would think 
+less of them because 
+apparently, we think 
+differently.”  
+ 03.6%  
+(8) 
+LACK OF 
+JUSTIFICATION  A person who has bad taste is 
+unable to explain or justify their 
+tastes OR is a person whose 
+tastes are not the product of 
+active reflection on their behalf, 
+but are rather the product of a 
+passively acquired disposition.  “If someone has bad 
+tastes they are unable to 
+explain why they like 
+something and can not 
+defend their position.”  
+ 03.6%  
+(8) 
+NARROW -
+MINDED  A person who has bad taste is a 
+person who never tries new 
+things, who prefers to stick to 
+the same kinds and genres of 
+works of art.  “When someone has bad 
+taste this person has yet to 
+try many things in life. 
+They solely stick to a 
+couple of choices in their 
+food, clo thing etc. For 
+example a person eats 
+McDonalds shows he/she 
+hasn't tried something 
+better.”  04.0%  
+(9) 
+NO 
+BACKGROUND 
+KNOWLEDGE  A person who has bad taste is a 
+person who has not enough 
+background knowledge (e.g. 
+academic or historical “They do not understand 
+the creation. They are not 
+educated enough to 
+appreciate what it is or 
+means.”  
+ 02.2%  
+(5) 
+--- Page 14 ---
+ 
+          14 knowledge) about the works of 
+art and their creators.  
+FOLLOWER  A person who has bad taste is a 
+person whose taste is not really 
+their own , but the mere result  of 
+blind conformism.  “I'd say someone with a 
+"bad taste" doesn't really 
+like things on their own, 
+they tend to be a follower 
+for what's popular so they 
+don't end up with much of 
+a taste at all. I'd also say 
+it's when they like a lot of 
+things that other p eople 
+tend to dislike, so they'd 
+have a "bad taste" 
+compared. Again though, 
+really depends on cultures 
+and areas they grew up, 
+what may be bad tastes 
+where they are, could be 
+good tastes elsewhere.”  05.8%  
+(13) 
+Detection of aesthetic and aesthetically relevant properties  39.7%  
+(87) 
+NO VALUE  A person who has bad taste is a 
+person who likes things that 
+have no aesthetic values  or 
+negative aesthetic values  OR is 
+unable to make the distinction 
+between things that have 
+aesthetic values and those that 
+don’t.  “They don’t or can’t 
+appreciate the beauty and 
+quality of fine art or food, 
+etc. Bad taste usually 
+means that the person 
+enjoys something of a 
+lesser qual ity.” 
+ 29.0%  
+(65) 
+GAUDY  
+(subcategory of 
+NO VALUE)  A person who has bad taste is a 
+person who likes things that are 
+gaudy, flashy, attention -getting, 
+pompous, ostentatious, tacky 
+(or has similar properties).  “It means they do not have 
+a clue about what loo ks 
+good, what is quality, what 
+is in style, is desirable. 
+Usually they like gaudy 
+and tacky things that may 
+be expensive but horrible 
+looking.”  09.8%  
+(22) 
+--- Page 15 ---
+ 
+          15 SHALLOW/EAS
+Y A person who has bad taste is a 
+person unable to make an effort 
+to perceive and appreciate 
+properties of works of art that 
+are not immediately obvious OR 
+is a person who stops at the 
+surface of works of art, and thus 
+only likes superficial things that 
+are easy to appreciate.  “Attracted to things that 
+have no depth.”  12.1%  
+(27) 
+Non-aesthetic properties of works of art  20.1%  
+(45) 
+HARMFUL  A person who has bad taste is a 
+person who likes things that are 
+harmful, immoral or offensive.  “If someone finds humor 
+by making fun of 
+someone. If there is 
+violence, or abuse.”  
+ 15.6%  
+(35) 
+DUMB  A person who has bad taste is a 
+person who likes things or 
+people that are dumb or lack 
+any epistemic value.  “Generally something 
+dumb that can be 
+apprecia ted by the lowest 
+common denominator, is 
+my best way of summing it 
+up. This can also change 
+depending on who is 
+saying it.”  04.0%  
+(9) 
+CHEAP  A person who has bad taste is a 
+person who likes things that are 
+not expensive, or cheap.  “A person who has a bad 
+taste is a person who likes 
+ugly and cheap stuff. 
+He/she likes to collect junk 
+or dress ugly. For 
+example, he wears jean 
+and t -shirt to a wedding. 
+Another example, she 
+collects junk jewelry like 
+fake ugly bracelet.”  02.2%  
+(5) 
+Others (agent -based)  22.8% 
+(51) 
+BAD DESIGNER  A person who has bad taste is a 
+person who designs things or 
+chooses compositions that are 
+aesthetically unpleasant 
+(clothes, decoration, etc.)  “Specific examples come 
+to mind right away, of bad 
+taste. In clothing, for 
+example, a blouse, that 
+combines plaid and 
+stripes, anything with a 
+leopard or snake print, or 
+any clothing that lacks 12.1%  
+(27) 
+--- Page 16 ---
+ 
+          16 modesty for the wearer. A 
+person with bad taste, in 
+my opinion, lacks the 
+ability to create sometihng 
+of beauty.”  
+UNPLEASANT  A person who has bad taste is a 
+person who is annoying to be 
+around, either because they are 
+rude, immodest, or loud or wear 
+kitsch or garish clothes.  “bad taste to me is being 
+unkempt in yourself. A lack 
+of postivity which shows in 
+almost everything a 
+perso n does.”  
+ 11.6%  
+(26) 
+Table 2. Participants’ definitions of bad taste. The indications for the columns are the same 
+as for Table 1.  
+ 
+5.3. Demographic variations in participants’ definitions of taste  
+ 
+Additionally, we looked at whether participants’ definitions of good and bad aesthetic tastes 
+varied along with certain demographic variables: age, gender (coded as : 1 = man, 2 = 
+woman), socio -economic status (measured through education levels for non -student 
+participants, and education le vel of their parent with the highest education level for student 
+participants), political orientation (from left to right), and frequency of engagement in art -
+related activities. For each category of definition presented in Tables 3 and 4, we performed 
+logistic regression with endorsement of category as dependent variable, and all five 
+demographic variables as predictors. As can be seen, socioeconomic status or engagement 
+with art did not seem to significantly impact participants’ choices.  
+ 
+ DISTINCTION  SUBJECTIVISM  CONSENSUS  GENTLE  
+Age 0.04 (0.01)  
+β = 1.40***  -0.04 (0.01)  
+β = -1.34**  -0.01 (0.01)  
+β = -0.40 0.03 (0.02)  
+β = 1.87  
+Gender  -0.15 (0.33)  
+β = -0.17 0.67 (0.34)  
+β = 0.78*  -0.40 (0.39)  
+β = -0.56 0.00 (0.61)  
+β = 0.00  
+Socio -economic  -0.17 (0.17)  
+β = -0.38 -0.28 (0.17)  
+β = -0.64 0.17 (0.20)  
+β = 0.48  0.12 (0.32)  
+β = 0.52  
+Art-related 
+practices  0.11 (0.37)  
+β = 0.11  -0.70 (0.44)  
+β = -0.70 -0.48 (0.48)  
+β = -0.57 -1.02 (0.84)  
+β = -1.95 
+Political  0.05 (0.08)  
+β = 0.27  0.02 (0.09)  
+β = 0.08  0.05 (0.10)  
+β = 0.24 0.19 (0.16)  
+β = 1.55  
+Table 3. Demographic predictors of participants’ definitions of good taste. For each category 
+presented (DISTINCTION, SUBJECTIVISM, CONSENSUS and GENTLE), we performed a 
+logistic regression with Age, Gender (1 = Man, 2 = Woman), Socio -economic status, 
+Engagement in art -related practices, and Political orientation as predictors. Each cell presents 
+the regression coefficient and the standard error on the first line, and the standardized 
+regression coefficient (β) on the seco nd line.  
+ 
+--- Page 17 ---
+ 
+          17  
+ RELATIVISM  DISSENSUS  NO VALUE  SHALLOW/EA
+SY HARMFUL  
+Age -0.01 (0.02)  
+β = -0.77 -0.02 (0.01)  
+β = -0.71 0.01 (0.01)  
+β = 0.31  -0.01 (0.01)  
+β = -0.72 0.02 (0.01)  
+β = 0.78  
+Gender  0.21 (0.57)  
+β = 0.43  -0.25 (0.39)  
+β = -0.35 0.30 (0.31)  
+β = 0.33  -0.81 (0.45)  
+β = -1.23°  0.37 (0.39)  
+β = 0.51  
+Socio -
+economic  -0.26 (0.29)  
+β = -1.03 -0.16 (0.19)  
+β = -0.43 -0.04 (0.16)  
+β = -0.09 0.15 (0.22)  
+β = 0.46  0.08 (0.20)  
+β = 0.23  
+Art 
+engagement  -0.39 (0.72)  
+β = -0.69 -0.61 (0.49)  
+β = -0.73 -0.26 (0.37)  
+β = -0.24 0.86 (0.48)  
+β = 1.14°  -0.28 (0.46)  
+β = -0.33 
+Political  0.10 (0.15)  
+β = 0.79  0.02 (0.10)  
+β = 0.11  -0.13 (0.08)  
+β = -0.52 -0.32 (0.14)  
+β = -1.84*  -0.16 (0.11)  
+β = -0.83 
+Table 4. Demographic predictors of participants’ definitions of bad taste. The indications for 
+the columns are the same as for table 3.  
+ 
+5.4. Discussion  
+ 
+What lesson can be drawn from these results regarding the folk concept of taste? Most of ou r 
+participants (93%) agreed to say that they considered that certain people had better  aesthetic 
+taste than others. This confirms that the notions of good and bad aesthetic taste are part of 
+our everyday aesthetic lives. But what exactly do people mean by ‘good’ and ‘bad’ aesthetic 
+tastes?  
+ 
+(i) A first finding, which came as a surprise, was that, contrary to what is usually discussed in 
+the philosophical literature (see Schellekens, 2009) , good t aste is not only associated with 
+judgment, perception, or enjoyment, but also with an ability to create, compose, and design. 
+About one in ten participants gave an answer falling into the DESIGNER (10.7%) or BAD 
+DESIGNER (12.1%) category and considered tha t good taste comes with creative abilities 
+such as selecting clothing items that fit together, arranging a living room harmoniously, etc.  
+ 
+--- Page 18 ---
+ 
+          18  
+Figure 1.  Percentage of participants’ definitions of good taste  falling into each category.  
+ 
+ 
+Figure 2.  Percentage  of participants’ definitions of bad taste  falling into each category.  
+ 
+(ii) Beyond this unexpected observation, a second finding was that participants’ definitions of 
+good and bad aesthetic taste mirrored the kind of tension highlighted by Hume, illustrat ing the 
+paradox of taste. On the subjective side, 25% of good taste definitions and 20.1% of bad taste 
+definitions fell into the SUBJECTIVISM category, in which participants defined good and bad 
+taste in reference to their own taste. At the same time, 25.9 % of good taste definitions and 
+29% of bad taste definitions fell respectively into the DISTINCTION and NO VALUE 
+categories, according to which having good taste is liking good art and/or being able to 
+distinguish good from bad works of art, and having bad  taste is liking things that lack positive 
+aesthetic values. Among participants whose definition of bad taste fell into the NO VALUE 
+category, a third also fell into the GAUDY category, meaning that they considered that people 
+
+--- Page 19 ---
+ 
+          19 of bad taste enjoy objects th at instantiate negative properties which form a specific cluster 
+including being gaudy, kitsch, or tacky.  
+ It is worth noting that SUBJECTIVIST answers are not absolutely  incompatible with 
+answers that fall into the DISTINCTION and NO VALUE categories, as shown by a participant 
+who answered:  
+ 
+When I say someone has bad taste I usually mean someone who thinks fast food is delicious, 
+or someone who doesn't appreciate great dialog in a movie. I think bad taste is liking clothes 
+that aren't classic -looking. But  it appears my perception of "bad taste" is solely my own opinion.3 
+ 
+However, it is clear that answers in the DISTINCTION and NO VALUE categories easily lend 
+themselves to an objectivist reading, according to which good taste is the ability to discriminat e 
+the true aesthetic value of objects. Thus, the fact that participants’ answers are split between 
+these categories and the SUBJECTIVISM one seems to speak in favor of the dichotomy Hume 
+pointed out three centuries ago. The following answer perfectly illus trates this:  
+ 
+Their taste aligns closely to mine, or is similar but “better” than mine. By “better,” I mean like 
+disliking something I know (sort of objectively) is not that good (like laughing at a joke that’s so 
+unfunny that it comes back around into bei ng funny again).  
+ 
+Interestingly, while roughly the same percentage of good taste definitions fell into the 
+DISTINCTION and SUBJECTIVISM categories (25.9 vs. 25%), there was a 9% gap between 
+the NO VALUE and SUBJECTIVISM categories for bad taste definitions  (29.0 vs. 20.1%). This 
+might reflect a tendency in participants to become more objectivist when focusing on the bad 
+(rather than the good). Such a tendency has been observed in the past for moral objectivism 
+(Beebe, 2014; Goodwin & Darley, 2010), though n ot for aesthetic objectivism (Cova & Pain, 
+2012).  
+ 
+(iii) Hume’s solution to this paradox of taste was to keep both subjectivity and objectivity by 
+grounding the standard of taste in the opinion of experts. As one can see, this solution wasn’t 
+favored by ou r participants: only 1.3% of participants considered that good taste is determined 
+by the taste of EXPERTS. A much more popular position was that good taste is to be found in 
+what is widely appreciated: 14.7% of good taste definitions fell into the CONSENS US 
+category4 and 15.2% of bad taste definitions fell into the DISSENSUS category. This inclusive 
+stance is in stark contrast with Hume’s elitist hypothesis, but it can be seen as another way to 
+combine the mind -dependence of aesthetic properties with the existence of an objective 
+standard of taste.5 
+ 
+(iv) Burke’s contention that good taste is an active ability was well reflected by the proportion 
+of bad taste definitions falling into the SHALLOW/EASY (12.1%) and FOLLOWERS (5.8%) 
+ 
+3 The last sentence does not necessarily contradict the first because the participant may consider that 
+expressions such as ‘delicious ‘ or ‘great dialogues ‘ mean something like ‘delicious for me ‘ or ‘great 
+dialogue according to me ‘. 
+4 Among the 33 participants who gave an answer in the CONSENSUS category, only 4 gave an answer 
+that mentioned what philos ophers call the ‘test of time’.  
+5 We classified as ‘experts’ people's reference to professionals of artistic domains. Hume was rather 
+referring to ideal judges (see Levinson 2002 for an enlightening discussion). Since nearly nobody 
+referred to judges, the difference between ideal or professional judges is not of great importance here.  
+--- Page 20 ---
+ 
+          20 categories. Indeed, th e definitions in both of these categories rely on the idea that people of 
+bad taste indulge in effortless consumption and fail to put in the effort required by good taste. 
+For example, when explaining how taste could be improved (see Section 7), one partic ipant 
+even claimed that having a better taste is not a question of changing preferences, but a 
+question of having experiences grounded in better experiences and judgment:  
+ 
+Having new experiences in food, racing or sports exposes the individual to other pos sibilities.  
+Once they can distinguish differences, their taste has been improved.  A change in taste may 
+not reflect a change in preference.  
+ 
+The definitions provided by these participants also fit well with the thesis that good 
+taste is an Aristotelian v irtue since the latter requires continuous training (see notably Lopes 
+2008; Goldie, 2008).  
+ 
+(v) Finally, participants also appealed to moral considerations (e.g. whether one likes offensive 
+works of art) to define good and bad taste. This was clearer for definitions of bad taste 
+(HARMFUL: 15.6%) than for definitions of good taste (GENTLE: 5.4%). The difference 
+between the two conditions is statistically significant: χ2(1) = 11.51, p < .001. This might reflect 
+the fact that offensive works of art can be tal ked about as being in “bad taste,” while “good 
+taste” doesn’t seem to have clear moral connotations. For example, in everyday life, we say 
+that a morally dubious remark is in ‘bad taste’, but we wouldn’t say that a morally virtuous 
+remark is in ‘good taste ’. This also suggests that liking what is morally bad can be a defeater 
+for good taste although liking what is morally good isn’t sufficient for having good taste. Hume 
+formulates a similar idea:  
+ 
+Where vicious manners are described without being marked with the proper characters of 
+blame and disapprobation this must be allowed to disfigure the poem and to be a real deformity. 
+[H]owever I may excuse the poet, on account of the manners of his age, I never can relish the 
+composition. (1757/1987, p.15 3) 
+ 
+Participants with higher education (which we used as a proxy for socio -economic level) 
+were not less likely to ground their definition of good and bad taste in moral considerations (in 
+fact, they were even non -significantly more likely). Thus, our resu lts seem to conflict with 
+Bourdieu’s claim that “popular classes” are more likely to blend aesthetic and moral 
+judgments, in opposition with the ‘disinterested‘, the Kantian view that morality and aesthetics 
+are orthogonal (1979/1984, p. 41). However, it s hould be stressed that Bourdieu focused on 
+the (moral) content  of the work, while our participants more frequently referred to the works’ 
+impact  on real -life individuals (and how they could be offended). This difference should be 
+kept in mind while interpr eting our results.  
+ 
+6. Good and bad taste across domains  
+ 
+We have seen that most people think that there can be good and bad aesthetic taste, even if 
+they do not all seem to mean the same things by these expressions. However, our initial 
+question (Taste_Po ssibility) was restricted to works of art (even if participants didn’t 
+necessarily take this restriction into account). This raises a question: do people think that the 
+distinction between good and bad taste is specific to the artistic domain, or do they t hink that 
+--- Page 21 ---
+ 
+          21 it can be found in other domains as well? To find out, we presented participants with 19 
+domains (beer, car races, clothing, comic books, food, graphic design, interior design, jewelry, 
+literature, marijuana, movies, music, paintings, sculpture, sports, TV shows, video games, 
+wine and wrestling) and asked them for each domain:  
+ 
+1. To which extent it makes sense  to say that someone has good or bad taste in this 
+domain (for one half of participants), or to distinguish  between good and bad tastes in 
+this domain (for the other half) (on a scale from -3 = “No sense at all” to 3 = “Completely 
+sense”).  
+2. To which extent it is important  to have good taste in this domain (on a scale from 0 = 
+“Not important at all” to 6 = “Extremely important”).  
+3. To which extent t hey were knowledgeable  in this domain (on a scale from 0 = “Not 
+knowledgeable at all” to 6 = “Very knowledgeable”).  
+ 
+6.1 Participants’ answers on good and bad taste across domains  
+ 
+Participants’ answers to these questions are organized by domain in Table 5 (standard 
+deviation in parentheses). The rightmost column presents the result of an additional survey on 
+42 French -speaking participants presented with the same list of domains and asked to rate to 
+which extent each domain is generally considered a s “highbrow” (on a scale from 0 = 
+“Completely disagree”  to 6 = “completely agree”). This survey was conducted to determine to 
+what extent participants’ conceptions of taste track what counts as “highbrow”.  
+ 
+Domain  Say Distinguish  Important  Knowledgea
+ble Highbrow  
+Beer  0.81 (1.89)  0.91 (1.76)  2.22 (2.05)  2.12 (1.89)  1.98 (1.32)  
+Car races  -0.95 (1.85)  -1.00 (1.65)  0.85 (1.32)  0.77 (1.23)  1.26 (1.42)  
+Clothing  2.05 (1.41)  2.07 (1.31)  4.23 (1.60)  3.24 (1.57)  3.12 (1.50)  
+Comic books  0.59 (1.80)  0.43 (1.85)  1.82 (1.78)  1.51 (1.64)  1.90 (1.21)  
+Food  1.75 (1.60)  1.76 (1.43)  4.15 (1.82)  4.05 (1.49)  3.48 (1.42)  
+Graphic 
+Design  1.70 (1.57)  1.58 (1.44)  3.46 (1.88)  2.19 (1.86)  3.79 (1.12)  
+Interior 
+Design  2.03 (1.45)  2.01 (1.18)  3.94 (1.79)  2.36 (1.73)  3.95 (1.43)  
+Jewelry  1.61 (1.60)  1.61 (1.31)  3.12 (2.00)  2.15 (1.76)  4.00 (1.48)  
+Literature  1.86 (1.57)  1.93 (1.34)  3.92 (1.81)  3.29 (1.73)  4.98 (1.07)  
+Marijuana  -0.25 (2.09)  -0.28 (2.04)  1.51 (1.95)  1.53 (1.93)  0.90 (1.14)  
+Movies  1.70 (1.62)  1.96 (1.21)  3.85 (1.70)  3.85 (1.50)  3.17 (1.21)  
+--- Page 22 ---
+ 
+          22 Music  1.96 (1.49)  2.14 (1.11)  4.27 (1.72)  3.98 (1.57)  3.83 (1.50)  
+Paintings  1.74 (1.80)  1.86 (1.37)  3.68 (1.88)  2.47 (1.77)  4.64 (1.43)  
+Sculpture  1.49 (1.63)  1.59 (1.39)  3.05 (2.06)  1.69 (1.59)  5.07 (1.22)  
+Sports  -0.37 (1.94)  -0.26 (1.82)  1.59 (1.80)  2.04 (1.88)  1.88 (1.38)  
+ 
+TV shows  1.38 (1.64)  1.73 (1.37)  3.49 (1.79)  3.63 (1.59)  1.38 (1.13)  
+Video games  0.35 (1.99)  0.55 (2.00)  2.26 (2.08)  2.47 (2.09)  1.57 (1.17)  
+Wine  1.48 (1.82)  1.46 (1.61)  2.91 (2.12)  1.89 (1.76)  4.48 (1.21)  
+Wrestling  -0.94 (1.96)  -1.03 (1.78)  0.88 (1.52)  0.92 (1.56)  0.81 (1.06)  
+Table 5. Means and SDs for participants to our four questions about domains ( say, distinguish, 
+important, knowledgeable ). The rightmost column presents the results of an additional survey 
+in which participants were asked to rate to what extent each domain is generally considered 
+as “highbrow”.  
+ 
+Because participants’ answers to the Say and Distinguish  question were closely 
+aligned across domains: r(17) = .99, we merged them into a single score ( Taste ). Participants’ 
+Taste  answers were significantly correlated with their answers to the Important  and 
+Knowledgeable  questions: r(4577) = .64, r(4577) = .44. Participants’ answers to the Important  
+and Knowledgeable  questions were also correlated: r(4577) = .59.  
+Using domains rather than participants as data points, we also found a significant 
+correlation between Taste  and Highbrow  answers: r(17) = .79. Partial correlations suggested  
+that being knowledgeable in a domain and considering it as highbrow made independent 
+contributions to the idea that there are good and bad tastes within this domain: r(17) = 0.80, 
+r(17) = 0.83.  
+ 
+6.2. Discussion  
+ 
+(i) A first remark is that these participan ts thought that it makes sense to distinguish between 
+good and bad taste in domains other than the artistic. This clashes with an interpretation of 
+Kant according to which aesthetic judgments and judgments of the agreeable are restricted to 
+specific domain s. Kant gave food and wine as examples of domains where we make 
+judgments of the agreeable rather than aesthetic judgments (1790/1914, p.57 & p.158, see 
+also Ginsborg, 2019, §2.1) – because such judgments usually involve a desire for the object, 
+often don’ t purport to be universal judgments about which everyone ought to agree, and 
+involve sense modalities (smell and taste) which don’t “permit contemplation” (Scruton, 2001, 
+p.103) in contrast to hearing and sight. Contrary to this Kantian view, food and wine  scored 
+highly on the Say, Distinguish , and Important questions.  
+We may interpret this as suggesting that, contrary to what Kant claimed, common 
+sense doesn’t treat judgments about beauty and art differently from judgments of the 
+agreeable. Alternatively, it may be interpreted as suggesting that there are more domains, e.g. 
+--- Page 23 ---
+ 
+          23 food and wine, where aesthetic judgments are relevant than were indicated by Kant and some 
+of his interpreters (however, see our next point).  
+ 
+(ii) Because participants considered that i t doesn’t make sense to distinguish between good 
+and bad taste in certain domains, these results seem to conflict with the appealing conjunction 
+of two plausible ideas: (1) that domains where it makes sense to distinguish between good 
+and bad taste are dom ains where we can adopt an aesthetic attitude, and (2) that we can 
+adopt an aesthetic attitude toward any kind of object (Irvin 2008). If it doesn’t make sense to 
+distinguish good and bad taste concerning, say, marijuana – as participants, on average, seem  
+to think – either (1) or (2) should be rejected.  
+ 
+(iii) As predicted by a popular hypothesis, participants’ conceptions of taste seemed driven by 
+their knowledge of a given field. For example, the more people knew about comic books, video 
+games or marijuana, the more they found it made sense to distinguish between good and bad 
+taste in these domains (respectively: r = .41, .51, .43). However, knowledge didn’t explain 
+everything: for example, participants were way more knowledgeable in Food than in I nterior 
+Design and still answered that it made a bit more sense to distinguish between good and bad 
+taste for Interior Design.  
+ 
+(iv) Another factor might then be whether domains are considered as ‘highbrow’ or not. Indeed, 
+the categories for which the Say and Distinguish scores are negative are considered as 
+“lowbrow” ( Highbrow  average score below 2): wrestling, sport, marijuana, and car races. 
+Furthermore, among the 13 domains in which participants usually didn’t consider themselves 
+knowledgeable (those fo r which the average score for Knowledgeable  is below 3), the only 5 
+where they tended to consider it important to distinguish between good and bad taste (average 
+score for Important above 3) are domains that are considered highbrow: sculpture, painting, 
+jewelry, interior design, and graphic design (average score for Highbrow  above 3).  
+This result fits well with the Bourdieusian idea that it is more valuable to have good 
+taste in domains that are associated with the dominant classes (highbrow domains) becaus e 
+taste is often used to signal one’s social status.  
+7. Can taste be improved? And how?  
+ 
+Finally, we asked our participants whether people could improve their taste, relative to fine 
+arts. 92.5% of participants answered positively. We then asked participan ts who answered 
+positively to explain how people could improve their taste.  
+After categories were created, all three coders independently went through 
+participants’ answers and indicated for each answer in which categories this answer fell. FC 
+coded all an swers and CB and SHD coded one half each. Inter -rater agreement was good 
+(Cohen’s kappa = 0.68 [0.64, 0.73]). Remaining disagreements were settled by a third coder 
+(CB or SHD, depending on the second coder’s identity). Final results are presented in Table 
+6 (rightmost column).  
+ 
+7.1 Participants’ answers to how taste can be improved  
+ 
+--- Page 24 ---
+ 
+          24 Category  Method to improve  Example  % 
+Exposure  66.4%  
+(148)  
+VARIETY  Expose oneself to a wide variety 
+of works of art (by travelling, 
+etc.).  “They can improve their 
+tastes by starting to value 
+new things. I haven't 
+always liked the same 
+things but over time my 
+taste has become more 
+refined. Anyone can do 
+that. It's not something you 
+are born with.”  
+ 40.4%  
+(90) 
+AGAINST  Go against oneself by trying 
+things one does not like, or b y 
+going out of one’s comfort zone 
+and trying unusual things (e.g. 
+things that are not mainstream).  “People can improve their 
+taste by giving chances to 
+art that is not their go -to 
+piece. For instance, listen 
+to a genre of music you are 
+not familiar with or  
+ordinarily do not like but 
+instead try to find the 
+beauty/harmony in it.”  10.8%  
+(24) 
+QUALITY  Expose oneself to or acquaint 
+oneself with things that are 
+high-quality OR are considered 
+high-quality by most people 
+and/or critics.  “By choosing specific 
+topics within a given 
+subject that are 
+considered good. For 
+example, one can improve 
+their taste in music by 
+listening to bands and 
+artists that are considered 
+good. Not forcing 
+themselves to like it, 
+however.”  
+ 17.5%  
+(39) 
+CONFORMITY  Try to imitate the taste of the 
+majority, or of one’s ingroups.  “People should know what 
+is accepted as good by 
+most of the people and try 
+to stick with such good 
+things to improve their 
+taste.”  06.3%  
+(14) 
+EMULATION  Try to imitate the taste of 
+experts and role models.  “By educating themselves 
+and mirroring behaviors of 
+those with good taste.”  08.5%  
+(19) 
+Knowledge  41.7%  
+(93) 
+--- Page 25 ---
+ 
+          25 BACKGROUND 
+KNOWLEDGE  Acquire factual knowledge 
+about works of art and their 
+creator (by reading, getting an 
+education, etc.).  “Finding out more about a 
+subject will improve a 
+person's taste. Like 
+reading a book about 
+movies or taking a class 
+will help a person to 
+understand what makes a 
+movie good or bad.”  36.8%  
+(82) 
+DISCUSS  Discuss taste with others, try to 
+understand others’ taste, ask 
+others to explain their taste.  “Consumption is very 
+important, it helps people 
+gain perspective, 
+discussing with others the 
+strong and weak points of 
+a given work is also very 
+important”  06.3%  
+(14) 
+EXPLAIN  Learn to explain an d/or justify 
+one’s preferences and tastes.  “People can improve their 
+taste by being reflective on 
+something they enjoyed. It 
+is easy to think "wow that 
+was good" but to think 
+back and pick apart why 
+you liked or did not like 
+something is the path to 
+refini ng your taste”  02.7%  
+(6) 
+Skills (Know -how)  04.5%  
+(10) 
+PERCEPTION  Learn to pay attention to and 
+perceive more details, learn to 
+adopt new perspectives on 
+works of art.  “I think just being able to 
+pay more attention to the 
+subtle details in those 
+areas can actually elevate 
+a person's perception of 
+things.”  04.5%  
+(10) 
+Others  07.6%  
+(17) 
+AGE  Taste changes during one’s life.  “as people age, their 
+preferences and choices 
+changes and it leads to 
+betterment most of the 
+time.”  02.7%  
+(6) 
+RELATIVISM  Someone’s taste becomes 
+‘good’ when it coincides with the 
+participant’s taste.  “If someone begins to 
+have similar opinions to 
+me on a form of 
+entertainment then I would 
+say that they can improve 
+their taste”  02.2%  
+(5) 
+--- Page 26 ---
+ 
+          26 DESIGN  Learn to compose ae sthetically 
+pleasant things (e.g. 
+coordinating clothes, colors, or 
+sounds).  “Often people are unaware 
+that certain qualities of an 
+object enhance or detract 
+from the surrounding 
+objects. Once they have a 
+few examples of how 
+objects and colors can 
+work with  or against each 
+other, they are freer to 
+experiment and find 
+combinations that are 
+more pleasing to them and 
+others. This is sometimes 
+seen when people are 
+given a course in choosing 
+clothes.”  02.7%  
+(6) 
+Table 6. Participants’ methods to improve taste. The indications for the columns are the same 
+as for Table 1.  
+ 
+7.2 Discussion  
+ 
+As we saw, most participants answered that people can improve their taste, which is in line 
+with the fact that most participants admitted making a distinction between good  and bad taste.  
+ 
+(i) 55.6% of those who thought that people cannot improve their taste (7.5% of all participants) 
+considered that this is not possible because taste is relative and/or is akin to subjective 
+preferences - due to space constraints, we do not produce the table; all materials and data 
+can be found at osf.io/ckx2z/ .6 Another common answer as to why people cannot improve 
+their taste is that it is somehow too hard to change one’s taste (NO CHANGE, 27.8%), due to 
+a lack of motivation (NO MOTIVATION, 16.7%) or to habits or difficulties in modyfining 
+preferences and belief s:  
+ 
+I believe people already have in them what they like and what they are accustomed to . It's very 
+hard to change adults for their beliefs and training .  
+ 
+(ii) 40.4% of participants considered that we can improve our taste by being exposed to a 
+variety o f objects, genres, experiences, etc. This intuition was shared by Hume and Burke. 
+Quite often (17.5%), participants explicitly specify that one needs to be exposed to high -quality 
+objects and experiences, such as high art, masterpieces, or just Beauty (as in the following 
+Kantian -ish example):  
+ 
+People could improve their taste in fine art by being exposed to more of the beauty of God's 
+creation...mountains, sunrises and sunsets, trees, etc.  
+ 
+ 
+6 Note however that some who think that taste is subjective believe that we can nevertheless improve 
+our taste, as the following example shows: “ People can continue to expose  themselves to arts and 
+design. Over time the person should develop what they think is a pleasing style. This should improve 
+their taste. ” 
+--- Page 27 ---
+ 
+          27 Additionally, it is interesting to note that our participants’ emphasis on diversity is in line with 
+the results of a recent sociological study that highlight the fact that, nowadays, high -status 
+tastes are characterized by a greater diversity and inclusivity at the level of genres (while still 
+being cha racterized by a narrower focus on “high -quality” items within each genre) (Childress 
+et al., 2021). Thus, it might be that participants’ conceptions of the best ways to improve one’s 
+aesthetic taste are driven by the models offered by contemporary high -status tastes.  
+ 
+(iii) 41.7% of participants gave an answer that we categorized as involving the  acquisition of 
+some kind of knowledge (see the BACKGROUND KNOWLEDGE, DISCUSS and EXPLAIN 
+categories). According to these participants, we can improve our taste by improving our 
+cognitive capacities and by learning from books and discussions with others. These answers 
+are in line with Burke’s contention that taste is akin to judgment, in contrast to mere passive 
+perception.  
+Nevertheless, as we saw in section 5, only 4% of participants’ definitions of good taste 
+were classified as BACKGROUND KNOWLEDGE and 4.9% as INTELLECTUAL. Aesthetic 
+taste is rarely defined in cognitive terms. This seems to be in tension with a strict reading of 
+Burke’s view that taste is a kind of judgment, but it is not incompatible with a more moderate 
+interpretation of his ideas, e.g. Carroll’s (1984) Burkian hypothesis that cognition plays a 
+central role in aesthetic enjoyment and taste.  
+ 
+8. Conclusion  
+ 
+In this paper, our goal was to explore the  everyday concept of aesthetic taste with the aim of 
+improving our grasp of what people mean when they distinguish between 'good' and 'bad' 
+aesthetic taste. A first result was that most of our participants (drawn from a stratified US 
+sample) indeed made su ch a distinction and considered that people could improve their 
+aesthetic taste.  
+ However, this apparent uniformity hides a wide variety of definitions of good and bad 
+aesthetic taste. Though a variety in expression (i.e., definitions given) does not neces sarily 
+reflect variety in the underlying construct (i.e., the folk concept of aesthetic taste), participants’ 
+answers seem torn between the idea that taste is merely a matter of personal preference and 
+the idea that taste is an ability to discriminate the true value of aesthetic objects. Between 20 
+and 25% of participants gave a subjectivist answer according to which taste is a mere 
+preference that differs from one person to another, while 25 to 29% of participants defined 
+good and bad taste as the ability or inability to appreciate what is really aesthetically valuable. 
+This tension reflects Hume’s paradox of taste, which we described in the introduction.  
+ Our results suggest that our participants see good taste as something that is actively 
+developed, whi le bad taste is passively absorbed. While our participants do not necessarily 
+think that having good taste requires going against the consensus – quite the contrary, as 
+many answers fell into the CONSENSUS or DISSENSUS categories – various participants 
+stressed that good taste has to be autonomously and consciously developed, making the 
+person with good taste able to explain and justify their preferences. This is in line with Burke 
+and Carroll’s claims that taste, like judgment, has to be actively exercised  to be improved.  
+ Most participants answered that improving one’s taste required exposing oneself to a 
+wide and diverse array of works of art and/or acquiring factual knowledge about works of art. 
+This might reflect that, even if taste is simply a preferen ce, some preferences are better 
+--- Page 28 ---
+ 
+          28 because they are more informed and the product of better judgment. To come back to the 
+metaphor of gustatory taste ( pace Kant), one could say that taste as preference is subjective, 
+but that it is better when it is grounded in an accurate ability to distinguish between the 
+ingredients of a plate. This might also explain why people tend to think that it makes more 
+sense to distinguish between good and bad taste for domains about which they have more 
+knowledge: because their kn owledge makes them more conscious of the quantity of 
+knowledge required to fully appreciate an object. Nevertheless, people also seemed to 
+attribute an importance to mastering good taste in domains about which they are not 
+knowledgeable but considered soci ally highbrow - which is close to Bourdieu’s hypothesis.     
+ 
+Going back to our initial question of whether people are implicitly aesthetic objectivists, 
+what can be learned from our results? First, it is indeed hard to deny that people do distinguish 
+betw een good and bad taste. However, as we saw, this is not always incompatible with 
+subjectivism about aesthetic properties: many participants simply defined good taste as taste 
+similar to theirs or as taste in line with the consensus of the majority. Still, the high proportion 
+of definitions assimilating good taste to the ability to discriminate and/or appreciate the true 
+aesthetic values of works of art, and the fact that most people accept the idea that taste can 
+be improved might reveal an objectivist stra in in laypeople’s views about aesthetic properties. 
+This is a question that might need to be tackled more directly in future work.  
+ Among other questions that might need to be addressed in the future, one is whether 
+people who think of good taste as an abi lity to recognize what has true aesthetic value think 
+that good judgment has to be accompanied by enjoyment to count as good taste. What about 
+someone who is able to recognize good art after a lot of training, but is unable to enjoy and 
+appreciate it? Does  this person have good taste? Does good taste necessarily include an 
+affective component?  
+ Such are the questions we plan to address in future work. Meanwhile, we would like to 
+conclude by pointing out the striking relevance of empiricists’ analyses of aes thetic taste. It is 
+heartening to note that aesthetic intuitions that are more than 260 years old have not drastically 
+shifted. Hence, classical philosophers are not merely confined to history classes but can 
+participate actively in contemporary debates. W hile the question of good taste is little 
+discussed in philosophy (if not reduced to being merely subjective), both Hume and common 
+sense show us that on taste, there is much to debate.  
+ 
+References  
+ 
+Beebe, J. R. (2014). How different kinds of disagreement impact folk metaethical judgments. 
+In J. C. Wright, & H. Sarkissian (Eds.), Advances in experimental moral psychology: Affect, 
+character, and commitments  (pp. 167 –178). London: Bloomsbury.  
+ 
+Beebe, J. R., & Sackris, D. (2016). Moral objectivism across the l ifespan. Philosophical 
+Psychology , 29(6), 912 -929. 
+ 
+Beebe, J., Qiaoan, R., Wysocki, T., & Endara, M. A. (2015). Moral objectivism in cross -cultural 
+perspective. Journal of Cognition and Culture , 15(3-4), 386 -401. 
+ 
+--- Page 29 ---
+ 
+          29 Bourdieu, P. (1979/1984). Distinction: A social critique of the judgement of taste  (R. Nice, 
+Trans.). Harvard University Press.  
+Burke, E. (1757/1998). A philosophical enquiry into the origin of our ideas of the sublime and 
+beautiful  (A. Phillips, Ed.; Reiss). Oxford University Press.  
+Carroll, N. (1984). Hume’s Standard of Taste. The Jou rnal of Aesthetics and Art Criticism , 
+43(2), 181 –194. 
+Childress, C., Baumann, S., Rawlings, C. M., & Nault, J. F. (2021). Genres, Objects, and the 
+Contemporary Expression of Higher -Status Tastes. Sociological Science , 8, 230 -264.  
+Cova, F. (2018). Beyond i ntersubjective validity: recent empirical investigations into the nature 
+of aesthetic judgment. In F. Cova & S. Réhault, Advances in Experimental Philosophy of 
+Aesthetics  (pp. 13 -32). Bloomsbury Publishing.  
+ 
+Cova, F., & Pain, N. (2012). Can folk aesthetics  ground aesthetic realism? The Monist , 95(2), 
+241-263. 
+ 
+Cova, F., & Réhault, S. (2018). Advances in Experimental Philosophy of Aesthetics . 
+Bloomsbury Publishing.  
+ 
+Cova, F., Garcia, A., & Liao, S. Y. (2015). Experimental philosophy of aesthetics. Philosophy  
+Compass , 10(12), 927 -939. 
+ 
+Cova, F., Olivola, C. Y., Machery, E., Stich, S., Rose, D., Alai, M., ... & Zhu, J. (2019). De 
+Pulchritudine non est Disputandum ? A cross ‐cultural investigation of the alleged 
+intersubjective validity of aesthetic judgment. Mind  & Language , 34(3), 317 -338. 
+ 
+Ginsborg, H. (2019). Kant’s Aesthetics and Teleology. In E. N. Zalta (Ed.), The Stanford 
+Encyclopedia of Philosophy  (Winter 2019). Metaphysics Research Lab, Stanford University. 
+https://plato.stanford.edu/archives/win2019/entries/kant -aesthetics/  
+Goffin, K., & Cova, F. (2019). An empirical investigation of guilty pleasures. Philosophical 
+Psychology , 32(7), 1129 -1155.  
+ 
+Goldie, P. (2008). Virt ues of Art and Human Well -Being. Aristotelian Society Supplementary 
+Volume , 82(1), 179 –195. 
+ 
+Goodwin, G. P., & Darley, J. M. (2008). The psychology of meta -ethics: Exploring objectivism. 
+Cognition , 106(3), 1339 -1366.  
+ 
+Goodwin, G. P., & Darley, J. M. (2010) . The perceived objectivity of ethical beliefs: 
+Psychological findings and implications for public policy. Review of Philosophy and 
+Psychology,  1(2), 161 –188 
+ 
+Goodwin, G. P., & Darley, J. M. (2012). Why are some moral beliefs perceived to be more 
+objective  than others? Journal of Experimental Social Psychology , 48(1), 250 -256. 
+--- Page 30 ---
+ 
+          30  
+Hume, D. (1757/1987). Essays, moral, political, and literary  (E. F. Miller, Ed.; Rev. ed). Liberty 
+Classics.  
+Hutcheson, F. (1727/2008). An inquiry into the original of our ideas of beauty and virtue: In 
+two treatises  (W. Leidhold, Ed.; Rev. ed). Liberty Fund.  
+Irvin, S. (2008). The Pervasiveness of the Aesthetic in Ordinary Experience. The British 
+Journal of Aesthetics , 48(1), 29 –44. 
+Kant, I. (1790/1914). The Critique of the Power Judgement  (Bernard, Trans). Macmillan.  
+Korsmeyer, C. (2013). Taste. In B. Gaut and D.M. Lopes. The Routledge Companion to 
+Aesthetics .. New York: Routledge, 2001. 193 –202. 
+ 
+Levinson, J. (2002). Hume’s Standard of Taste: The Real Problem. The Journal o f Aesthetics 
+and Art Criticism , 60(3), 227 –238. 
+Lizardo, O. (2014). Taste and the Logic of Practice in Distinction. Czech Sociological Review , 
+50(3), 335 –364. 
+Lopes, D. M. (2008). Virtues of Art: Good Taste. Proceedings of the Aristotelian Society, 
+Supplem entary Volumes , 82, 197 –211. 
+Moss, D., & Bush, L. S. (2021). Measuring metaaesthetics: Challenges and ways forward. 
+New Ideas in Psychology , 62, 100866.  
+ 
+Mothersill, M. (1989). Hume and the paradox of taste. In G. Dickie (Ed.), Aesthetics: A Critical 
+Antho logy (pp. 269 –286). St. Martin’s.  
+Murray, D. (2020). Maggots Are Delicious, Sunsets Hideous: False, or Do You Just Disagree? 
+Data on Truth Relativism about Judgments of Personal Taste and Aesthetics. In T. Lombrozo, 
+J. Knobe & S. Nichols (Eds.), Oxford Stu dies in Experimental Philosophy Volume 3  (pp. 64 -
+96). Oxford University Press.  
+ 
+Rabb, N., Han, A., Nebeker, L., & Winner, E. (2020). Expressivist to the core: Metaaesthetic 
+subjectivism is stable and robust. New Ideas in Psychology , 57, 100760.  
+ 
+Schelleken s, E. (2009). Taste and Objectivity: The Emergence of the Concept of the Aesthetic. 
+Philosophy Compass , 4(5), 734 –743 
+ 
+Scruton, R. (2001). Kant: A Very Short Introduction  (Revised). Oxford: Oxford University 
+Press.  
+Zangwill, N. (2018). Beauty and the agree able: A critique of experimental aesthetics. In F. 
+Cova & S. Réhault, Advances in Experimental Philosophy of Aesthetics  (pp. 289 -308). 
+Bloomsbury Publishing.  
