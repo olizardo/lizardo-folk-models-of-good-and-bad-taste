@@ -2,11 +2,11 @@
     "good_taste_robustness": [
         {
             "min_topic_size": 5,
-            "num_topics": 2
+            "num_topics": 3
         },
         {
             "min_topic_size": 10,
-            "num_topics": 3
+            "num_topics": 2
         },
         {
             "min_topic_size": 15,
@@ -20,7 +20,7 @@
     "bad_taste_robustness": [
         {
             "min_topic_size": 5,
-            "num_topics": 7
+            "num_topics": 8
         },
         {
             "min_topic_size": 10,

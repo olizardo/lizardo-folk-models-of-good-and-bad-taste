@@ -2,11 +2,11 @@
     "good_taste_def": [
         {
             "min_topic_size": 5,
-            "num_topics": 2
+            "num_topics": 6
         },
         {
             "min_topic_size": 10,
-            "num_topics": 3
+            "num_topics": 2
         },
         {
             "min_topic_size": 15,
@@ -20,7 +20,7 @@
     "bad_taste_def": [
         {
             "min_topic_size": 5,
-            "num_topics": 6
+            "num_topics": 9
         },
         {
             "min_topic_size": 10,
@@ -46,7 +46,7 @@
         },
         {
             "min_topic_size": 15,
-            "num_topics": 2
+            "num_topics": 3
         },
         {
             "min_topic_size": 20,
@@ -56,7 +56,7 @@
     "bad_taste_example": [
         {
             "min_topic_size": 5,
-            "num_topics": 12
+            "num_topics": 10
         },
         {
             "min_topic_size": 10,

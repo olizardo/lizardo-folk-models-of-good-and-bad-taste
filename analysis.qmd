@@ -26,7 +26,7 @@ def run_and_save_bertopic(docs, taste_type, min_topic_sizes=[5, 10, 15, 20]):
     results = []
     
     # Initialize CountVectorizer with expanded stop words
-    domain_stops = ["good", "bad", "taste", "people", "person", "think", "means", "just", "like", "things", "someone", "really"]
+    domain_stops = ["don", "dont", "t", "didn", "didnt", "doesn", "doesnt", "ve", "ll", "re", "m", "isn", "isnt", "aren", "arent", "wasn", "wasnt", "weren", "werent", "haven", "havent", "hasn", "hasnt", "hadn", "hadnt", "won", "wont", "wouldn", "wouldnt", "can", "cant", "couldn", "couldnt", "shouldn", "shouldnt", "mightn", "mightnt", "mustn", "mustnt", "i've", "don't", "doesn't", "didn't", "isn't", "aren't", "wasn't", "weren't", "haven't", "hasn't", "hadn't", "won't", "wouldn't", "can't", "couldn't", "shouldn't", "mightn't", "mustn't"]
     custom_stop_words = list(ENGLISH_STOP_WORDS.union(domain_stops))
     vectorizer_model = CountVectorizer(stop_words=custom_stop_words)
     
@@ -124,7 +124,7 @@ def run_and_save_bertopic(docs, indices, model_prefix, min_topic_sizes=[5, 10, 1
     results = []
     
     # Initialize CountVectorizer with expanded stop words
-    domain_stops = ["good", "bad", "taste", "people", "person", "think", "means", "just", "like", "things", "someone", "really", "dont", "don't", "do not", "doesnt", "doesn't"]
+    domain_stops = ["don", "dont", "t", "didn", "didnt", "doesn", "doesnt", "ve", "ll", "re", "m", "isn", "isnt", "aren", "arent", "wasn", "wasnt", "weren", "werent", "haven", "havent", "hasn", "hasnt", "hadn", "hadnt", "won", "wont", "wouldn", "wouldnt", "can", "cant", "couldn", "couldnt", "shouldn", "shouldnt", "mightn", "mightnt", "mustn", "mustnt", "i've", "don't", "doesn't", "didn't", "isn't", "aren't", "wasn't", "weren't", "haven't", "hasn't", "hadn't", "won't", "wouldn't", "can't", "couldn't", "shouldn't", "mightn't", "mustn't"]
     custom_stop_words = list(ENGLISH_STOP_WORDS.union(domain_stops))
     vectorizer_model = CountVectorizer(stop_words=custom_stop_words)
     
@@ -234,7 +234,7 @@ def run_and_save_bertopic(docs, indices, taste_type, min_topic_sizes=[5, 10, 15,
     results = []
     
     # Initialize CountVectorizer with expanded stop words
-    domain_stops = ["good", "bad", "taste", "people", "person", "think", "means", "just", "like", "things", "someone", "really"]
+    domain_stops = ["don", "dont", "t", "didn", "didnt", "doesn", "doesnt", "ve", "ll", "re", "m", "isn", "isnt", "aren", "arent", "wasn", "wasnt", "weren", "werent", "haven", "havent", "hasn", "hasnt", "hadn", "hadnt", "won", "wont", "wouldn", "wouldnt", "can", "cant", "couldn", "couldnt", "shouldn", "shouldnt", "mightn", "mightnt", "mustn", "mustnt", "i've", "don't", "doesn't", "didn't", "isn't", "aren't", "wasn't", "weren't", "haven't", "hasn't", "hadn't", "won't", "wouldn't", "can't", "couldn't", "shouldn't", "mightn't", "mustn't"]
     custom_stop_words = list(ENGLISH_STOP_WORDS.union(domain_stops))
     vectorizer_model = CountVectorizer(stop_words=custom_stop_words)
     
@@ -342,9 +342,9 @@ def get_primary(prob_file):
     df['primary'] = df[topic_cols].idxmax(axis=1)
     return df[['original_index', 'primary']]
 
-gd = get_primary("good_taste_def_model_min10/document_topic_probabilities.csv").rename(columns={'primary': 'Good_Def'})
-bd = get_primary("bad_taste_def_model_min5/document_topic_probabilities.csv").rename(columns={'primary': 'Bad_Def'})
-ge = get_primary("good_taste_example_model_min5/document_topic_probabilities.csv").rename(columns={'primary': 'Good_Ex'})
+gd = get_primary("good_taste_def_model_min5/document_topic_probabilities.csv").rename(columns={'primary': 'Good_Def'})
+bd = get_primary("bad_taste_def_model_min15/document_topic_probabilities.csv").rename(columns={'primary': 'Bad_Def'})
+ge = get_primary("good_taste_example_model_min10/document_topic_probabilities.csv").rename(columns={'primary': 'Good_Ex'})
 be = get_primary("bad_taste_example_model_min10/document_topic_probabilities.csv").rename(columns={'primary': 'Bad_Ex'})
 
 df = gd.merge(bd, on='original_index').merge(ge, on='original_index').merge(be, on='original_index')
@@ -433,9 +433,9 @@ analyze_model <- function(prob_file, name) {
   }
 }
 
-analyze_model("good_taste_def_model_min10/document_topic_probabilities.csv", "Good Taste Def")
-analyze_model("bad_taste_def_model_min5/document_topic_probabilities.csv", "Bad Taste Def")
-analyze_model("good_taste_example_model_min5/document_topic_probabilities.csv", "Good Taste Example")
+analyze_model("good_taste_def_model_min5/document_topic_probabilities.csv", "Good Taste Def")
+analyze_model("bad_taste_def_model_min15/document_topic_probabilities.csv", "Bad Taste Def")
+analyze_model("good_taste_example_model_min10/document_topic_probabilities.csv", "Good Taste Example")
 analyze_model("bad_taste_example_model_min10/document_topic_probabilities.csv", "Bad Taste Example")
 ```
 
@@ -599,7 +599,7 @@ dir.create("report/Plots", showWarnings = FALSE)
 dir.create("report/Tabs", showWarnings = FALSE)
 
 # 1. Topic Frequencies for Examples
-good_ex_info <- read_csv("good_taste_example_model_min5/topic_info.csv", show_col_types = FALSE)
+good_ex_info <- read_csv("good_taste_example_model_min10/topic_info.csv", show_col_types = FALSE)
 bad_ex_info <- read_csv("bad_taste_example_model_min10/topic_info.csv", show_col_types = FALSE)
 
 clean_keywords <- function(rep_str) {
@@ -634,7 +634,7 @@ extract_keyword_weights <- function(json_path) {
   do.call(rbind, df_list)
 }
 
-good_ex_weights <- extract_keyword_weights("good_taste_example_model_min5/topics.json")
+good_ex_weights <- extract_keyword_weights("good_taste_example_model_min10/topics.json")
 p_good_ex_keys <- good_ex_weights %>%
   group_by(Topic) %>% top_n(8, Score) %>% ungroup() %>%
   mutate(Word = reorder_within(Word, Score, Topic)) %>%
@@ -656,7 +656,7 @@ ggsave("report/Plots/bad_taste_example_keywords.png", plot = p_bad_ex_keys, widt
 
 
 # 3. CA Plots for Examples
-good_ex_probs <- read_csv("good_taste_example_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
+good_ex_probs <- read_csv("good_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
 bad_ex_probs <- read_csv("bad_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
 
 good_ex_probs_clean <- good_ex_probs %>% select(-original_index)
@@ -719,9 +719,9 @@ run_multinom <- function(prob_file, name) {
   return(NULL)
 }
 
-res1 <- run_multinom("good_taste_def_model_min10/document_topic_probabilities.csv", "Good Taste Def")
-res2 <- run_multinom("bad_taste_def_model_min5/document_topic_probabilities.csv", "Bad Taste Def")
-res3 <- run_multinom("good_taste_example_model_min5/document_topic_probabilities.csv", "Good Taste Example")
+res1 <- run_multinom("good_taste_def_model_min5/document_topic_probabilities.csv", "Good Taste Def")
+res2 <- run_multinom("bad_taste_def_model_min15/document_topic_probabilities.csv", "Bad Taste Def")
+res3 <- run_multinom("good_taste_example_model_min10/document_topic_probabilities.csv", "Good Taste Example")
 res4 <- run_multinom("bad_taste_example_model_min10/document_topic_probabilities.csv", "Bad Taste Example")
 
 all_res <- bind_rows(res1, res2, res3, res4)
@@ -759,9 +759,9 @@ if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) {
 raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
 
 # Probabilities
-good_def_probs <- read_csv("good_taste_def_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
-bad_def_probs <- read_csv("bad_taste_def_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
-good_ex_probs <- read_csv("good_taste_example_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
+good_def_probs <- read_csv("good_taste_def_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
+bad_def_probs <- read_csv("bad_taste_def_model_min15/document_topic_probabilities.csv", show_col_types = FALSE)
+good_ex_probs <- read_csv("good_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
 bad_ex_probs <- read_csv("bad_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
 
 get_primary <- function(probs, name) {
@@ -856,7 +856,7 @@ if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) {
 raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
 
 # 2. Load Probs
-good_ex_probs <- read_csv("good_taste_example_model_min5/document_topic_probabilities.csv", show_col_types = FALSE)
+good_ex_probs <- read_csv("good_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
 bad_ex_probs <- read_csv("bad_taste_example_model_min10/document_topic_probabilities.csv", show_col_types = FALSE)
 
 topic_cols_g <- setdiff(names(good_ex_probs), "original_index")
@@ -937,7 +937,7 @@ raw_survey <- read.csv("data/FolkTaste_CleanData.csv")
 if(grepl("What do you mean", raw_survey$GoodTaste_Def[1])) raw_survey <- raw_survey[-1, ]
 raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
 
-good_ex_probs <- read.csv("good_taste_example_model_min5/document_topic_probabilities.csv")
+good_ex_probs <- read.csv("good_taste_example_model_min10/document_topic_probabilities.csv")
 topic_cols <- setdiff(names(good_ex_probs), "original_index")
 good_ex_probs$primary_topic <- apply(good_ex_probs[, topic_cols], 1, function(row) topic_cols[which.max(row)])
 good_ex_probs <- good_ex_probs %>% filter(!primary_topic %in% "-1")
@@ -1012,9 +1012,9 @@ get_primary <- function(path, name) {
   probs %>% select(original_index, !!sym(name))
 }
 
-gd <- get_primary("good_taste_def_model_min10/document_topic_probabilities.csv", "Good_Def")
-bd <- get_primary("bad_taste_def_model_min5/document_topic_probabilities.csv", "Bad_Def")
-ge <- get_primary("good_taste_example_model_min5/document_topic_probabilities.csv", "Good_Ex")
+gd <- get_primary("good_taste_def_model_min5/document_topic_probabilities.csv", "Good_Def")
+bd <- get_primary("bad_taste_def_model_min15/document_topic_probabilities.csv", "Bad_Def")
+ge <- get_primary("good_taste_example_model_min10/document_topic_probabilities.csv", "Good_Ex")
 be <- get_primary("bad_taste_example_model_min10/document_topic_probabilities.csv", "Bad_Ex")
 
 df <- raw_survey %>%
