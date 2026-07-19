@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.28)  19 JUL 2026 11:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.28)  19 JUL 2026 11:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -438,18 +438,28 @@ File: report/Plots/domain_counts_bad.png Graphic file (type png)
 Package pdftex.def Info: report/Plots/domain_counts_bad.png  used on input line 165.
 (pdftex.def)             Requested size: 375.80544pt x 313.18651pt.
  (./report/Tabs/anova_domain_counts.tex) [11 <./report/Plots/bad_taste_demo_profile.png>] [12 <./report/Plots/domain_counts_bad.png>]
-<report/Plots/distinction_domains_bad.png, id=165, 794.97pt x 505.89pt>
+<report/Plots/distinction_domains_bad.png, id=167, 794.97pt x 505.89pt>
 File: report/Plots/distinction_domains_bad.png Graphic file (type png)
 <use report/Plots/distinction_domains_bad.png>
-Package pdftex.def Info: report/Plots/distinction_domains_bad.png  used on input line 181.
+Package pdftex.def Info: report/Plots/distinction_domains_bad.png  used on input line 177.
 (pdftex.def)             Requested size: 469.75502pt x 298.94337pt.
  [13 <./report/Plots/distinction_domains_bad.png>] (./draft_research_note.bbl) [14] (./draft_research_note.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-06-18>
  ***********
-Package rerunfilecheck Info: File `draft_research_note.out' has not changed.
-(rerunfilecheck)             Checksum: B42CBDA0B0B6F9D61779B88CF2C810C7;1669.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `draft_research_note.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `draft_research_note.out':
+(rerunfilecheck)             Before: B42CBDA0B0B6F9D61779B88CF2C810C7;1669
+(rerunfilecheck)             After:  4CC8C21A4E771491B6F3731CAE106F0E;1528.
  ) 
 Here is how much of TeX's memory you used:
  10420 strings out of 469097
@@ -459,11 +469,14 @@ Here is how much of TeX's memory you used:
  634357 words of font info for 63 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
  74i,10n,79p,1282b,483s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+pdfTeX warning (dest): name{subsection.4.5} has been referenced but does not exist, replaced by a fixed one
+
 </home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on draft_research_note.pdf (14 pages, 2007993 bytes).
+Output written on draft_research_note.pdf (14 pages, 2008199 bytes).
 PDF statistics:
- 245 PDF objects out of 1000 (max. 8388607)
- 190 compressed objects within 2 object streams
+ 246 PDF objects out of 1000 (max. 8388607)
+ 191 compressed objects within 2 object streams
  50 named destinations out of 1000 (max. 500000)
  144 words of extra memory for PDF output out of 10000 (max. 10000000)
 

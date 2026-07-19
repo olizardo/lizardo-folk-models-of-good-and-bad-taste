@@ -191,23 +191,25 @@ create_heatmap <- function(data, group_col, title, filename) {
     mutate(Domain = str_remove(Domain, "Domains_Distinction1_"), Score = as.numeric(Score)) %>%
     filter(!is.na(Score)) %>%
     group_by(!!sym(group_col), Domain) %>%
-    summarize(Mean_Score = mean(Score, na.rm = TRUE), .groups = 'drop')
+    summarize(Probability = mean(Score >= 2, na.rm = TRUE), .groups = 'drop')
   
-  domain_order <- dist_means %>% group_by(Domain) %>% summarize(Overall = mean(Mean_Score)) %>% arrange(Overall) %>% pull(Domain)
+  domain_order <- dist_means %>% group_by(Domain) %>% summarize(Overall = mean(Probability)) %>% arrange(Overall) %>% pull(Domain)
   dist_means <- dist_means %>% mutate(Domain = factor(Domain, levels = domain_order))
   
   # Add newlines to make sure they fit horizontally
   dist_means[[group_col]] <- str_replace_all(dist_means[[group_col]], "/", "/\n")
   dist_means[[group_col]] <- str_replace_all(dist_means[[group_col]], " ", "\n")
   
-  p <- ggplot(dist_means, aes(x = !!sym(group_col), y = Domain, fill = Mean_Score)) +
+  global_mean <- mean(dist_means$Probability, na.rm = TRUE)
+  
+  p <- ggplot(dist_means, aes(x = !!sym(group_col), y = Domain, fill = Probability)) +
     geom_tile(color = "white") +
-    geom_text(aes(label = sprintf("%.2f", Mean_Score)), color = "black", size = 4) +
-    scale_fill_gradient2(low = "steelblue", mid = "white", high = "indianred", midpoint = 1.5) +
+    geom_text(aes(label = sprintf("%.2f", Probability)), color = "black", size = 4) +
+    scale_fill_gradient2(low = "steelblue", mid = "white", high = "indianred", midpoint = global_mean) +
     scale_x_discrete(position = "top") +
     theme_minimal(base_size = 14) +
     theme(axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 0)) +
-    labs(title = title, x = "Cultural Model", y = "Cultural Domain", fill = "Mean Score")
+    labs(title = title, x = "Cultural Model", y = "Cultural Domain", fill = "Probability\n(Score \u2265 2)")
   
   ggsave(filename, plot = p, width = 11, height = 7)
 }
