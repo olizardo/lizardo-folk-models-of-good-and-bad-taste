@@ -73,46 +73,46 @@ Figure \ref{fig:good_taste_keywords} and Figure \ref{fig:bad_taste_keywords} dis
 
 For \textbf{Good Taste}, four primary cultural models emerged from the NMF analysis: \emph{Similar Say Usually} (highlighting subjective similarity, driven by terms like ``similar,'' ``say,'' and ``usually''), \emph{Art Appreciate Quality} (focusing on elevated aesthetic appreciation and driven by words like ``art,'' ``quality,'' and ``appreciate''), \emph{Look Appealing Clothing} (emphasizing visual presentation and curation, characterized by words like ``look,'' ``appealing,'' and ``clothing''), and \emph{Pleasing Choices Aesthetically} (centering on innate aesthetic stylishness via terms like ``pleasing,'' ``aesthetically,'' and ``choices''). Table \ref{tab:good_taste_def_summary} and Table \ref{tab:good_taste_rep_docs} present the term arrays and representative qualitative quotes for these models.
 
-\input{report/Tabs/good_taste_def_summary_table.tex}
-\input{report/Tabs/good_taste_rep_docs.tex}
+\input{Tabs/good_taste_def_summary_table.tex}
+\input{Tabs/good_taste_rep_docs.tex}
 
 For \textbf{Bad Taste}, respondents defined it through four distinct cultural models that mirror and invert the positive models: \emph{Likes Different Opinion} (emphasizing subjective differences and disagreement via words like ``likes,'' ``different,'' and ``opinion''), \emph{Choices Music Clothing} (focusing on poor specific choices in domains like music and clothing), \emph{Usually Quality Ugly} (centering on low quality, cheapness, or ugliness), and \emph{Care Really Look} (highlighting gaudiness, clashing styles, and a general lack of care in appearance or curation, anchored by words like ``care,'' ``really,'' and ``look''). Table \ref{tab:bad_taste_def_summary} and Table \ref{tab:bad_taste_rep_docs} present the corresponding term summaries and representative quotes.
 
-\input{report/Tabs/bad_taste_def_summary_table.tex}
-\input{report/Tabs/bad_taste_rep_docs.tex}
+\input{Tabs/bad_taste_def_summary_table.tex}
+\input{Tabs/bad_taste_rep_docs.tex}
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.48\textwidth]{report/Plots/good_taste_topics.png}
-    \includegraphics[width=0.48\textwidth]{report/Plots/bad_taste_topics.png}
+    \includegraphics[width=0.48\textwidth]{Plots/good_taste_topics.png}
+    \includegraphics[width=0.48\textwidth]{Plots/bad_taste_topics.png}
     \caption{Topic Frequencies for Good and Bad Taste (Definitions)}
     \label{fig:topic_frequencies_def}
 \end{figure}
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=1\textwidth]{report/Plots/good_taste_keywords.png}
+    \includegraphics[width=1\textwidth]{Plots/good_taste_keywords.png}
     \caption{Top Keywords for Good Taste Cultural Models}
     \label{fig:good_taste_keywords}
 \end{figure}
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=1\textwidth]{report/Plots/bad_taste_keywords.png}
+    \includegraphics[width=1\textwidth]{Plots/bad_taste_keywords.png}
     \caption{Top Keywords for Bad Taste Cultural Models}
     \label{fig:bad_taste_keywords}
 \end{figure}
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=1\textwidth]{report/Plots/ca_good_taste.png}
+    \includegraphics[width=1\textwidth]{Plots/ca_good_taste.png}
     \caption{Correspondence Analysis of Good Taste Cultural Models (Definitions)}
     \label{fig:ca_good_taste}
 \end{figure}
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=1\textwidth]{report/Plots/ca_bad_taste.png}
+    \includegraphics[width=1\textwidth]{Plots/ca_bad_taste.png}
     \caption{Correspondence Analysis of Bad Taste Cultural Models (Definitions)}
     \label{fig:ca_bad_taste}
 \end{figure}
@@ -123,7 +123,7 @@ To test whether these cultural models are isolated or form coherent ``logics,'' 
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.75\textwidth]{report/Plots/schema_corr_Good_Def_Bad_Def.png}
+    \includegraphics[width=0.75\textwidth]{Plots/schema_corr_Good_Def_Bad_Def.png}
     \caption{Pearson Residuals: Cross-Tabulation of Good and Bad Taste Cultural Models}
     \label{fig:schema_corr_main}
 \end{figure}
@@ -134,20 +134,20 @@ To examine whether taste cultural models are patterned by socio-demographic fact
 
 As shown in Table \ref{tab:wald_models}, sociodemographic background strongly structures how respondents conceptualize taste. For the Good Taste models, every single predictor---Age, Gender, Education, Parent's Education, and Political Ideology---is highly significant ($p < 0.05$, with Education and Politics significant at $p < 0.001$). The pattern holds similarly for Bad Taste models, where Age, Gender, Education, and Parent's Education significantly predict topic assignment. Political ideology is the only variable that does not reach statistical significance ($p = 0.10$) when predicting Bad Taste conceptualizations. This indicates that while folk theories of taste are varied, they are not randomly distributed; they map closely onto traditional axes of social stratification.
 
-\input{report/Tabs/wald_models.tex}
+\input{Tabs/wald_models.tex}
 
 To further illustrate these significant demographic boundaries without relying on noisy coefficient estimates from small cell counts, Figure \ref{fig:profile_good_taste} and Figure \ref{fig:profile_bad_taste} display demographic profile heatmaps for each cultural model. These heatmaps calculate the mean demographic percentage values for each topic and color-code them based on the raw percentage (where deeper blue indicates a higher percentage of respondents in that demographic category, and deeper red indicates a lower percentage). For example, Figure \ref{fig:profile_good_taste} demonstrates that respondents holding the \emph{Art Appreciate Quality} good taste model skew distinctly older, more highly educated (both personally and across their parents' generation), and heavily liberal compared to the other groups. In contrast, those adopting the \emph{Look Appealing Clothing} model are the youngest and least likely to have college-educated parents. Similar boundaries emerge in Figure \ref{fig:profile_bad_taste}, where the \emph{Usually Quality Ugly} bad taste model is uniquely concentrated among highly-educated liberals, while \emph{Choices Music Clothing} appeals to a notably more conservative demographic base.
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.9\textwidth]{report/Plots/good_taste_demo_profile.png}
+    \includegraphics[width=0.9\textwidth]{Plots/good_taste_demo_profile.png}
     \caption{Demographic Profile Heatmap (Good Taste Cultural Models)}
     \label{fig:profile_good_taste}
 \end{figure}
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=0.9\textwidth]{report/Plots/bad_taste_demo_profile.png}
+    \includegraphics[width=0.9\textwidth]{Plots/bad_taste_demo_profile.png}
     \caption{Demographic Profile Heatmap (Bad Taste Cultural Models)}
     \label{fig:profile_bad_taste}
 \end{figure}
@@ -162,19 +162,19 @@ First, I constructed an additive variable representing the total volume of domai
     \centering
     \begin{minipage}{0.8\textwidth}
         \centering
-        \includegraphics[width=\linewidth]{report/Plots/domain_counts_bad.png}
+        \includegraphics[width=\linewidth]{Plots/domain_counts_bad.png}
     \end{minipage}
     \caption{Mean Number of Distinguishable Domains by Bad Taste Cultural Model}
     \label{fig:domain_counts}
 \end{figure}
 
-\input{report/Tabs/anova_domain_counts.tex}
+\input{Tabs/anova_domain_counts.tex}
 
 Second, visualizing the specific probabilities of boundary-drawing across these 19 domains via heatmaps (Figure \ref{fig:distinction_bad_def}) reveals several interesting patterns. Regardless of the cultural model adopted, respondents display a remarkably high probability of drawing taste distinctions in core lifestyle and aesthetic domains like \textbf{Clothing, Interior Design, Movies, Music, and Paintings}. Conversely, taste distinctions are almost universally rejected for domains like \textbf{Car Races and Wrestling}.
 
 \begin{figure}[htpb]
     \centering
-    \includegraphics[width=1\textwidth]{report/Plots/distinction_domains_bad.png}
+    \includegraphics[width=1\textwidth]{Plots/distinction_domains_bad.png}
     \caption{Probability of Making Taste Distinctions by Domain and Bad Taste Cultural Model}
     \label{fig:distinction_bad_def}
 \end{figure}

@@ -10,7 +10,7 @@ config <- fromJSON("config.json")
 good_model_dir <- config$good_model
 bad_model_dir <- config$bad_model
 
-dir.create("report/Plots", showWarnings = FALSE)
+dir.create("Plots", showWarnings = FALSE)
 
 # --- TOPIC FREQUENCIES AND KEYWORDS ---
 plot_topics_and_keywords <- function(model_dir, title_prefix, color, prefix) {
@@ -26,7 +26,7 @@ plot_topics_and_keywords <- function(model_dir, title_prefix, color, prefix) {
     coord_flip() +
     theme_minimal(base_size = 14) +
     labs(title = paste(title_prefix, "(Definitions)"), x = "Cultural Model", y = "Count")
-  ggsave(sprintf("report/Plots/%s_topics.png", prefix), plot = p_topics, width = 8, height = 6)
+  ggsave(sprintf("Plots/%s_topics.png", prefix), plot = p_topics, width = 8, height = 6)
   
   # 2. Keywords
   clean_keywords <- function(rep_str) {
@@ -63,7 +63,7 @@ plot_topics_and_keywords <- function(model_dir, title_prefix, color, prefix) {
     ) +
     labs(title = paste("Top Keywords per", title_prefix, "Cultural Model"), x = "Keyword", y = "Relative Prominence (NMF Weight)")
   
-  ggsave(sprintf("report/Plots/%s_keywords.png", prefix), plot = p_keywords, width = 10, height = 6)
+  ggsave(sprintf("Plots/%s_keywords.png", prefix), plot = p_keywords, width = 10, height = 6)
 }
 plot_topics_and_keywords(good_model_dir, "Good Taste", "steelblue", "good_taste")
 plot_topics_and_keywords(bad_model_dir, "Bad Taste", "indianred", "bad_taste")
@@ -90,7 +90,7 @@ plot_ca <- function(model_dir, title_prefix, prefix) {
   p_ca <- fviz_ca_biplot(res.ca, geom.row = "point", col.row = assigned, col.col = "black", 
                          title = paste("CA:", title_prefix, "Taste Cultural Models"), palette = "jco", legend.title = "Assigned Cultural Model")
   p_ca <- p_ca + theme(legend.position = "bottom", legend.direction="vertical")
-  ggsave(sprintf("report/Plots/%s.png", prefix), plot = p_ca, width = 10, height = 7)
+  ggsave(sprintf("Plots/%s.png", prefix), plot = p_ca, width = 10, height = 7)
 }
 plot_ca(good_model_dir, "Good", "ca_good_taste")
 plot_ca(bad_model_dir, "Bad", "ca_bad_taste")
@@ -163,7 +163,7 @@ for (c in combos) {
         y = str_replace(v2, "_", " "),
         fill = "Residual"
       )
-    ggsave(sprintf("report/Plots/schema_corr_%s_%s.png", v1, v2), plot=p, width=10, height=7)
+    ggsave(sprintf("Plots/schema_corr_%s_%s.png", v1, v2), plot=p, width=10, height=7)
   }
 }
 
@@ -214,5 +214,5 @@ create_heatmap <- function(data, group_col, title, filename) {
   ggsave(filename, plot = p, width = 11, height = 7)
 }
 
-create_heatmap(m_df, "Good_Def", "Average Distinction Rating by Domain (Good Taste Definitions)", "report/Plots/distinction_domains.png")
-create_heatmap(m_df, "Bad_Def", "Average Distinction Rating by Domain (Bad Taste Definitions)", "report/Plots/distinction_domains_bad.png")
+create_heatmap(m_df, "Good_Def", "Average Distinction Rating by Domain (Good Taste Definitions)", "Plots/distinction_domains.png")
+create_heatmap(m_df, "Bad_Def", "Average Distinction Rating by Domain (Bad Taste Definitions)", "Plots/distinction_domains_bad.png")
