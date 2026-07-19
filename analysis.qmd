@@ -428,7 +428,7 @@ res_bd <- run_anova_for_model("Bad_Def")
 # Format into a single table
 combined <- res_gd %>% select(Domain)
 format_cell <- function(f, p_adj) {
-  sig <- ifelse(p_adj < 0.001, "***", ifelse(p_adj < 0.01, "**", ifelse(p_adj < 0.05, "*", "")))
+  sig <- ifelse(p_adj < 0.001, "$^{***}$", ifelse(p_adj < 0.01, "$^{**}$", ifelse(p_adj < 0.05, "$^{*}$", "")))
   sprintf("%.2f%s (%.3f)", f, sig, p_adj)
 }
 
@@ -443,18 +443,9 @@ latex_str <- paste0(latex_str, "Domain & Good Taste Def & Bad Taste Def \\\\\n")
 latex_str <- paste0(latex_str, "& $F$ ($p_{adj}$) & $F$ ($p_{adj}$) \\\\\n\\midrule\n")
 
 for (i in 1:nrow(combined)) {
-  # Add significance asterisks nicely formatted in math mode
-  g_d <- str_replace_all(combined$Good_Def[i], "\\*\\*\\*", "$^{***}$")
-  g_d <- str_replace_all(g_d, "(?<!\\$)\\*\\*(?!\\$)", "$^{**}$")
-  g_d <- str_replace_all(g_d, "(?<!\\$)\\*(?!\\$)", "$^{*}$")
-  
-  b_d <- str_replace_all(combined$Bad_Def[i], "\\*\\*\\*", "$^{***}$")
-  b_d <- str_replace_all(b_d, "(?<!\\$)\\*\\*(?!\\$)", "$^{**}$")
-  b_d <- str_replace_all(b_d, "(?<!\\$)\\*(?!\\$)", "$^{*}$")
-  
   latex_str <- paste0(latex_str, sprintf("%s & %s & %s \\\\\n", 
                                          str_replace_all(combined$Domain[i], "_", "\\\\_"), 
-                                         g_d, b_d))
+                                         combined$Good_Def[i], combined$Bad_Def[i]))
 }
 
 latex_str <- paste0(latex_str, "\\bottomrule\n\\multicolumn{3}{l}{\\footnotesize $^{*}p<0.05; ^{**}p<0.01; ^{***}p<0.001$ (Benjamini-Hochberg FDR corrected)} \\\\\n")

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.28)  18 JUL 2026 17:10
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.6.28)  18 JUL 2026 20:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -286,151 +286,157 @@ Package hyperref Info: Link coloring ON on input line 25.
  [1
 
 {/home/omarlizardo/.TinyTeX/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 50.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 50.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 50.
- [2] (./report/Tabs/good_taste_summary_table.tex) (./report/Tabs/good_taste_def_examples_table.tex) (./report/Tabs/good_taste_ex_examples_table.tex
+Overfull \hbox (3.56923pt too wide) in paragraph at lines 51--52
+\OT1/cmr/m/n/12 To an-a-lyze these short, un-struc-tured participant-level text re-sponses (here-after ``doc-u-ments''),
+ []
 
-LaTeX Warning: Float too large for page by 203.67958pt on input line 20.
+[2]
+<report/Plots/robustness_check_def.png, id=77, 650.43pt x 361.35pt>
+File: report/Plots/robustness_check_def.png Graphic file (type png)
+<use report/Plots/robustness_check_def.png>
+Package pdftex.def Info: report/Plots/robustness_check_def.png  used on input line 58.
+(pdftex.def)             Requested size: 422.77664pt x 234.88023pt.
+ (./report/Tabs/good_taste_def_summary_table.tex
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 13.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 13.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 13.
+) (./report/Tabs/good_taste_rep_docs.tex
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 4.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 4.
 
-) (./report/Tabs/bad_taste_summary_table.tex) (./report/Tabs/bad_taste_def_examples_table.tex) (./report/Tabs/bad_taste_ex_examples_table.tex)
-<report/Plots/good_taste_topics.png, id=77, 578.16pt x 433.62pt>
+Underfull \hbox (badness 3590) in paragraph at lines 9--9
+[]\OT1/cmr/m/n/10 Like Things Choices
+ []
+
+) (./report/Tabs/bad_taste_def_summary_table.tex) (./report/Tabs/bad_taste_rep_docs.tex
+Underfull \hbox (badness 3590) in paragraph at lines 9--9
+[]\OT1/cmr/m/n/10 Like Things Choices
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 10--10
+[]\OT1/cmr/m/n/10 Person Loud Sense
+ []
+
+
+Underfull \hbox (badness 3861) in paragraph at lines 11--11
+[]\OT1/cmr/m/n/10 Music Movies En-joy
+ []
+
+
+Underfull \hbox (badness 6625) in paragraph at lines 13--13
+[]\OT1/cmr/m/n/10 Means Usu-ally Like
+ []
+
+)
+<report/Plots/good_taste_topics.png, id=78, 578.16pt x 433.62pt>
 File: report/Plots/good_taste_topics.png Graphic file (type png)
 <use report/Plots/good_taste_topics.png>
-Package pdftex.def Info: report/Plots/good_taste_topics.png  used on input line 72.
+Package pdftex.def Info: report/Plots/good_taste_topics.png  used on input line 77.
 (pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
-<report/Plots/bad_taste_topics.png, id=78, 578.16pt x 433.62pt>
+<report/Plots/bad_taste_topics.png, id=79, 578.16pt x 433.62pt>
 File: report/Plots/bad_taste_topics.png Graphic file (type png)
 <use report/Plots/bad_taste_topics.png>
-Package pdftex.def Info: report/Plots/bad_taste_topics.png  used on input line 73.
+Package pdftex.def Info: report/Plots/bad_taste_topics.png  used on input line 78.
 (pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
-<report/Plots/good_taste_example_topics.png, id=79, 578.16pt x 433.62pt>
-File: report/Plots/good_taste_example_topics.png Graphic file (type png)
-<use report/Plots/good_taste_example_topics.png>
-Package pdftex.def Info: report/Plots/good_taste_example_topics.png  used on input line 80.
-(pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
-<report/Plots/bad_taste_example_topics.png, id=80, 578.16pt x 433.62pt>
-File: report/Plots/bad_taste_example_topics.png Graphic file (type png)
-<use report/Plots/bad_taste_example_topics.png>
-Package pdftex.def Info: report/Plots/bad_taste_example_topics.png  used on input line 81.
-(pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
-<report/Plots/good_taste_keywords.png, id=81, 722.7pt x 578.16pt>
-File: report/Plots/good_taste_keywords.png Graphic file (type png)
-<use report/Plots/good_taste_keywords.png>
-Package pdftex.def Info: report/Plots/good_taste_keywords.png  used on input line 88.
-(pdftex.def)             Requested size: 469.75502pt x 375.80836pt.
-<report/Plots/bad_taste_keywords.png, id=82, 722.7pt x 578.16pt>
-File: report/Plots/bad_taste_keywords.png Graphic file (type png)
-<use report/Plots/bad_taste_keywords.png>
-Package pdftex.def Info: report/Plots/bad_taste_keywords.png  used on input line 95.
-(pdftex.def)             Requested size: 469.75502pt x 375.80836pt.
-<report/Plots/good_taste_example_keywords.png, id=83, 722.7pt x 578.16pt>
-File: report/Plots/good_taste_example_keywords.png Graphic file (type png)
-<use report/Plots/good_taste_example_keywords.png>
-Package pdftex.def Info: report/Plots/good_taste_example_keywords.png  used on input line 102.
-(pdftex.def)             Requested size: 469.75502pt x 375.80836pt.
-<report/Plots/bad_taste_example_keywords.png, id=84, 722.7pt x 578.16pt>
-File: report/Plots/bad_taste_example_keywords.png Graphic file (type png)
-<use report/Plots/bad_taste_example_keywords.png>
-Package pdftex.def Info: report/Plots/bad_taste_example_keywords.png  used on input line 109.
-(pdftex.def)             Requested size: 469.75502pt x 375.80836pt.
-<report/Plots/ca_good_taste.png, id=85, 578.16pt x 433.62pt>
+<report/Plots/ca_good_taste.png, id=80, 578.16pt x 433.62pt>
 File: report/Plots/ca_good_taste.png Graphic file (type png)
 <use report/Plots/ca_good_taste.png>
-Package pdftex.def Info: report/Plots/ca_good_taste.png  used on input line 116.
+Package pdftex.def Info: report/Plots/ca_good_taste.png  used on input line 85.
 (pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
-<report/Plots/ca_bad_taste.png, id=86, 578.16pt x 433.62pt>
+<report/Plots/ca_bad_taste.png, id=81, 578.16pt x 433.62pt>
 File: report/Plots/ca_bad_taste.png Graphic file (type png)
 <use report/Plots/ca_bad_taste.png>
-Package pdftex.def Info: report/Plots/ca_bad_taste.png  used on input line 117.
+Package pdftex.def Info: report/Plots/ca_bad_taste.png  used on input line 86.
 (pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
-<report/Plots/ca_good_taste_example.png, id=87, 578.16pt x 433.62pt>
-File: report/Plots/ca_good_taste_example.png Graphic file (type png)
-<use report/Plots/ca_good_taste_example.png>
-Package pdftex.def Info: report/Plots/ca_good_taste_example.png  used on input line 124.
-(pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
-<report/Plots/ca_bad_taste_example.png, id=88, 578.16pt x 433.62pt>
-File: report/Plots/ca_bad_taste_example.png Graphic file (type png)
-<use report/Plots/ca_bad_taste_example.png>
-Package pdftex.def Info: report/Plots/ca_bad_taste_example.png  used on input line 125.
-(pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
- [3] [4] [5 <./report/Plots/good_taste_topics.png> <./report/Plots/bad_taste_topics.png> <./report/Plots/good_taste_example_topics.png> <./report/Plots/bad_taste_example_topics.png>] [6] [7] [8 <./report/Plots/good_taste_keywords.png>] [9 <./report/Plots/bad_taste_keywords.png>] [10 <./report/Plots/good_taste_example_keywords.png>] [11 <./report/Plots/bad_taste_example_keywords.png> <./report/Plots/ca_good_taste.png> <./report/Plots/ca_bad_taste.png>]
-<report/Plots/schema_corr_Good_Def_Bad_Def.png, id=146, 722.7pt x 505.89pt>
+ [3 <./report/Plots/robustness_check_def.png>] [4 <./report/Plots/good_taste_topics.png> <./report/Plots/bad_taste_topics.png>] [5 <./report/Plots/ca_good_taste.png> <./report/Plots/ca_bad_taste.png (PNG copy)>]
+<report/Plots/schema_corr_Good_Def_Bad_Def.png, id=104, 578.16pt x 433.62pt>
 File: report/Plots/schema_corr_Good_Def_Bad_Def.png Graphic file (type png)
 <use report/Plots/schema_corr_Good_Def_Bad_Def.png>
-Package pdftex.def Info: report/Plots/schema_corr_Good_Def_Bad_Def.png  used on input line 138.
-(pdftex.def)             Requested size: 225.4804pt x 157.8355pt.
-<report/Plots/schema_corr_Good_Ex_Bad_Ex.png, id=147, 722.7pt x 505.89pt>
-File: report/Plots/schema_corr_Good_Ex_Bad_Ex.png Graphic file (type png)
-<use report/Plots/schema_corr_Good_Ex_Bad_Ex.png>
-Package pdftex.def Info: report/Plots/schema_corr_Good_Ex_Bad_Ex.png  used on input line 139.
-(pdftex.def)             Requested size: 225.4804pt x 157.8355pt.
-<report/Plots/schema_corr_Good_Def_Good_Ex.png, id=148, 722.7pt x 505.89pt>
-File: report/Plots/schema_corr_Good_Def_Good_Ex.png Graphic file (type png)
-<use report/Plots/schema_corr_Good_Def_Good_Ex.png>
-Package pdftex.def Info: report/Plots/schema_corr_Good_Def_Good_Ex.png  used on input line 146.
-(pdftex.def)             Requested size: 225.4804pt x 157.8355pt.
-<report/Plots/schema_corr_Bad_Def_Bad_Ex.png, id=149, 722.7pt x 505.89pt>
-File: report/Plots/schema_corr_Bad_Def_Bad_Ex.png Graphic file (type png)
-<use report/Plots/schema_corr_Bad_Def_Bad_Ex.png>
-Package pdftex.def Info: report/Plots/schema_corr_Bad_Def_Bad_Ex.png  used on input line 147.
-(pdftex.def)             Requested size: 225.4804pt x 157.8355pt.
- [12 <./report/Plots/ca_good_taste_example.png> <./report/Plots/ca_bad_taste_example.png> <./report/Plots/schema_corr_Good_Def_Bad_Def.png> <./report/Plots/schema_corr_Good_Ex_Bad_Ex.png>] (./report/Tabs/wald_four_models.tex)
-<report/Plots/pca_domain_variables.png, id=157, 578.16pt x 433.62pt>
-File: report/Plots/pca_domain_variables.png Graphic file (type png)
-<use report/Plots/pca_domain_variables.png>
-Package pdftex.def Info: report/Plots/pca_domain_variables.png  used on input line 164.
-(pdftex.def)             Requested size: 375.80544pt x 281.84966pt.
- (./report/Tabs/anova_pca.tex
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 11.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 11.
-) (./report/Tabs/anova_distinction.tex)
-<report/Plots/distinction_domains.png, id=158, 794.97pt x 505.89pt>
+Package pdftex.def Info: report/Plots/schema_corr_Good_Def_Bad_Def.png  used on input line 97.
+(pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
+ (./report/Tabs/wald_models.tex) [6 <./report/Plots/schema_corr_Good_Def_Bad_Def.png>]
+<report/Plots/pca_distinction1.png, id=112, 578.16pt x 433.62pt>
+File: report/Plots/pca_distinction1.png Graphic file (type png)
+<use report/Plots/pca_distinction1.png>
+Package pdftex.def Info: report/Plots/pca_distinction1.png  used on input line 116.
+(pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
+<report/Plots/pca_correlations_distinction1.png, id=113, 481.8pt x 602.25pt>
+File: report/Plots/pca_correlations_distinction1.png Graphic file (type png)
+<use report/Plots/pca_correlations_distinction1.png>
+Package pdftex.def Info: report/Plots/pca_correlations_distinction1.png  used on input line 117.
+(pdftex.def)             Requested size: 225.4804pt x 281.84451pt.
+<report/Plots/pca_distinction2.png, id=114, 578.16pt x 433.62pt>
+File: report/Plots/pca_distinction2.png Graphic file (type png)
+<use report/Plots/pca_distinction2.png>
+Package pdftex.def Info: report/Plots/pca_distinction2.png  used on input line 124.
+(pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
+<report/Plots/pca_correlations_distinction2.png, id=115, 481.8pt x 602.25pt>
+File: report/Plots/pca_correlations_distinction2.png Graphic file (type png)
+<use report/Plots/pca_correlations_distinction2.png>
+Package pdftex.def Info: report/Plots/pca_correlations_distinction2.png  used on input line 125.
+(pdftex.def)             Requested size: 225.4804pt x 281.84451pt.
+<report/Plots/pca_importance.png, id=116, 578.16pt x 433.62pt>
+File: report/Plots/pca_importance.png Graphic file (type png)
+<use report/Plots/pca_importance.png>
+Package pdftex.def Info: report/Plots/pca_importance.png  used on input line 132.
+(pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
+<report/Plots/pca_correlations_importance.png, id=117, 481.8pt x 602.25pt>
+File: report/Plots/pca_correlations_importance.png Graphic file (type png)
+<use report/Plots/pca_correlations_importance.png>
+Package pdftex.def Info: report/Plots/pca_correlations_importance.png  used on input line 133.
+(pdftex.def)             Requested size: 225.4804pt x 281.84451pt.
+<report/Plots/pca_knowledge.png, id=118, 578.16pt x 433.62pt>
+File: report/Plots/pca_knowledge.png Graphic file (type png)
+<use report/Plots/pca_knowledge.png>
+Package pdftex.def Info: report/Plots/pca_knowledge.png  used on input line 140.
+(pdftex.def)             Requested size: 225.4804pt x 169.10449pt.
+<report/Plots/pca_correlations_knowledge.png, id=119, 481.8pt x 602.25pt>
+File: report/Plots/pca_correlations_knowledge.png Graphic file (type png)
+<use report/Plots/pca_correlations_knowledge.png>
+Package pdftex.def Info: report/Plots/pca_correlations_knowledge.png  used on input line 141.
+(pdftex.def)             Requested size: 225.4804pt x 281.84451pt.
+ (./report/Tabs/anova_pca_distinction1.tex) (./report/Tabs/anova_pca_distinction2.tex) (./report/Tabs/anova_pca_importance.tex) (./report/Tabs/anova_pca_knowledge.tex) [7 <./report/Plots/pca_distinction1.png> <./report/Plots/pca_correlations_distinction1.png (PNG copy)>] [8 <./report/Plots/pca_distinction2.png> <./report/Plots/pca_correlations_distinction2.png (PNG copy)> <./report/Plots/pca_importance.png> <./report/Plots/pca_correlations_importance.png (PNG copy)>] [9 <./report/Plots/pca_knowledge.png> <./report/Plots/pca_correlations_knowledge.png (PNG copy)>]
+<report/Plots/distinction_domains.png, id=142, 794.97pt x 505.89pt>
 File: report/Plots/distinction_domains.png Graphic file (type png)
 <use report/Plots/distinction_domains.png>
-Package pdftex.def Info: report/Plots/distinction_domains.png  used on input line 183.
+Package pdftex.def Info: report/Plots/distinction_domains.png  used on input line 161.
 (pdftex.def)             Requested size: 375.80544pt x 239.15779pt.
-<report/Plots/distinction_domains_bad.png, id=159, 794.97pt x 505.89pt>
+<report/Plots/distinction_domains_bad.png, id=143, 794.97pt x 505.89pt>
 File: report/Plots/distinction_domains_bad.png Graphic file (type png)
 <use report/Plots/distinction_domains_bad.png>
-Package pdftex.def Info: report/Plots/distinction_domains_bad.png  used on input line 190.
+Package pdftex.def Info: report/Plots/distinction_domains_bad.png  used on input line 168.
 (pdftex.def)             Requested size: 375.80544pt x 239.15779pt.
-<report/Plots/distinction_domains_good_ex.png, id=160, 794.97pt x 505.89pt>
-File: report/Plots/distinction_domains_good_ex.png Graphic file (type png)
-<use report/Plots/distinction_domains_good_ex.png>
-Package pdftex.def Info: report/Plots/distinction_domains_good_ex.png  used on input line 197.
-(pdftex.def)             Requested size: 375.80544pt x 239.15779pt.
-<report/Plots/distinction_domains_bad_ex.png, id=161, 794.97pt x 505.89pt>
-File: report/Plots/distinction_domains_bad_ex.png Graphic file (type png)
-<use report/Plots/distinction_domains_bad_ex.png>
-Package pdftex.def Info: report/Plots/distinction_domains_bad_ex.png  used on input line 204.
-(pdftex.def)             Requested size: 375.80544pt x 239.15779pt.
- [13 <./report/Plots/schema_corr_Good_Def_Good_Ex.png> <./report/Plots/schema_corr_Bad_Def_Bad_Ex.png>] [14] [15 <./report/Plots/pca_domain_variables.png> <./report/Plots/distinction_domains.png>] [16] [17 <./report/Plots/distinction_domains_bad.png> <./report/Plots/distinction_domains_good_ex.png>] [18 <./report/Plots/distinction_domains_bad_ex.png>] (./draft_research_note.bbl) [19] (./draft_research_note.aux)
+ [10 <./report/Plots/distinction_domains.png (PNG copy)>] [11 <./report/Plots/distinction_domains_bad.png (PNG copy)>] (./draft_research_note.bbl) [12] (./draft_research_note.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-06-18>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `draft_research_note.out' has not changed.
-(rerunfilecheck)             Checksum: 12A6E7EE05E5E7E090999FAFC4EB4CC3;1422.
+(rerunfilecheck)             Checksum: A8239555C7C26AE0800B6F4F3E6C0C59;1687.
  ) 
 Here is how much of TeX's memory you used:
- 9831 strings out of 469097
- 159966 string characters out of 5457857
- 606212 words of memory out of 5000000
- 38667 multiletter control sequences out of 15000+600000
- 633566 words of font info for 59 fonts, out of 8000000 for 9000
+ 9779 strings out of 469097
+ 157836 string characters out of 5457857
+ 588292 words of memory out of 5000000
+ 38628 multiletter control sequences out of 15000+600000
+ 633398 words of font info for 59 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 74i,11n,79p,1016b,447s stack positions out of 10000i,1000n,20000p,200000b,200000s
- </home/omarlizardo/.TinyTeX/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.600pk></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on draft_research_note.pdf (19 pages, 2718462 bytes).
+ 74i,9n,79p,960b,447s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></home/omarlizardo/.TinyTeX/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on draft_research_note.pdf (12 pages, 2216666 bytes).
 PDF statistics:
- 271 PDF objects out of 1000 (max. 8388607)
- 198 compressed objects within 2 object streams
- 61 named destinations out of 1000 (max. 500000)
- 186 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 220 PDF objects out of 1000 (max. 8388607)
+ 163 compressed objects within 2 object streams
+ 48 named destinations out of 1000 (max. 500000)
+ 169 words of extra memory for PDF output out of 10000 (max. 10000000)
 
