@@ -54,23 +54,23 @@ __TABLES__
                 return f.read().strip()
         return ""
     
-    content = content.replace("__TOPIC_MODELING__", read_file("run_topic_modeling.py"))
-    content = content.replace("__CHI_SQUARE__", read_file("run_chi_square.py"))
-    content = content.replace("__R_ANALYSES__", read_file("run_r_analyses.R"))
-    content = content.replace("__ANOVA__", read_file("generate_anova.R"))
-    content = content.replace("__PLOTS__", read_file("fix_plots.R"))
-    content = content.replace("__TABLES__", read_file("generate_tables.py"))
+    content = content.replace("__TOPIC_MODELING__", read_file("scripts/run_topic_modeling.py"))
+    content = content.replace("__CHI_SQUARE__", read_file("scripts/run_chi_square.py"))
+    content = content.replace("__R_ANALYSES__", read_file("scripts/run_r_analyses.R"))
+    content = content.replace("__ANOVA__", read_file("scripts/generate_anova.R"))
+    content = content.replace("__PLOTS__", read_file("scripts/fix_plots.R"))
+    content = content.replace("__TABLES__", read_file("scripts/generate_tables.py"))
     
     with open("analysis.qmd", "w", encoding="utf-8") as f:
         f.write(content)
 
 steps = [
-    ("Running Topic Modeling...", ["python", "run_topic_modeling.py"]),
-    ("Running Chi-Square Tests...", ["python", "run_chi_square.py"]),
-    ("Running R Analyses (Multinomial, Demographics, PCA)...", ["Rscript", "run_r_analyses.R"]),
-    ("Generating ANOVA Tables...", ["Rscript", "generate_anova.R"]),
-    ("Generating Plots and Heatmaps...", ["Rscript", "fix_plots.R"]),
-    ("Generating TeX Summary Tables...", ["python", "generate_tables.py"]),
+    ("Running Topic Modeling...", ["python", "scripts/run_topic_modeling.py"]),
+    ("Running Chi-Square Tests...", ["python", "scripts/run_chi_square.py"]),
+    ("Running R Analyses (Multinomial, Demographics, PCA)...", ["C:/Program Files/R/R-4.5.3/bin/Rscript.exe", "scripts/run_r_analyses.R"]),
+    ("Generating ANOVA Tables...", ["C:/Program Files/R/R-4.5.3/bin/Rscript.exe", "scripts/generate_anova.R"]),
+    ("Generating Plots and Heatmaps...", ["C:/Program Files/R/R-4.5.3/bin/Rscript.exe", "scripts/fix_plots.R"]),
+    ("Generating TeX Summary Tables...", ["python", "scripts/generate_tables.py"]),
 ]
 
 for desc, cmd in steps:
