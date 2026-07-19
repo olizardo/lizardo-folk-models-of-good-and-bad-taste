@@ -132,12 +132,26 @@ def get_primary(prob_file):
 def get_topic_names(model_dir):
     info = pd.read_csv(f"{model_dir}/topic_info.csv")
     mapping = {}
+    
+    name_map = {
+        "Similar Say Usually": "Shared Taste",
+        "Art Appreciate Quality": "Cultivated Discernment",
+        "Look Appealing Clothing": "Personal Style",
+        "Pleasing Choices Aesthetically": "Aesthetic Curation",
+        "Likes Different Opinion": "Relational Distance",
+        "Choices Music Clothing": "Questionable Consumption",
+        "Usually Quality Ugly": "Lack of Refinement",
+        "Care Really Look": "Aesthetic Neglect"
+    }
+    
     for _, row in info.iterrows():
         t = row['Topic']
         if t == -1:
             mapping[str(t)] = "Outlier"
         else:
             clean_name = "_".join(row['Name'].split('_')[1:]).replace('_', ' ').title()
+            if clean_name in name_map:
+                clean_name = name_map[clean_name]
             mapping[str(t)] = clean_name
     return mapping
 
@@ -817,7 +831,19 @@ def make_summary_table(csv_path, out_tex, label):
     df = df[df['Topic'] != -1]
     
     # Clean the name provided by BERTopic/NMF (e.g. "0_taste_good" -> "Taste-Good")
-    df['Name'] = df['Name'].apply(lambda x: "-".join(x.split('_')[1:]).title())
+    df['Name'] = df['Name'].apply(lambda x: " ".join(x.split('_')[1:]).title())
+    
+    name_map = {
+        "Similar Say Usually": "Shared Taste",
+        "Art Appreciate Quality": "Cultivated Discernment",
+        "Look Appealing Clothing": "Personal Style",
+        "Pleasing Choices Aesthetically": "Aesthetic Curation",
+        "Likes Different Opinion": "Relational Distance",
+        "Choices Music Clothing": "Questionable Consumption",
+        "Usually Quality Ugly": "Lack of Refinement",
+        "Care Really Look": "Aesthetic Neglect"
+    }
+    df['Name'] = df['Name'].replace(name_map)
     
     # Clean representation array string
     def get_words(r):
@@ -844,7 +870,7 @@ def make_summary_table(csv_path, out_tex, label):
     with open(out_tex, "w") as f:
         f.write(tex_str)
 
-make_summary_table(f"{config['good_model']}/topic_info.csv", "report/Tabs/good_taste_def_summary_table.tex", "good_taste_def_summary")
-make_summary_table(f"{config['bad_model']}/topic_info.csv", "report/Tabs/bad_taste_def_summary_table.tex", "bad_taste_def_summary")
+make_summary_table(f"{config['good_model']}/topic_info.csv", "Tabs/good_taste_def_summary_table.tex", "good_taste_def_summary")
+make_summary_table(f"{config['bad_model']}/topic_info.csv", "Tabs/bad_taste_def_summary_table.tex", "bad_taste_def_summary")
 print("Successfully generated summary tables from config.")
 ```
