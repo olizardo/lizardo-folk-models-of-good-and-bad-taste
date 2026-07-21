@@ -12,7 +12,7 @@ Analyze survey data regarding sociological definitions of "good taste" and "bad 
     * Use `python run_pipeline.py` from the root directory to re-execute the entire project (Topic Modeling -> Chi-Square -> R Stats/Plots -> LaTeX table generation).
 * **R Environment**: Initialized a bare `renv` for R-based analysis. R is located at `C:/Program Files/R/R-4.5.3/bin/Rscript.exe`. Always use this explicit path when invoking Rscript from Python subprocesses.
 * **Statistical Modeling & Visualizations**:
-    * **Demographic Analysis**: Multinomial logistic regression (Wald tests) evaluating the probability of topic assignments across demographics.
+    * **Demographic Analysis**: Multinomial logistic regression (Wald tests) evaluating the probability of topic assignments across demographics. Predicted marginal probabilities for Age (faceted line plots with 95% CIs) and Gender (dodged bar plots) are generated using `ggeffects` dynamically in `analysis.qmd`.
     * **Correspondence Analysis (CA)**: CA plots mapping the schemas against each other.
     * **Domain Distinction**: PCA and ANOVAs of specific domains where respondents draw boundaries, visualized via heatmaps.
 * **Reporting**: Findings are structured in `draft_research_note.tex`. The master analytical steps are consolidated in `analysis.qmd`, which is auto-rebuilt by `run_pipeline.py`.

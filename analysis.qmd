@@ -184,6 +184,8 @@ library(FactoMineR)
 library(factoextra)
 library(jsonlite)
 library(corrplot)
+library(ggeffects)
+library(ggsci)
 
 config <- fromJSON("config.json")
 good_model_dir <- config$good_model
@@ -238,6 +240,96 @@ run_multinom <- function(prob_file, name) {
   }
   return(NULL)
 }
+
+generate_margin_plots <- function(model_dir, name, is_good) {
+  # Get topic names internally to avoid scope issues
+  get_topic_names_local <- function(dir) {
+    info <- read_csv(file.path(dir, "topic_info.csv"), show_col_types = FALSE)
+    meaningful_labels <- c(
+      "0_similar_say_usually" = "Shared Taste",
+      "1_art_appreciate_quality" = "Cultivated Discernment",
+      "2_look_appealing_clothing" = "Personal Style",
+      "3_pleasing_choices_aesthetically" = "Aesthetic Curation",
+      "0_likes_different_opinion" = "Relational Distance",
+      "1_choices_music_clothing" = "Questionable Consumption",
+      "2_usually_quality_ugly" = "Lack of Refinement",
+      "3_care_really_look" = "Aesthetic Neglect"
+    )
+    names_mapped <- meaningful_labels[info$Name]
+    names_mapped[is.na(names_mapped)] <- str_to_title(str_replace_all(str_replace(info$Name[is.na(names_mapped)], "^\\d+_", ""), "_", " "))
+    map <- setNames(names_mapped, as.character(info$Topic))
+    map["-1"] <- "Outlier"
+    map
+  }
+
+  prob_file <- file.path(model_dir, "document_topic_probabilities.csv")
+  probs <- read_csv(prob_file, show_col_types = FALSE)
+  topic_cols <- setdiff(names(probs), "original_index")
+  probs$primary_topic <- apply(probs[, topic_cols], 1, function(row) topic_cols[which.max(row)])
+  probs_valid <- probs %>% filter(!primary_topic %in% c("-1"))
+  
+  merged_df <- merge(raw_survey, probs_valid, by.x="python_index", by.y="original_index")
+  
+  # MAP TO MEANINGFUL LABELS
+  t_map <- get_topic_names_local(model_dir)
+  merged_df$primary_topic <- t_map[as.character(merged_df$primary_topic)]
+  merged_df$primary_topic <- as.factor(merged_df$primary_topic)
+  
+  model_data <- merged_df %>% drop_na(Age, Gender, EducationLevel_Coded, Political) %>% filter(Gender %in% c("A man", "A woman"))
+  # Sort table to pick reference level dynamically (largest group)
+  model_data$primary_topic <- relevel(model_data$primary_topic, ref=names(sort(table(model_data$primary_topic), decreasing=TRUE)[1]))
+  
+  m <- multinom(primary_topic ~ poly(Age, 2) + Gender + EducationLevel_Coded + Political, data=model_data, trace=FALSE)
+  
+  suffix <- ifelse(is_good, "good", "bad")
+  
+  # 1. AGE PLOT
+  eff_age <- ggeffect(m, terms = "Age [all]")
+  eff_age$response.level <- str_wrap(eff_age$response.level, width = 20)
+  
+  p_age <- ggplot(eff_age, aes(x = x, y = predicted, group = response.level)) +
+    geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = response.level), alpha = 0.2) +
+    geom_line(aes(color = response.level), linewidth = 1.2) +
+    scale_fill_d3() +
+    scale_color_d3() +
+    labs(
+      title = paste("Predicted Probabilities of", name, "by Age"),
+      x = "Age",
+      y = "Predicted Probability",
+      color = "Cultural Model",
+      fill = "Cultural Model"
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "none") +
+    facet_wrap(~ response.level)
+    
+  ggsave(file.path("Plots", paste0("pred_age_ci_faceted_", suffix, ".png")), p_age, width = 10, height = 7, dpi = 300)
+  
+  # 2. GENDER PLOT
+  eff_gender <- ggeffect(m, terms = "Gender")
+  eff_gender$response.level <- str_wrap(eff_gender$response.level, width = 20)
+  
+  p_gender <- ggplot(eff_gender, aes(x = response.level, y = predicted, fill = x)) +
+    geom_bar(stat = "identity", position = position_dodge(width = 0.9)) +
+    geom_errorbar(aes(ymin = conf.low, ymax = conf.high), position = position_dodge(width = 0.9), width = 0.2) +
+    scale_fill_d3() +
+    coord_flip() +
+    labs(
+      title = paste("Predicted Probabilities of", name, "by Gender"),
+      x = "Cultural Model",
+      y = "Predicted Probability",
+      fill = "Gender"
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(legend.position = "bottom")
+    
+  fn <- paste0("pred_gender_ci_", str_replace_all(name, " ", "_"), "_flipped.png")
+  ggsave(file.path("Plots", fn), p_gender, width = 10, height = 7, dpi = 300)
+}
+
+# Run the marginal plots generation
+generate_margin_plots(good_model_dir, "Good Taste Models", TRUE)
+generate_margin_plots(bad_model_dir, "Bad Taste Models", FALSE)
 
 res1 <- run_multinom(file.path(good_model_dir, "document_topic_probabilities.csv"), "Good Taste Def")
 res2 <- run_multinom(file.path(bad_model_dir, "document_topic_probabilities.csv"), "Bad Taste Def")
