@@ -215,6 +215,32 @@ raw_survey$Political <- as.numeric(raw_survey$Political)
 # ADD python_index globally since it's used multiple times
 # (already added above)
 
+# Generate descriptive statistics table
+desc_data <- raw_survey %>% drop_na(Age, Gender, EducationLevel_Coded, Political) %>% filter(Gender %in% c("A man", "A woman"))
+
+latex_desc <- "\\begin{table}[htpb]\n\\centering\n\\begin{tabular}{lrrr}\n\\toprule\n"
+latex_desc <- paste0(latex_desc, "Variable & Mean / \\% & SD & Range \\\\\n\\midrule\n")
+latex_desc <- paste0(latex_desc, "\\textbf{Numeric Variables} & & & \\\\\n")
+latex_desc <- paste0(latex_desc, sprintf("Age & %.2f & %.2f & [%.0f, %.0f] \\\\\n", mean(desc_data$Age), sd(desc_data$Age), min(desc_data$Age), max(desc_data$Age)))
+latex_desc <- paste0(latex_desc, sprintf("Political Ideology (1-7) & %.2f & %.2f & [%.0f, %.0f] \\\\\n", mean(desc_data$Political), sd(desc_data$Political), min(desc_data$Political), max(desc_data$Political)))
+latex_desc <- paste0(latex_desc, "\\midrule\n\\textbf{Categorical Variables} & & & \\\\\n")
+
+g_prop <- prop.table(table(desc_data$Gender)) * 100
+latex_desc <- paste0(latex_desc, sprintf("Gender: Man & %.1f\\%% & - & - \\\\\n", g_prop["A man"]))
+latex_desc <- paste0(latex_desc, sprintf("Gender: Woman & %.1f\\%% & - & - \\\\\n", g_prop["A woman"]))
+
+e_prop <- prop.table(table(desc_data$EducationLevel_Coded)) * 100
+latex_desc <- paste0(latex_desc, sprintf("Education: High School & %.1f\\%% & - & - \\\\\n", e_prop["2"]))
+latex_desc <- paste0(latex_desc, sprintf("Education: Some College & %.1f\\%% & - & - \\\\\n", e_prop["3"]))
+latex_desc <- paste0(latex_desc, sprintf("Education: College Degree & %.1f\\%% & - & - \\\\\n", e_prop["4"]))
+latex_desc <- paste0(latex_desc, sprintf("Education: Graduate Degree & %.1f\\%% & - & - \\\\\n", e_prop["5"]))
+
+latex_desc <- paste0(latex_desc, "\\bottomrule\n\\end{tabular}\n")
+latex_desc <- paste0(latex_desc, "\\caption{Descriptive Statistics of Socio-Demographic Variables in Multinomial Models ($N = ", nrow(desc_data), "$)}\n")
+latex_desc <- paste0(latex_desc, "\\label{tab:descriptives}\n\\end{table}\n")
+
+write(latex_desc, "Tabs/descriptive_statistics.tex")
+
 run_multinom <- function(prob_file, name) {
   probs <- read_csv(prob_file, show_col_types = FALSE)
   topic_cols <- setdiff(names(probs), "original_index")
