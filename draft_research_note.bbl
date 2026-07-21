@@ -1,5 +1,10 @@
 \begin{thebibliography}{}
 
+\bibitem[Baumann and Price, 2026]{baumann2026graded-610}
+Baumann, S. and Price, T. (2026).
+\newblock A graded conceptualization of taste.
+\newblock {\em Poetics}, 115:102092.
+
 \bibitem[Bonard et~al., 2024]{bonard2024}
 Bonard, C., Cova, F., and Humbert-Droz, S. (2024).
 \newblock De gustibus est disputandum: an empirical investigation of the folk concept of good taste.
@@ -9,6 +14,11 @@ Bonard, C., Cova, F., and Humbert-Droz, S. (2024).
 Bourdieu, P. (1984).
 \newblock {\em Distinction: A Social Critique of the Judgement of Taste}.
 \newblock Harvard University Press, Cambridge, {MA}.
+
+\bibitem[{DiMaggio} and Mukhtar, 2004]{dimaggio2004arts-de9}
+{DiMaggio}, P. and Mukhtar, T. (2004).
+\newblock Arts participation as cultural capital in the united states, 1982–2002: Signs of decline?
+\newblock {\em Poetics}, 32(2):169--194.
 
 \bibitem[Haak and Wilterdink, 2019]{haak2019struggling-502}
 Haak, M. v.~d. and Wilterdink, N. (2019).
@@ -20,15 +30,62 @@ Jarness, V. and Friedman, S. (2017).
 \newblock ‘i’m not a snob, but…’: Class boundaries and the downplaying of difference.
 \newblock {\em Poetics}, 61:14--25.
 
+\bibitem[Lamont and Molnar, 2002]{lamont2002study-18a}
+Lamont, M. and Molnar, V. (2002).
+\newblock The study of symbolic boundaries.
+\newblock {\em Annual review of sociology}, 28:167--195.
+
+\bibitem[Lizardo and Skiles, 2012]{lizardo2012reconceptualizing-8ff}
+Lizardo, O. and Skiles, S. (2012).
+\newblock Reconceptualizing and theorizing “omnivorousness”: Genetic and relational mechanisms.
+\newblock {\em Sociological Theory}, 30(4):263--282.
+\newblock 10.1177/0735275112466999.
+
+\bibitem[Lizardo and Skiles, 2015]{lizardo2015musical-8c6}
+Lizardo, O. and Skiles, S. (2015).
+\newblock Musical taste and patterns of symbolic exclusion in the united states 1993–2012: Generational dynamics of differentiation and continuity.
+\newblock {\em Poetics}, 53:9--21.
+
 \bibitem[Pauca et~al., 2004]{pauca2004text}
 Pauca, V.~P., Shahnaz, F., Berry, M.~W., and Plemmons, R.~J. (2004).
 \newblock Text mining using non-negative matrix factorizations.
 \newblock In {\em Proceedings of the 2004 SIAM International Conference on Data Mining}, pages 452--456.
 
+\bibitem[Purhonen et~al., 2023]{purhonen2023definitely-f03}
+Purhonen, S., Verboord, M., Sirkka, O., Kristensen, N.~N., and Janssen, S. (2023).
+\newblock Definitely (not) belonging to culture: Europeans’ evaluations of the contents and limits of culture.
+\newblock {\em Poetics}, 101:101840.
+
 \bibitem[Shi et~al., 2018]{shi2018short}
 Shi, T., Kang, K., Choo, J., and Reddy, C.~K. (2018).
 \newblock Short-text topic modeling via non-negative matrix factorization enriched with local word-context correlations.
 \newblock In {\em Proceedings of the 2018 World Wide Web Conference}, pages 1105--1114.
+
+\bibitem[Tampubolon, 2008]{tampubolon2008revisiting-3c2}
+Tampubolon, G. (2008).
+\newblock Revisiting omnivores in america circa 1990s: The exclusiveness of omnivores?
+\newblock {\em Poetics}, 36(2-3):243--264.
+
+\bibitem[Vaisey and Lizardo, 2010]{vaisey2010can-b9a}
+Vaisey, S. and Lizardo, O. (2010).
+\newblock Can cultural worldviews influence network composition?
+\newblock {\em Social Forces}, 88(4):1595--1618.
+\newblock {ID}: 608.
+
+\bibitem[Vlegels and Lievens, 2017]{vlegels2017music-360}
+Vlegels, J. and Lievens, J. (2017).
+\newblock Music classification, genres, and taste patterns: A ground-up network analysis on the clustering of artist preferences.
+\newblock {\em Poetics}, 60:76--89.
+
+\bibitem[Wohl, 2015]{wohl2015community-2d2}
+Wohl, H. (2015).
+\newblock Community sense: The cohesive power of aesthetic judgment.
+\newblock {\em Sociological Theory}, 33(4):299--326.
+
+\bibitem[Xiangyu, 2026]{xiangyu2026tastes-710}
+Xiangyu, M. (2026).
+\newblock Tastes and complex tastes.
+\newblock {\em Cultural Sociology}, 20(2):311--333.
 
 \bibitem[Xu et~al., 2003]{xu2003document}
 Xu, W., Liu, X., and Gong, Y. (2003).
