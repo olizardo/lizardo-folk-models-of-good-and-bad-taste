@@ -442,58 +442,71 @@ Attaching package: 'car'</code></pre>
 <span id="cb18-92"><a href="#cb18-92" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract topic names dynamically from topic_info.csv</span></span>
 <span id="cb18-93"><a href="#cb18-93" aria-hidden="true" tabindex="-1"></a>get_topic_names <span class="ot">&lt;-</span> <span class="cf">function</span>(model_dir) {</span>
 <span id="cb18-94"><a href="#cb18-94" aria-hidden="true" tabindex="-1"></a>  info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(model_dir, <span class="st">"topic_info.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb18-95"><a href="#cb18-95" aria-hidden="true" tabindex="-1"></a>  names_clean <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(<span class="fu">str_replace</span>(info<span class="sc">$</span>Name, <span class="st">"^</span><span class="sc">\\</span><span class="st">d+_"</span>, <span class="st">""</span>), <span class="st">"_"</span>, <span class="st">" "</span>)</span>
-<span id="cb18-96"><a href="#cb18-96" aria-hidden="true" tabindex="-1"></a>  names_title <span class="ot">&lt;-</span> <span class="fu">str_to_title</span>(names_clean)</span>
-<span id="cb18-97"><a href="#cb18-97" aria-hidden="true" tabindex="-1"></a>  map <span class="ot">&lt;-</span> <span class="fu">setNames</span>(names_title, <span class="fu">as.character</span>(info<span class="sc">$</span>Topic))</span>
-<span id="cb18-98"><a href="#cb18-98" aria-hidden="true" tabindex="-1"></a>  map[<span class="st">"-1"</span>] <span class="ot">&lt;-</span> <span class="st">"Outlier"</span></span>
-<span id="cb18-99"><a href="#cb18-99" aria-hidden="true" tabindex="-1"></a>  map</span>
-<span id="cb18-100"><a href="#cb18-100" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb18-101"><a href="#cb18-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-102"><a href="#cb18-102" aria-hidden="true" tabindex="-1"></a>t_g_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(good_model_dir)</span>
-<span id="cb18-103"><a href="#cb18-103" aria-hidden="true" tabindex="-1"></a>t_b_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(bad_model_dir)</span>
-<span id="cb18-104"><a href="#cb18-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-105"><a href="#cb18-105" aria-hidden="true" tabindex="-1"></a>gd <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(good_def_probs, <span class="st">"Good_Def"</span>)</span>
-<span id="cb18-106"><a href="#cb18-106" aria-hidden="true" tabindex="-1"></a>bd <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(bad_def_probs, <span class="st">"Bad_Def"</span>)</span>
-<span id="cb18-107"><a href="#cb18-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-108"><a href="#cb18-108" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> gd <span class="sc">%&gt;%</span> <span class="fu">inner_join</span>(bd, <span class="at">by=</span><span class="st">"original_index"</span>)</span>
-<span id="cb18-109"><a href="#cb18-109" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb18-110"><a href="#cb18-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Good_Def <span class="sc">!=</span> <span class="st">"-1"</span>, Bad_Def <span class="sc">!=</span> <span class="st">"-1"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb18-111"><a href="#cb18-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb18-112"><a href="#cb18-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">Good_Def =</span> t_g_d[<span class="fu">as.character</span>(Good_Def)],</span>
-<span id="cb18-113"><a href="#cb18-113" aria-hidden="true" tabindex="-1"></a>    <span class="at">Bad_Def =</span> t_b_d[<span class="fu">as.character</span>(Bad_Def)]</span>
-<span id="cb18-114"><a href="#cb18-114" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb18-115"><a href="#cb18-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-116"><a href="#cb18-116" aria-hidden="true" tabindex="-1"></a>tb <span class="ot">&lt;-</span> <span class="fu">table</span>(df<span class="sc">$</span>Good_Def, df<span class="sc">$</span>Bad_Def)</span>
-<span id="cb18-117"><a href="#cb18-117" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(tb) <span class="sc">&gt;</span> <span class="dv">1</span> <span class="sc">&amp;&amp;</span> <span class="fu">ncol</span>(tb) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
-<span id="cb18-118"><a href="#cb18-118" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(tb)</span>
-<span id="cb18-119"><a href="#cb18-119" aria-hidden="true" tabindex="-1"></a>  residuals_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">as.table</span>(res<span class="sc">$</span>residuals))</span>
-<span id="cb18-120"><a href="#cb18-120" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(residuals_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Var1"</span>, <span class="st">"Var2"</span>, <span class="st">"Residual"</span>)</span>
-<span id="cb18-121"><a href="#cb18-121" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb18-122"><a href="#cb18-122" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(residuals_df, <span class="fu">aes</span>(<span class="at">x =</span> Var1, <span class="at">y =</span> Var2, <span class="at">fill =</span> Residual)) <span class="sc">+</span></span>
-<span id="cb18-123"><a href="#cb18-123" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb18-124"><a href="#cb18-124" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Residual, <span class="dv">2</span>)), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">fontface=</span><span class="st">"bold"</span>) <span class="sc">+</span></span>
-<span id="cb18-125"><a href="#cb18-125" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"indianred"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"steelblue"</span>, <span class="at">midpoint =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb18-126"><a href="#cb18-126" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_discrete</span>(<span class="at">position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
-<span id="cb18-127"><a href="#cb18-127" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb18-128"><a href="#cb18-128" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb18-129"><a href="#cb18-129" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">angle=</span><span class="dv">20</span>, <span class="at">hjust=</span><span class="dv">1</span>),</span>
-<span id="cb18-130"><a href="#cb18-130" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>, <span class="at">face =</span> <span class="st">"bold"</span>)</span>
-<span id="cb18-131"><a href="#cb18-131" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb18-132"><a href="#cb18-132" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
-<span id="cb18-133"><a href="#cb18-133" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">"Pearson Residuals: Good Def vs Bad Def"</span>,</span>
-<span id="cb18-134"><a href="#cb18-134" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">"Good Taste Def"</span>,</span>
-<span id="cb18-135"><a href="#cb18-135" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">"Bad Taste Def"</span>,</span>
-<span id="cb18-136"><a href="#cb18-136" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill =</span> <span class="st">"Residual"</span></span>
-<span id="cb18-137"><a href="#cb18-137" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb18-138"><a href="#cb18-138" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="st">"Plots/schema_corr_Good_Def_Bad_Def.png"</span>, <span class="at">plot =</span> p, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
-<span id="cb18-139"><a href="#cb18-139" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb18-140"><a href="#cb18-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-141"><a href="#cb18-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-142"><a href="#cb18-142" aria-hidden="true" tabindex="-1"></a><span class="co"># Run for domain counts (called from external script now)</span></span>
-<span id="cb18-143"><a href="#cb18-143" aria-hidden="true" tabindex="-1"></a><span class="co"># (PCA and MANOVA were removed in favor of a count-based ANOVA)</span></span>
-<span id="cb18-144"><a href="#cb18-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-145"><a href="#cb18-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-146"><a href="#cb18-146" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"R script executed successfully."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb18-95"><a href="#cb18-95" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-96"><a href="#cb18-96" aria-hidden="true" tabindex="-1"></a>  meaningful_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb18-97"><a href="#cb18-97" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0_similar_say_usually"</span> <span class="ot">=</span> <span class="st">"Shared Taste"</span>,</span>
+<span id="cb18-98"><a href="#cb18-98" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1_art_appreciate_quality"</span> <span class="ot">=</span> <span class="st">"Cultivated Discernment"</span>,</span>
+<span id="cb18-99"><a href="#cb18-99" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2_look_appealing_clothing"</span> <span class="ot">=</span> <span class="st">"Personal Style"</span>,</span>
+<span id="cb18-100"><a href="#cb18-100" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3_pleasing_choices_aesthetically"</span> <span class="ot">=</span> <span class="st">"Aesthetic Curation"</span>,</span>
+<span id="cb18-101"><a href="#cb18-101" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0_likes_different_opinion"</span> <span class="ot">=</span> <span class="st">"Relational Distance"</span>,</span>
+<span id="cb18-102"><a href="#cb18-102" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1_choices_music_clothing"</span> <span class="ot">=</span> <span class="st">"Questionable Consumption"</span>,</span>
+<span id="cb18-103"><a href="#cb18-103" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2_usually_quality_ugly"</span> <span class="ot">=</span> <span class="st">"Lack of Refinement"</span>,</span>
+<span id="cb18-104"><a href="#cb18-104" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3_care_really_look"</span> <span class="ot">=</span> <span class="st">"Aesthetic Neglect"</span></span>
+<span id="cb18-105"><a href="#cb18-105" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-106"><a href="#cb18-106" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-107"><a href="#cb18-107" aria-hidden="true" tabindex="-1"></a>  names_mapped <span class="ot">&lt;-</span> meaningful_labels[info<span class="sc">$</span>Name]</span>
+<span id="cb18-108"><a href="#cb18-108" aria-hidden="true" tabindex="-1"></a>  names_mapped[<span class="fu">is.na</span>(names_mapped)] <span class="ot">&lt;-</span> <span class="fu">str_to_title</span>(<span class="fu">str_replace_all</span>(<span class="fu">str_replace</span>(info<span class="sc">$</span>Name[<span class="fu">is.na</span>(names_mapped)], <span class="st">"^</span><span class="sc">\\</span><span class="st">d+_"</span>, <span class="st">""</span>), <span class="st">"_"</span>, <span class="st">" "</span>))</span>
+<span id="cb18-109"><a href="#cb18-109" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-110"><a href="#cb18-110" aria-hidden="true" tabindex="-1"></a>  map <span class="ot">&lt;-</span> <span class="fu">setNames</span>(names_mapped, <span class="fu">as.character</span>(info<span class="sc">$</span>Topic))</span>
+<span id="cb18-111"><a href="#cb18-111" aria-hidden="true" tabindex="-1"></a>  map[<span class="st">"-1"</span>] <span class="ot">&lt;-</span> <span class="st">"Outlier"</span></span>
+<span id="cb18-112"><a href="#cb18-112" aria-hidden="true" tabindex="-1"></a>  map</span>
+<span id="cb18-113"><a href="#cb18-113" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-114"><a href="#cb18-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-115"><a href="#cb18-115" aria-hidden="true" tabindex="-1"></a>t_g_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(good_model_dir)</span>
+<span id="cb18-116"><a href="#cb18-116" aria-hidden="true" tabindex="-1"></a>t_b_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(bad_model_dir)</span>
+<span id="cb18-117"><a href="#cb18-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-118"><a href="#cb18-118" aria-hidden="true" tabindex="-1"></a>gd <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(good_def_probs, <span class="st">"Good_Def"</span>)</span>
+<span id="cb18-119"><a href="#cb18-119" aria-hidden="true" tabindex="-1"></a>bd <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(bad_def_probs, <span class="st">"Bad_Def"</span>)</span>
+<span id="cb18-120"><a href="#cb18-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-121"><a href="#cb18-121" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> gd <span class="sc">%&gt;%</span> <span class="fu">inner_join</span>(bd, <span class="at">by=</span><span class="st">"original_index"</span>)</span>
+<span id="cb18-122"><a href="#cb18-122" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb18-123"><a href="#cb18-123" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Good_Def <span class="sc">!=</span> <span class="st">"-1"</span>, Bad_Def <span class="sc">!=</span> <span class="st">"-1"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-124"><a href="#cb18-124" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-125"><a href="#cb18-125" aria-hidden="true" tabindex="-1"></a>    <span class="at">Good_Def =</span> t_g_d[<span class="fu">as.character</span>(Good_Def)],</span>
+<span id="cb18-126"><a href="#cb18-126" aria-hidden="true" tabindex="-1"></a>    <span class="at">Bad_Def =</span> t_b_d[<span class="fu">as.character</span>(Bad_Def)]</span>
+<span id="cb18-127"><a href="#cb18-127" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb18-128"><a href="#cb18-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-129"><a href="#cb18-129" aria-hidden="true" tabindex="-1"></a>tb <span class="ot">&lt;-</span> <span class="fu">table</span>(df<span class="sc">$</span>Good_Def, df<span class="sc">$</span>Bad_Def)</span>
+<span id="cb18-130"><a href="#cb18-130" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">nrow</span>(tb) <span class="sc">&gt;</span> <span class="dv">1</span> <span class="sc">&amp;&amp;</span> <span class="fu">ncol</span>(tb) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb18-131"><a href="#cb18-131" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(tb)</span>
+<span id="cb18-132"><a href="#cb18-132" aria-hidden="true" tabindex="-1"></a>  residuals_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">as.table</span>(res<span class="sc">$</span>residuals))</span>
+<span id="cb18-133"><a href="#cb18-133" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(residuals_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Var1"</span>, <span class="st">"Var2"</span>, <span class="st">"Residual"</span>)</span>
+<span id="cb18-134"><a href="#cb18-134" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb18-135"><a href="#cb18-135" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(residuals_df, <span class="fu">aes</span>(<span class="at">x =</span> Var1, <span class="at">y =</span> Var2, <span class="at">fill =</span> Residual)) <span class="sc">+</span></span>
+<span id="cb18-136"><a href="#cb18-136" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb18-137"><a href="#cb18-137" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Residual, <span class="dv">2</span>)), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">3.5</span>, <span class="at">fontface=</span><span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb18-138"><a href="#cb18-138" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"indianred"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"steelblue"</span>, <span class="at">midpoint =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb18-139"><a href="#cb18-139" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_discrete</span>(<span class="at">position =</span> <span class="st">"bottom"</span>) <span class="sc">+</span></span>
+<span id="cb18-140"><a href="#cb18-140" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb18-141"><a href="#cb18-141" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb18-142"><a href="#cb18-142" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">angle=</span><span class="dv">20</span>, <span class="at">hjust=</span><span class="dv">1</span>),</span>
+<span id="cb18-143"><a href="#cb18-143" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>, <span class="at">face =</span> <span class="st">"bold"</span>)</span>
+<span id="cb18-144"><a href="#cb18-144" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb18-145"><a href="#cb18-145" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb18-146"><a href="#cb18-146" aria-hidden="true" tabindex="-1"></a>      <span class="at">title =</span> <span class="st">"Pearson Residuals: Good Def vs Bad Def"</span>,</span>
+<span id="cb18-147"><a href="#cb18-147" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">"Good Taste Def"</span>,</span>
+<span id="cb18-148"><a href="#cb18-148" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">"Bad Taste Def"</span>,</span>
+<span id="cb18-149"><a href="#cb18-149" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill =</span> <span class="st">"Residual"</span></span>
+<span id="cb18-150"><a href="#cb18-150" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-151"><a href="#cb18-151" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="st">"Plots/schema_corr_Good_Def_Bad_Def.png"</span>, <span class="at">plot =</span> p, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
+<span id="cb18-152"><a href="#cb18-152" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-153"><a href="#cb18-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-154"><a href="#cb18-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-155"><a href="#cb18-155" aria-hidden="true" tabindex="-1"></a><span class="co"># Run for domain counts (called from external script now)</span></span>
+<span id="cb18-156"><a href="#cb18-156" aria-hidden="true" tabindex="-1"></a><span class="co"># (PCA and MANOVA were removed in favor of a count-based ANOVA)</span></span>
+<span id="cb18-157"><a href="#cb18-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-158"><a href="#cb18-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-159"><a href="#cb18-159" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"R script executed successfully."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "R script executed successfully."</code></pre>
 </div>
@@ -627,25 +640,38 @@ Attaching package: 'car'</code></pre>
 <span id="cb20-123"><a href="#cb20-123" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract topic names dynamically from topic_info.csv</span></span>
 <span id="cb20-124"><a href="#cb20-124" aria-hidden="true" tabindex="-1"></a>get_topic_names <span class="ot">&lt;-</span> <span class="cf">function</span>(model_dir) {</span>
 <span id="cb20-125"><a href="#cb20-125" aria-hidden="true" tabindex="-1"></a>  info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(model_dir, <span class="st">"topic_info.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb20-126"><a href="#cb20-126" aria-hidden="true" tabindex="-1"></a>  names_clean <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(<span class="fu">str_replace</span>(info<span class="sc">$</span>Name, <span class="st">"^</span><span class="sc">\\</span><span class="st">d+_"</span>, <span class="st">""</span>), <span class="st">"_"</span>, <span class="st">" "</span>)</span>
-<span id="cb20-127"><a href="#cb20-127" aria-hidden="true" tabindex="-1"></a>  names_title <span class="ot">&lt;-</span> <span class="fu">str_to_title</span>(names_clean)</span>
-<span id="cb20-128"><a href="#cb20-128" aria-hidden="true" tabindex="-1"></a>  map <span class="ot">&lt;-</span> <span class="fu">setNames</span>(names_title, <span class="fu">as.character</span>(info<span class="sc">$</span>Topic))</span>
-<span id="cb20-129"><a href="#cb20-129" aria-hidden="true" tabindex="-1"></a>  map[<span class="st">"-1"</span>] <span class="ot">&lt;-</span> <span class="st">"Outlier"</span></span>
-<span id="cb20-130"><a href="#cb20-130" aria-hidden="true" tabindex="-1"></a>  map</span>
-<span id="cb20-131"><a href="#cb20-131" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb20-132"><a href="#cb20-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-133"><a href="#cb20-133" aria-hidden="true" tabindex="-1"></a>t_g_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(good_model_dir)</span>
-<span id="cb20-134"><a href="#cb20-134" aria-hidden="true" tabindex="-1"></a>t_b_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(bad_model_dir)</span>
-<span id="cb20-135"><a href="#cb20-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-136"><a href="#cb20-136" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"Plots"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb20-137"><a href="#cb20-137" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(res_good)) {</span>
-<span id="cb20-138"><a href="#cb20-138" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_means</span>(res_good<span class="sc">$</span>means, <span class="st">"Good_Def"</span>, <span class="st">"Mean Number of Distinguishable Domains</span><span class="sc">\n</span><span class="st">by Good Taste Cultural Model"</span>, <span class="st">"Plots/domain_counts_good.png"</span>, t_g_d)</span>
-<span id="cb20-139"><a href="#cb20-139" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb20-140"><a href="#cb20-140" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(res_bad)) {</span>
-<span id="cb20-141"><a href="#cb20-141" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_means</span>(res_bad<span class="sc">$</span>means, <span class="st">"Bad_Def"</span>, <span class="st">"Mean Number of Distinguishable Domains</span><span class="sc">\n</span><span class="st">by Bad Taste Cultural Model"</span>, <span class="st">"Plots/domain_counts_bad.png"</span>, t_b_d)</span>
-<span id="cb20-142"><a href="#cb20-142" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb20-143"><a href="#cb20-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-144"><a href="#cb20-144" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Domain counts ANOVA and plots generated successfully."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb20-126"><a href="#cb20-126" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-127"><a href="#cb20-127" aria-hidden="true" tabindex="-1"></a>  meaningful_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb20-128"><a href="#cb20-128" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0_similar_say_usually"</span> <span class="ot">=</span> <span class="st">"Shared Taste"</span>,</span>
+<span id="cb20-129"><a href="#cb20-129" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1_art_appreciate_quality"</span> <span class="ot">=</span> <span class="st">"Cultivated Discernment"</span>,</span>
+<span id="cb20-130"><a href="#cb20-130" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2_look_appealing_clothing"</span> <span class="ot">=</span> <span class="st">"Personal Style"</span>,</span>
+<span id="cb20-131"><a href="#cb20-131" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3_pleasing_choices_aesthetically"</span> <span class="ot">=</span> <span class="st">"Aesthetic Curation"</span>,</span>
+<span id="cb20-132"><a href="#cb20-132" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0_likes_different_opinion"</span> <span class="ot">=</span> <span class="st">"Relational Distance"</span>,</span>
+<span id="cb20-133"><a href="#cb20-133" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1_choices_music_clothing"</span> <span class="ot">=</span> <span class="st">"Questionable Consumption"</span>,</span>
+<span id="cb20-134"><a href="#cb20-134" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2_usually_quality_ugly"</span> <span class="ot">=</span> <span class="st">"Lack of Refinement"</span>,</span>
+<span id="cb20-135"><a href="#cb20-135" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3_care_really_look"</span> <span class="ot">=</span> <span class="st">"Aesthetic Neglect"</span></span>
+<span id="cb20-136"><a href="#cb20-136" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb20-137"><a href="#cb20-137" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-138"><a href="#cb20-138" aria-hidden="true" tabindex="-1"></a>  names_mapped <span class="ot">&lt;-</span> meaningful_labels[info<span class="sc">$</span>Name]</span>
+<span id="cb20-139"><a href="#cb20-139" aria-hidden="true" tabindex="-1"></a>  names_mapped[<span class="fu">is.na</span>(names_mapped)] <span class="ot">&lt;-</span> <span class="fu">str_to_title</span>(<span class="fu">str_replace_all</span>(<span class="fu">str_replace</span>(info<span class="sc">$</span>Name[<span class="fu">is.na</span>(names_mapped)], <span class="st">"^</span><span class="sc">\\</span><span class="st">d+_"</span>, <span class="st">""</span>), <span class="st">"_"</span>, <span class="st">" "</span>))</span>
+<span id="cb20-140"><a href="#cb20-140" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb20-141"><a href="#cb20-141" aria-hidden="true" tabindex="-1"></a>  map <span class="ot">&lt;-</span> <span class="fu">setNames</span>(names_mapped, <span class="fu">as.character</span>(info<span class="sc">$</span>Topic))</span>
+<span id="cb20-142"><a href="#cb20-142" aria-hidden="true" tabindex="-1"></a>  map[<span class="st">"-1"</span>] <span class="ot">&lt;-</span> <span class="st">"Outlier"</span></span>
+<span id="cb20-143"><a href="#cb20-143" aria-hidden="true" tabindex="-1"></a>  map</span>
+<span id="cb20-144"><a href="#cb20-144" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-145"><a href="#cb20-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-146"><a href="#cb20-146" aria-hidden="true" tabindex="-1"></a>t_g_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(good_model_dir)</span>
+<span id="cb20-147"><a href="#cb20-147" aria-hidden="true" tabindex="-1"></a>t_b_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(bad_model_dir)</span>
+<span id="cb20-148"><a href="#cb20-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-149"><a href="#cb20-149" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">"Plots"</span>, <span class="at">showWarnings =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb20-150"><a href="#cb20-150" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(res_good)) {</span>
+<span id="cb20-151"><a href="#cb20-151" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_means</span>(res_good<span class="sc">$</span>means, <span class="st">"Good_Def"</span>, <span class="st">"Mean Number of Distinguishable Domains</span><span class="sc">\n</span><span class="st">by Good Taste Cultural Model"</span>, <span class="st">"Plots/domain_counts_good.png"</span>, t_g_d)</span>
+<span id="cb20-152"><a href="#cb20-152" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-153"><a href="#cb20-153" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(res_bad)) {</span>
+<span id="cb20-154"><a href="#cb20-154" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_means</span>(res_bad<span class="sc">$</span>means, <span class="st">"Bad_Def"</span>, <span class="st">"Mean Number of Distinguishable Domains</span><span class="sc">\n</span><span class="st">by Bad Taste Cultural Model"</span>, <span class="st">"Plots/domain_counts_bad.png"</span>, t_b_d)</span>
+<span id="cb20-155"><a href="#cb20-155" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-156"><a href="#cb20-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-157"><a href="#cb20-157" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">"Domain counts ANOVA and plots generated successfully."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Domain counts ANOVA and plots generated successfully."</code></pre>
 </div>
@@ -770,216 +796,269 @@ Attaching package: 'car'</code></pre>
 <span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>  info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(model_dir, <span class="st">"topic_info.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Topic <span class="sc">!=</span> <span class="sc">-</span><span class="dv">1</span>)</span>
 <span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Format names</span></span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>  info<span class="sc">$</span>NameClean <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(<span class="fu">str_replace</span>(info<span class="sc">$</span>Name, <span class="st">"^</span><span class="sc">\\</span><span class="st">d+_"</span>, <span class="st">""</span>), <span class="st">"_"</span>, <span class="st">" "</span>)</span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>  info<span class="sc">$</span>NameClean <span class="ot">&lt;-</span> <span class="fu">str_to_title</span>(info<span class="sc">$</span>NameClean)</span>
-<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>  p_topics <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(info, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(NameClean, Count), <span class="at">y =</span> Count)) <span class="sc">+</span></span>
-<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> color) <span class="sc">+</span></span>
-<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(title_prefix, <span class="st">"(Definitions)"</span>), <span class="at">x =</span> <span class="st">"Cultural Model"</span>, <span class="at">y =</span> <span class="st">"Count"</span>)</span>
-<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="fu">sprintf</span>(<span class="st">"Plots/%s_topics.png"</span>, prefix), <span class="at">plot =</span> p_topics, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
-<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Keywords</span></span>
-<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>  clean_keywords <span class="ot">&lt;-</span> <span class="cf">function</span>(rep_str) {</span>
-<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>    words <span class="ot">&lt;-</span> <span class="fu">str_extract_all</span>(rep_str, <span class="st">"'([^']+)'"</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>    words <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(words, <span class="st">"'"</span>, <span class="st">""</span>)</span>
-<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(words)</span>
-<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>  word_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(info)) {</span>
-<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>    words <span class="ot">&lt;-</span> <span class="fu">clean_keywords</span>(info<span class="sc">$</span>Representation[i])</span>
-<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Give them a dummy score decreasing from 10 to 1 for plotting order</span></span>
-<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>    scores <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">length</span>(words), <span class="dv">1</span>, <span class="at">length.out =</span> <span class="fu">length</span>(words))</span>
-<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a>    df_words <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>      <span class="at">Topic =</span> info<span class="sc">$</span>NameClean[i],</span>
-<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>      <span class="at">Word =</span> words,</span>
-<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a>      <span class="at">Score =</span> scores</span>
-<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a>    word_list[[i]] <span class="ot">&lt;-</span> df_words</span>
-<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb23-50"><a href="#cb23-50" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-51"><a href="#cb23-51" aria-hidden="true" tabindex="-1"></a>  words_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(word_list)</span>
-<span id="cb23-52"><a href="#cb23-52" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-53"><a href="#cb23-53" aria-hidden="true" tabindex="-1"></a>  p_keywords <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(words_df, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder_within</span>(Word, Score, Topic), <span class="at">y =</span> Score)) <span class="sc">+</span></span>
-<span id="cb23-54"><a href="#cb23-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> color, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb23-55"><a href="#cb23-55" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_reordered</span>() <span class="sc">+</span></span>
-<span id="cb23-56"><a href="#cb23-56" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> Topic, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
-<span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
-<span id="cb23-59"><a href="#cb23-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
-<span id="cb23-60"><a href="#cb23-60" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">10</span>)),</span>
-<span id="cb23-61"><a href="#cb23-61" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb23-62"><a href="#cb23-62" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>()</span>
-<span id="cb23-63"><a href="#cb23-63" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
-<span id="cb23-64"><a href="#cb23-64" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Top Keywords per"</span>, title_prefix, <span class="st">"Cultural Model"</span>), <span class="at">x =</span> <span class="st">"Keyword"</span>, <span class="at">y =</span> <span class="st">"Relative Prominence (NMF Weight)"</span>)</span>
-<span id="cb23-65"><a href="#cb23-65" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-66"><a href="#cb23-66" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="fu">sprintf</span>(<span class="st">"Plots/%s_keywords.png"</span>, prefix), <span class="at">plot =</span> p_keywords, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
-<span id="cb23-67"><a href="#cb23-67" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_topics_and_keywords</span>(good_model_dir, <span class="st">"Good Taste"</span>, <span class="st">"steelblue"</span>, <span class="st">"good_taste"</span>)</span>
-<span id="cb23-69"><a href="#cb23-69" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_topics_and_keywords</span>(bad_model_dir, <span class="st">"Bad Taste"</span>, <span class="st">"indianred"</span>, <span class="st">"bad_taste"</span>)</span>
-<span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a><span class="co"># --- RE-GENERATE CA PLOTS ---</span></span>
-<span id="cb23-72"><a href="#cb23-72" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
-<span id="cb23-73"><a href="#cb23-73" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
-<span id="cb23-74"><a href="#cb23-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-75"><a href="#cb23-75" aria-hidden="true" tabindex="-1"></a>plot_ca <span class="ot">&lt;-</span> <span class="cf">function</span>(model_dir, title_prefix, prefix) {</span>
-<span id="cb23-76"><a href="#cb23-76" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get names for plotting</span></span>
-<span id="cb23-77"><a href="#cb23-77" aria-hidden="true" tabindex="-1"></a>  info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(model_dir, <span class="st">"topic_info.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb23-78"><a href="#cb23-78" aria-hidden="true" tabindex="-1"></a>  names_clean <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(<span class="fu">str_replace</span>(info<span class="sc">$</span>Name, <span class="st">"^</span><span class="sc">\\</span><span class="st">d+_"</span>, <span class="st">""</span>), <span class="st">"_"</span>, <span class="st">" "</span>)</span>
-<span id="cb23-79"><a href="#cb23-79" aria-hidden="true" tabindex="-1"></a>  names_title <span class="ot">&lt;-</span> <span class="fu">str_to_title</span>(names_clean)</span>
-<span id="cb23-80"><a href="#cb23-80" aria-hidden="true" tabindex="-1"></a>  map <span class="ot">&lt;-</span> <span class="fu">setNames</span>(names_title, <span class="fu">as.character</span>(info<span class="sc">$</span>Topic))</span>
-<span id="cb23-81"><a href="#cb23-81" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-82"><a href="#cb23-82" aria-hidden="true" tabindex="-1"></a>  probs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(model_dir, <span class="st">"document_topic_probabilities.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb23-83"><a href="#cb23-83" aria-hidden="true" tabindex="-1"></a>  probs_clean <span class="ot">&lt;-</span> probs <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>original_index)</span>
-<span id="cb23-84"><a href="#cb23-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(probs_clean) <span class="ot">&lt;-</span> <span class="fu">unname</span>(map[<span class="fu">as.character</span>(<span class="dv">0</span><span class="sc">:</span>(<span class="fu">ncol</span>(probs_clean)<span class="sc">-</span><span class="dv">1</span>))])</span>
-<span id="cb23-85"><a href="#cb23-85" aria-hidden="true" tabindex="-1"></a>  ca_data <span class="ot">&lt;-</span> probs_clean <span class="sc">+</span> <span class="fl">1e-6</span></span>
-<span id="cb23-86"><a href="#cb23-86" aria-hidden="true" tabindex="-1"></a>  assigned_raw <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">apply</span>(probs_clean, <span class="dv">1</span>, which.max) <span class="sc">-</span> <span class="dv">1</span>)</span>
-<span id="cb23-87"><a href="#cb23-87" aria-hidden="true" tabindex="-1"></a>  assigned <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">unname</span>(map[assigned_raw]))</span>
-<span id="cb23-88"><a href="#cb23-88" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb23-89"><a href="#cb23-89" aria-hidden="true" tabindex="-1"></a>  res.ca <span class="ot">&lt;-</span> <span class="fu">CA</span>(ca_data, <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb23-90"><a href="#cb23-90" aria-hidden="true" tabindex="-1"></a>  p_ca <span class="ot">&lt;-</span> <span class="fu">fviz_ca_biplot</span>(res.ca, <span class="at">geom.row =</span> <span class="st">"point"</span>, <span class="at">col.row =</span> assigned, <span class="at">col.col =</span> <span class="st">"black"</span>, </span>
-<span id="cb23-91"><a href="#cb23-91" aria-hidden="true" tabindex="-1"></a>                         <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"CA:"</span>, title_prefix, <span class="st">"Taste Cultural Models"</span>), <span class="at">palette =</span> <span class="st">"jco"</span>, <span class="at">legend.title =</span> <span class="st">"Assigned Cultural Model"</span>)</span>
-<span id="cb23-92"><a href="#cb23-92" aria-hidden="true" tabindex="-1"></a>  p_ca <span class="ot">&lt;-</span> p_ca <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>, <span class="at">legend.direction=</span><span class="st">"vertical"</span>)</span>
-<span id="cb23-93"><a href="#cb23-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="fu">sprintf</span>(<span class="st">"Plots/%s.png"</span>, prefix), <span class="at">plot =</span> p_ca, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">7</span>)</span>
-<span id="cb23-94"><a href="#cb23-94" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb23-95"><a href="#cb23-95" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ca</span>(good_model_dir, <span class="st">"Good"</span>, <span class="st">"ca_good_taste"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>  meaningful_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0_similar_say_usually"</span> <span class="ot">=</span> <span class="st">"Shared Taste"</span>,</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1_art_appreciate_quality"</span> <span class="ot">=</span> <span class="st">"Cultivated Discernment"</span>,</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2_look_appealing_clothing"</span> <span class="ot">=</span> <span class="st">"Personal Style"</span>,</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3_pleasing_choices_aesthetically"</span> <span class="ot">=</span> <span class="st">"Aesthetic Curation"</span>,</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0_likes_different_opinion"</span> <span class="ot">=</span> <span class="st">"Relational Distance"</span>,</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1_choices_music_clothing"</span> <span class="ot">=</span> <span class="st">"Questionable Consumption"</span>,</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2_usually_quality_ugly"</span> <span class="ot">=</span> <span class="st">"Lack of Refinement"</span>,</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3_care_really_look"</span> <span class="ot">=</span> <span class="st">"Aesthetic Neglect"</span></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>  info<span class="sc">$</span>NameClean <span class="ot">&lt;-</span> meaningful_labels[info<span class="sc">$</span>Name]</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>  info<span class="sc">$</span>NameClean[<span class="fu">is.na</span>(info<span class="sc">$</span>NameClean)] <span class="ot">&lt;-</span> <span class="fu">str_to_title</span>(<span class="fu">str_replace_all</span>(<span class="fu">str_replace</span>(info<span class="sc">$</span>Name[<span class="fu">is.na</span>(info<span class="sc">$</span>NameClean)], <span class="st">"^</span><span class="sc">\\</span><span class="st">d+_"</span>, <span class="st">""</span>), <span class="st">"_"</span>, <span class="st">" "</span>))</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>  p_topics <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(info, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(NameClean, Count), <span class="at">y =</span> Count)) <span class="sc">+</span></span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> color) <span class="sc">+</span></span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(title_prefix, <span class="st">"(Definitions)"</span>), <span class="at">x =</span> <span class="st">"Cultural Model"</span>, <span class="at">y =</span> <span class="st">"Count"</span>)</span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="fu">sprintf</span>(<span class="st">"Plots/%s_topics.png"</span>, prefix), <span class="at">plot =</span> p_topics, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
+<span id="cb23-40"><a href="#cb23-40" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-41"><a href="#cb23-41" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. Keywords</span></span>
+<span id="cb23-42"><a href="#cb23-42" aria-hidden="true" tabindex="-1"></a>  clean_keywords <span class="ot">&lt;-</span> <span class="cf">function</span>(rep_str) {</span>
+<span id="cb23-43"><a href="#cb23-43" aria-hidden="true" tabindex="-1"></a>    words <span class="ot">&lt;-</span> <span class="fu">str_extract_all</span>(rep_str, <span class="st">"'([^']+)'"</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb23-44"><a href="#cb23-44" aria-hidden="true" tabindex="-1"></a>    words <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(words, <span class="st">"'"</span>, <span class="st">""</span>)</span>
+<span id="cb23-45"><a href="#cb23-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(words)</span>
+<span id="cb23-46"><a href="#cb23-46" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb23-47"><a href="#cb23-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-48"><a href="#cb23-48" aria-hidden="true" tabindex="-1"></a>  word_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb23-49"><a href="#cb23-49" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(info)) {</span>
+<span id="cb23-50"><a href="#cb23-50" aria-hidden="true" tabindex="-1"></a>    words <span class="ot">&lt;-</span> <span class="fu">clean_keywords</span>(info<span class="sc">$</span>Representation[i])</span>
+<span id="cb23-51"><a href="#cb23-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Give them a dummy score decreasing from 10 to 1 for plotting order</span></span>
+<span id="cb23-52"><a href="#cb23-52" aria-hidden="true" tabindex="-1"></a>    scores <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">length</span>(words), <span class="dv">1</span>, <span class="at">length.out =</span> <span class="fu">length</span>(words))</span>
+<span id="cb23-53"><a href="#cb23-53" aria-hidden="true" tabindex="-1"></a>    df_words <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb23-54"><a href="#cb23-54" aria-hidden="true" tabindex="-1"></a>      <span class="at">Topic =</span> info<span class="sc">$</span>NameClean[i],</span>
+<span id="cb23-55"><a href="#cb23-55" aria-hidden="true" tabindex="-1"></a>      <span class="at">Word =</span> words,</span>
+<span id="cb23-56"><a href="#cb23-56" aria-hidden="true" tabindex="-1"></a>      <span class="at">Score =</span> scores</span>
+<span id="cb23-57"><a href="#cb23-57" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-58"><a href="#cb23-58" aria-hidden="true" tabindex="-1"></a>    word_list[[i]] <span class="ot">&lt;-</span> df_words</span>
+<span id="cb23-59"><a href="#cb23-59" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb23-60"><a href="#cb23-60" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-61"><a href="#cb23-61" aria-hidden="true" tabindex="-1"></a>  words_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(word_list)</span>
+<span id="cb23-62"><a href="#cb23-62" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-63"><a href="#cb23-63" aria-hidden="true" tabindex="-1"></a>  p_keywords <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(words_df, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder_within</span>(Word, Score, Topic), <span class="at">y =</span> Score)) <span class="sc">+</span></span>
+<span id="cb23-64"><a href="#cb23-64" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">fill =</span> color, <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb23-65"><a href="#cb23-65" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_reordered</span>() <span class="sc">+</span></span>
+<span id="cb23-66"><a href="#cb23-66" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb23-67"><a href="#cb23-67" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> Topic, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb23-68"><a href="#cb23-68" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>) <span class="sc">+</span></span>
+<span id="cb23-69"><a href="#cb23-69" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb23-70"><a href="#cb23-70" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">10</span>)),</span>
+<span id="cb23-71"><a href="#cb23-71" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb23-72"><a href="#cb23-72" aria-hidden="true" tabindex="-1"></a>      <span class="at">axis.ticks.x =</span> <span class="fu">element_blank</span>()</span>
+<span id="cb23-73"><a href="#cb23-73" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb23-74"><a href="#cb23-74" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"Top Keywords per"</span>, title_prefix, <span class="st">"Cultural Model"</span>), <span class="at">x =</span> <span class="st">"Keyword"</span>, <span class="at">y =</span> <span class="st">"Relative Prominence (NMF Weight)"</span>)</span>
+<span id="cb23-75"><a href="#cb23-75" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-76"><a href="#cb23-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="fu">sprintf</span>(<span class="st">"Plots/%s_keywords.png"</span>, prefix), <span class="at">plot =</span> p_keywords, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
+<span id="cb23-77"><a href="#cb23-77" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-78"><a href="#cb23-78" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_topics_and_keywords</span>(good_model_dir, <span class="st">"Good Taste"</span>, <span class="st">"steelblue"</span>, <span class="st">"good_taste"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Scale for colour is already present.
-Adding another scale for colour, which will replace the existing scale.
-Scale for fill is already present.
-Adding another scale for fill, which will replace the existing scale.</code></pre>
+<pre><code>Warning in data.frame(Topic = info$NameClean[i], Word = words, Score = scores):
+row names were found from a short variable and have been discarded
+Warning in data.frame(Topic = info$NameClean[i], Word = words, Score = scores):
+row names were found from a short variable and have been discarded
+Warning in data.frame(Topic = info$NameClean[i], Word = words, Score = scores):
+row names were found from a short variable and have been discarded
+Warning in data.frame(Topic = info$NameClean[i], Word = words, Score = scores):
+row names were found from a short variable and have been discarded</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ca</span>(bad_model_dir, <span class="st">"Bad"</span>, <span class="st">"ca_bad_taste"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_topics_and_keywords</span>(bad_model_dir, <span class="st">"Bad Taste"</span>, <span class="st">"indianred"</span>, <span class="st">"bad_taste"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Scale for colour is already present.
-Adding another scale for colour, which will replace the existing scale.
-Scale for fill is already present.
-Adding another scale for fill, which will replace the existing scale.</code></pre>
+<pre><code>Warning in data.frame(Topic = info$NameClean[i], Word = words, Score = scores):
+row names were found from a short variable and have been discarded
+Warning in data.frame(Topic = info$NameClean[i], Word = words, Score = scores):
+row names were found from a short variable and have been discarded
+Warning in data.frame(Topic = info$NameClean[i], Word = words, Score = scores):
+row names were found from a short variable and have been discarded
+Warning in data.frame(Topic = info$NameClean[i], Word = words, Score = scores):
+row names were found from a short variable and have been discarded</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>raw_survey <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/FolkTaste_CleanData.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">grepl</span>(<span class="st">"What do you mean"</span>, raw_survey<span class="sc">$</span>GoodTaste_Def[<span class="dv">1</span>])) raw_survey <span class="ot">&lt;-</span> raw_survey[<span class="sc">-</span><span class="dv">1</span>, ]</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>raw_survey <span class="ot">&lt;-</span> raw_survey <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Taste_Possibility <span class="sc">==</span> <span class="st">"YES"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- RE-GENERATE CA PLOTS ---</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(factoextra)</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>gd_probs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(good_model_dir, <span class="st">"document_topic_probabilities.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>bd_probs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(bad_model_dir, <span class="st">"document_topic_probabilities.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>get_primary <span class="ot">&lt;-</span> <span class="cf">function</span>(probs, name) {</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  tc <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(probs), <span class="st">"original_index"</span>)</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  probs<span class="sc">$</span>primary <span class="ot">&lt;-</span> <span class="fu">apply</span>(probs[, tc], <span class="dv">1</span>, <span class="cf">function</span>(row) tc[<span class="fu">which.max</span>(row)])</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> probs <span class="sc">%&gt;%</span> <span class="fu">select</span>(original_index, primary)</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(res)[<span class="dv">2</span>] <span class="ot">&lt;-</span> name</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  res</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>gd <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(gd_probs, <span class="st">"Good_Def"</span>)</span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>bd <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(bd_probs, <span class="st">"Bad_Def"</span>)</span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> gd <span class="sc">%&gt;%</span> <span class="fu">inner_join</span>(bd, <span class="at">by=</span><span class="st">"original_index"</span>)</span>
-<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract topic names dynamically from topic_info.csv</span></span>
-<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>get_topic_names <span class="ot">&lt;-</span> <span class="cf">function</span>(model_dir) {</span>
-<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(model_dir, <span class="st">"topic_info.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  names_clean <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(<span class="fu">str_replace</span>(info<span class="sc">$</span>Name, <span class="st">"^</span><span class="sc">\\</span><span class="st">d+_"</span>, <span class="st">""</span>), <span class="st">"_"</span>, <span class="st">" "</span>)</span>
-<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>  names_title <span class="ot">&lt;-</span> <span class="fu">str_to_title</span>(names_clean)</span>
-<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>  map <span class="ot">&lt;-</span> <span class="fu">setNames</span>(names_title, <span class="fu">as.character</span>(info<span class="sc">$</span>Topic))</span>
-<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>  map[<span class="st">"-1"</span>] <span class="ot">&lt;-</span> <span class="st">"Outlier"</span></span>
-<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>  map</span>
-<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>t_g_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(good_model_dir)</span>
-<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>t_b_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(bad_model_dir)</span>
-<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Good_Def <span class="sc">!=</span> <span class="st">"-1"</span>, Bad_Def <span class="sc">!=</span> <span class="st">"-1"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>    <span class="at">Good_Def =</span> t_g_d[<span class="fu">as.character</span>(Good_Def)],</span>
-<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">Bad_Def =</span> t_b_d[<span class="fu">as.character</span>(Bad_Def)]</span>
-<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>combos <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"Good_Def"</span>, <span class="st">"Bad_Def"</span>))</span>
-<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (c <span class="cf">in</span> combos) {</span>
-<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a>  v1 <span class="ot">&lt;-</span> c[<span class="dv">1</span>]</span>
-<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a>  v2 <span class="ot">&lt;-</span> c[<span class="dv">2</span>]</span>
-<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a>  tb <span class="ot">&lt;-</span> <span class="fu">table</span>(df[[v1]], df[[v2]])</span>
-<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">nrow</span>(tb)<span class="sc">&gt;</span><span class="dv">1</span> <span class="sc">&amp;&amp;</span> <span class="fu">ncol</span>(tb)<span class="sc">&gt;</span><span class="dv">1</span>) {</span>
-<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(tb)</span>
-<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a>    r_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">as.table</span>(res<span class="sc">$</span>residuals))</span>
-<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(r_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Var1"</span>, <span class="st">"Var2"</span>, <span class="st">"Residual"</span>)</span>
-<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Format labels with newlines so they fit horizontally</span></span>
-<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a>    r_df<span class="sc">$</span>Var1 <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(r_df<span class="sc">$</span>Var1, <span class="st">"/"</span>, <span class="st">"/</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a>    r_df<span class="sc">$</span>Var1 <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(r_df<span class="sc">$</span>Var1, <span class="st">" "</span>, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(r_df, <span class="fu">aes</span>(<span class="at">x =</span> Var1, <span class="at">y =</span> Var2, <span class="at">fill =</span> Residual)) <span class="sc">+</span></span>
-<span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Residual, <span class="dv">2</span>)), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">6</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
-<span id="cb27-59"><a href="#cb27-59" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"indianred"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"steelblue"</span>, <span class="at">midpoint =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb27-60"><a href="#cb27-60" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_x_discrete</span>(<span class="at">position =</span> <span class="st">"top"</span>) <span class="sc">+</span></span>
-<span id="cb27-61"><a href="#cb27-61" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb27-62"><a href="#cb27-62" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">12</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
-<span id="cb27-63"><a href="#cb27-63" aria-hidden="true" tabindex="-1"></a>            <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">face =</span> <span class="st">"bold"</span>)) <span class="sc">+</span></span>
-<span id="cb27-64"><a href="#cb27-64" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(</span>
-<span id="cb27-65"><a href="#cb27-65" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">sprintf</span>(<span class="st">"Pearson Residuals: %s vs %s"</span>, <span class="fu">str_replace</span>(v1, <span class="st">"_"</span>, <span class="st">" "</span>), <span class="fu">str_replace</span>(v2, <span class="st">"_"</span>, <span class="st">" "</span>)),</span>
-<span id="cb27-66"><a href="#cb27-66" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="fu">str_replace</span>(v1, <span class="st">"_"</span>, <span class="st">" "</span>),</span>
-<span id="cb27-67"><a href="#cb27-67" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="fu">str_replace</span>(v2, <span class="st">"_"</span>, <span class="st">" "</span>),</span>
-<span id="cb27-68"><a href="#cb27-68" aria-hidden="true" tabindex="-1"></a>        <span class="at">fill =</span> <span class="st">"Residual"</span></span>
-<span id="cb27-69"><a href="#cb27-69" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb27-70"><a href="#cb27-70" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggsave</span>(<span class="fu">sprintf</span>(<span class="st">"Plots/schema_corr_%s_%s.png"</span>, v1, v2), <span class="at">plot=</span>p, <span class="at">width=</span><span class="dv">10</span>, <span class="at">height=</span><span class="dv">7</span>)</span>
-<span id="cb27-71"><a href="#cb27-71" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb27-72"><a href="#cb27-72" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-73"><a href="#cb27-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-74"><a href="#cb27-74" aria-hidden="true" tabindex="-1"></a><span class="co"># --- RE-GENERATE HEATMAPS (DEFINITIONS ONLY) ---</span></span>
-<span id="cb27-75"><a href="#cb27-75" aria-hidden="true" tabindex="-1"></a>df_g_d <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(gd_probs, <span class="st">"Good_Def"</span>)</span>
-<span id="cb27-76"><a href="#cb27-76" aria-hidden="true" tabindex="-1"></a>df_b_d <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(bd_probs, <span class="st">"Bad_Def"</span>)</span>
-<span id="cb27-77"><a href="#cb27-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-78"><a href="#cb27-78" aria-hidden="true" tabindex="-1"></a>raw_survey<span class="sc">$</span>python_index <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>(<span class="fu">nrow</span>(raw_survey)<span class="sc">-</span><span class="dv">1</span>)</span>
-<span id="cb27-79"><a href="#cb27-79" aria-hidden="true" tabindex="-1"></a>m_df <span class="ot">&lt;-</span> raw_survey <span class="sc">%&gt;%</span></span>
-<span id="cb27-80"><a href="#cb27-80" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_g_d, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"python_index"</span><span class="ot">=</span><span class="st">"original_index"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb27-81"><a href="#cb27-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_b_d, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"python_index"</span><span class="ot">=</span><span class="st">"original_index"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb27-82"><a href="#cb27-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb27-83"><a href="#cb27-83" aria-hidden="true" tabindex="-1"></a>    <span class="at">Good_Def =</span> t_g_d[<span class="fu">as.character</span>(Good_Def)],</span>
-<span id="cb27-84"><a href="#cb27-84" aria-hidden="true" tabindex="-1"></a>    <span class="at">Bad_Def =</span> t_b_d[<span class="fu">as.character</span>(Bad_Def)]</span>
-<span id="cb27-85"><a href="#cb27-85" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb27-86"><a href="#cb27-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-87"><a href="#cb27-87" aria-hidden="true" tabindex="-1"></a>distinction_cols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"Domains_Distinction1_"</span>, <span class="fu">names</span>(m_df), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb27-88"><a href="#cb27-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-89"><a href="#cb27-89" aria-hidden="true" tabindex="-1"></a>create_heatmap <span class="ot">&lt;-</span> <span class="cf">function</span>(data, group_col, title, filename) {</span>
-<span id="cb27-90"><a href="#cb27-90" aria-hidden="true" tabindex="-1"></a>  d_clean <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="sc">!!</span><span class="fu">sym</span>(group_col)) <span class="sc">&amp;</span> <span class="sc">!!</span><span class="fu">sym</span>(group_col) <span class="sc">!=</span> <span class="st">"Outlier"</span>)</span>
-<span id="cb27-91"><a href="#cb27-91" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-92"><a href="#cb27-92" aria-hidden="true" tabindex="-1"></a>  dist_means <span class="ot">&lt;-</span> d_clean <span class="sc">%&gt;%</span></span>
-<span id="cb27-93"><a href="#cb27-93" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">all_of</span>(group_col), <span class="fu">all_of</span>(distinction_cols)) <span class="sc">%&gt;%</span></span>
-<span id="cb27-94"><a href="#cb27-94" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"Domains_Distinction1_"</span>), <span class="at">names_to =</span> <span class="st">"Domain"</span>, <span class="at">values_to =</span> <span class="st">"Score"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb27-95"><a href="#cb27-95" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Domain =</span> <span class="fu">str_remove</span>(Domain, <span class="st">"Domains_Distinction1_"</span>), <span class="at">Score =</span> <span class="fu">as.numeric</span>(Score)) <span class="sc">%&gt;%</span></span>
-<span id="cb27-96"><a href="#cb27-96" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Score)) <span class="sc">%&gt;%</span></span>
-<span id="cb27-97"><a href="#cb27-97" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(<span class="sc">!!</span><span class="fu">sym</span>(group_col), Domain) <span class="sc">%&gt;%</span></span>
-<span id="cb27-98"><a href="#cb27-98" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">Probability =</span> <span class="fu">mean</span>(Score <span class="sc">&gt;=</span> <span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
-<span id="cb27-99"><a href="#cb27-99" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-100"><a href="#cb27-100" aria-hidden="true" tabindex="-1"></a>  domain_order <span class="ot">&lt;-</span> dist_means <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Domain) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">Overall =</span> <span class="fu">mean</span>(Probability)) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(Overall) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(Domain)</span>
-<span id="cb27-101"><a href="#cb27-101" aria-hidden="true" tabindex="-1"></a>  dist_means <span class="ot">&lt;-</span> dist_means <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Domain =</span> <span class="fu">factor</span>(Domain, <span class="at">levels =</span> domain_order))</span>
-<span id="cb27-102"><a href="#cb27-102" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-103"><a href="#cb27-103" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add newlines to make sure they fit horizontally</span></span>
-<span id="cb27-104"><a href="#cb27-104" aria-hidden="true" tabindex="-1"></a>  dist_means[[group_col]] <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(dist_means[[group_col]], <span class="st">"/"</span>, <span class="st">"/</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb27-105"><a href="#cb27-105" aria-hidden="true" tabindex="-1"></a>  dist_means[[group_col]] <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(dist_means[[group_col]], <span class="st">" "</span>, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb27-106"><a href="#cb27-106" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-107"><a href="#cb27-107" aria-hidden="true" tabindex="-1"></a>  global_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(dist_means<span class="sc">$</span>Probability, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb27-108"><a href="#cb27-108" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-109"><a href="#cb27-109" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dist_means, <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">!!</span><span class="fu">sym</span>(group_col), <span class="at">y =</span> Domain, <span class="at">fill =</span> Probability)) <span class="sc">+</span></span>
-<span id="cb27-110"><a href="#cb27-110" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb27-111"><a href="#cb27-111" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%.2f"</span>, Probability)), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb27-112"><a href="#cb27-112" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"steelblue"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"indianred"</span>, <span class="at">midpoint =</span> global_mean) <span class="sc">+</span></span>
-<span id="cb27-113"><a href="#cb27-113" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_discrete</span>(<span class="at">position =</span> <span class="st">"top"</span>) <span class="sc">+</span></span>
-<span id="cb27-114"><a href="#cb27-114" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb27-115"><a href="#cb27-115" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">vjust =</span> <span class="dv">0</span>)) <span class="sc">+</span></span>
-<span id="cb27-116"><a href="#cb27-116" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> title, <span class="at">x =</span> <span class="st">"Cultural Model"</span>, <span class="at">y =</span> <span class="st">"Cultural Domain"</span>, <span class="at">fill =</span> <span class="st">"Probability</span><span class="sc">\n</span><span class="st">(Score \u2265 2)"</span>)</span>
-<span id="cb27-117"><a href="#cb27-117" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-118"><a href="#cb27-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(filename, <span class="at">plot =</span> p, <span class="at">width =</span> <span class="dv">11</span>, <span class="at">height =</span> <span class="dv">7</span>)</span>
-<span id="cb27-119"><a href="#cb27-119" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-120"><a href="#cb27-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-121"><a href="#cb27-121" aria-hidden="true" tabindex="-1"></a><span class="fu">create_heatmap</span>(m_df, <span class="st">"Good_Def"</span>, <span class="st">"Average Distinction Rating by Domain (Good Taste Definitions)"</span>, <span class="st">"Plots/distinction_domains.png"</span>)</span>
-<span id="cb27-122"><a href="#cb27-122" aria-hidden="true" tabindex="-1"></a><span class="fu">create_heatmap</span>(m_df, <span class="st">"Bad_Def"</span>, <span class="st">"Average Distinction Rating by Domain (Bad Taste Definitions)"</span>, <span class="st">"Plots/distinction_domains_bad.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>plot_ca <span class="ot">&lt;-</span> <span class="cf">function</span>(model_dir, title_prefix, prefix) {</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get names for plotting</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(model_dir, <span class="st">"topic_info.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  meaningful_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0_similar_say_usually"</span> <span class="ot">=</span> <span class="st">"Shared Taste"</span>,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1_art_appreciate_quality"</span> <span class="ot">=</span> <span class="st">"Cultivated Discernment"</span>,</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2_look_appealing_clothing"</span> <span class="ot">=</span> <span class="st">"Personal Style"</span>,</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3_pleasing_choices_aesthetically"</span> <span class="ot">=</span> <span class="st">"Aesthetic Curation"</span>,</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0_likes_different_opinion"</span> <span class="ot">=</span> <span class="st">"Relational Distance"</span>,</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1_choices_music_clothing"</span> <span class="ot">=</span> <span class="st">"Questionable Consumption"</span>,</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2_usually_quality_ugly"</span> <span class="ot">=</span> <span class="st">"Lack of Refinement"</span>,</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3_care_really_look"</span> <span class="ot">=</span> <span class="st">"Aesthetic Neglect"</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  names_mapped <span class="ot">&lt;-</span> meaningful_labels[info<span class="sc">$</span>Name]</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>  names_mapped[<span class="fu">is.na</span>(names_mapped)] <span class="ot">&lt;-</span> <span class="fu">str_to_title</span>(<span class="fu">str_replace_all</span>(<span class="fu">str_replace</span>(info<span class="sc">$</span>Name[<span class="fu">is.na</span>(names_mapped)], <span class="st">"^</span><span class="sc">\\</span><span class="st">d+_"</span>, <span class="st">""</span>), <span class="st">"_"</span>, <span class="st">" "</span>))</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>  map <span class="ot">&lt;-</span> <span class="fu">setNames</span>(names_mapped, <span class="fu">as.character</span>(info<span class="sc">$</span>Topic))</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  probs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(model_dir, <span class="st">"document_topic_probabilities.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  probs_clean <span class="ot">&lt;-</span> probs <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>original_index)</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(probs_clean) <span class="ot">&lt;-</span> <span class="fu">unname</span>(map[<span class="fu">as.character</span>(<span class="dv">0</span><span class="sc">:</span>(<span class="fu">ncol</span>(probs_clean)<span class="sc">-</span><span class="dv">1</span>))])</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>  ca_data <span class="ot">&lt;-</span> probs_clean <span class="sc">+</span> <span class="fl">1e-6</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>  assigned_raw <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="fu">apply</span>(probs_clean, <span class="dv">1</span>, which.max) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>  assigned <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">unname</span>(map[assigned_raw]))</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>  res.ca <span class="ot">&lt;-</span> <span class="fu">CA</span>(ca_data, <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>  p_ca <span class="ot">&lt;-</span> <span class="fu">fviz_ca_biplot</span>(res.ca, <span class="at">geom.row =</span> <span class="st">"point"</span>, <span class="at">col.row =</span> assigned, <span class="at">col.col =</span> <span class="st">"black"</span>, </span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>                         <span class="at">title =</span> <span class="fu">paste</span>(<span class="st">"CA:"</span>, title_prefix, <span class="st">"Taste Cultural Models"</span>), <span class="at">palette =</span> <span class="st">"jco"</span>, <span class="at">legend.title =</span> <span class="st">"Assigned Cultural Model"</span>)</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>  p_ca <span class="ot">&lt;-</span> p_ca <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>, <span class="at">legend.direction=</span><span class="st">"vertical"</span>)</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="fu">sprintf</span>(<span class="st">"Plots/%s.png"</span>, prefix), <span class="at">plot =</span> p_ca, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">7</span>)</span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ca</span>(good_model_dir, <span class="st">"Good"</span>, <span class="st">"ca_good_taste"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Scale for colour is already present.
+Adding another scale for colour, which will replace the existing scale.
+Scale for fill is already present.
+Adding another scale for fill, which will replace the existing scale.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ca</span>(bad_model_dir, <span class="st">"Bad"</span>, <span class="st">"ca_bad_taste"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Scale for colour is already present.
+Adding another scale for colour, which will replace the existing scale.
+Scale for fill is already present.
+Adding another scale for fill, which will replace the existing scale.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>raw_survey <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/FolkTaste_CleanData.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">grepl</span>(<span class="st">"What do you mean"</span>, raw_survey<span class="sc">$</span>GoodTaste_Def[<span class="dv">1</span>])) raw_survey <span class="ot">&lt;-</span> raw_survey[<span class="sc">-</span><span class="dv">1</span>, ]</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>raw_survey <span class="ot">&lt;-</span> raw_survey <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Taste_Possibility <span class="sc">==</span> <span class="st">"YES"</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>gd_probs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(good_model_dir, <span class="st">"document_topic_probabilities.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>bd_probs <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(bad_model_dir, <span class="st">"document_topic_probabilities.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>get_primary <span class="ot">&lt;-</span> <span class="cf">function</span>(probs, name) {</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  tc <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(probs), <span class="st">"original_index"</span>)</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  probs<span class="sc">$</span>primary <span class="ot">&lt;-</span> <span class="fu">apply</span>(probs[, tc], <span class="dv">1</span>, <span class="cf">function</span>(row) tc[<span class="fu">which.max</span>(row)])</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> probs <span class="sc">%&gt;%</span> <span class="fu">select</span>(original_index, primary)</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(res)[<span class="dv">2</span>] <span class="ot">&lt;-</span> name</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>  res</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>gd <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(gd_probs, <span class="st">"Good_Def"</span>)</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>bd <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(bd_probs, <span class="st">"Bad_Def"</span>)</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> gd <span class="sc">%&gt;%</span> <span class="fu">inner_join</span>(bd, <span class="at">by=</span><span class="st">"original_index"</span>)</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract topic names dynamically from topic_info.csv</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>get_topic_names <span class="ot">&lt;-</span> <span class="cf">function</span>(model_dir) {</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>  info <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">file.path</span>(model_dir, <span class="st">"topic_info.csv"</span>), <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>  meaningful_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0_similar_say_usually"</span> <span class="ot">=</span> <span class="st">"Shared Taste"</span>,</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1_art_appreciate_quality"</span> <span class="ot">=</span> <span class="st">"Cultivated Discernment"</span>,</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2_look_appealing_clothing"</span> <span class="ot">=</span> <span class="st">"Personal Style"</span>,</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3_pleasing_choices_aesthetically"</span> <span class="ot">=</span> <span class="st">"Aesthetic Curation"</span>,</span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"0_likes_different_opinion"</span> <span class="ot">=</span> <span class="st">"Relational Distance"</span>,</span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">"1_choices_music_clothing"</span> <span class="ot">=</span> <span class="st">"Questionable Consumption"</span>,</span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">"2_usually_quality_ugly"</span> <span class="ot">=</span> <span class="st">"Lack of Refinement"</span>,</span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>    <span class="st">"3_care_really_look"</span> <span class="ot">=</span> <span class="st">"Aesthetic Neglect"</span></span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a>  names_mapped <span class="ot">&lt;-</span> meaningful_labels[info<span class="sc">$</span>Name]</span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a>  names_mapped[<span class="fu">is.na</span>(names_mapped)] <span class="ot">&lt;-</span> <span class="fu">str_to_title</span>(<span class="fu">str_replace_all</span>(<span class="fu">str_replace</span>(info<span class="sc">$</span>Name[<span class="fu">is.na</span>(names_mapped)], <span class="st">"^</span><span class="sc">\\</span><span class="st">d+_"</span>, <span class="st">""</span>), <span class="st">"_"</span>, <span class="st">" "</span>))</span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>  map <span class="ot">&lt;-</span> <span class="fu">setNames</span>(names_mapped, <span class="fu">as.character</span>(info<span class="sc">$</span>Topic))</span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a>  map[<span class="st">"-1"</span>] <span class="ot">&lt;-</span> <span class="st">"Outlier"</span></span>
+<span id="cb31-41"><a href="#cb31-41" aria-hidden="true" tabindex="-1"></a>  map</span>
+<span id="cb31-42"><a href="#cb31-42" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-43"><a href="#cb31-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-44"><a href="#cb31-44" aria-hidden="true" tabindex="-1"></a>t_g_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(good_model_dir)</span>
+<span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a>t_b_d <span class="ot">&lt;-</span> <span class="fu">get_topic_names</span>(bad_model_dir)</span>
+<span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-47"><a href="#cb31-47" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb31-48"><a href="#cb31-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Good_Def <span class="sc">!=</span> <span class="st">"-1"</span>, Bad_Def <span class="sc">!=</span> <span class="st">"-1"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb31-49"><a href="#cb31-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb31-50"><a href="#cb31-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">Good_Def =</span> t_g_d[<span class="fu">as.character</span>(Good_Def)],</span>
+<span id="cb31-51"><a href="#cb31-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">Bad_Def =</span> t_b_d[<span class="fu">as.character</span>(Bad_Def)]</span>
+<span id="cb31-52"><a href="#cb31-52" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-53"><a href="#cb31-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-54"><a href="#cb31-54" aria-hidden="true" tabindex="-1"></a>combos <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"Good_Def"</span>, <span class="st">"Bad_Def"</span>))</span>
+<span id="cb31-55"><a href="#cb31-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-56"><a href="#cb31-56" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (c <span class="cf">in</span> combos) {</span>
+<span id="cb31-57"><a href="#cb31-57" aria-hidden="true" tabindex="-1"></a>  v1 <span class="ot">&lt;-</span> c[<span class="dv">1</span>]</span>
+<span id="cb31-58"><a href="#cb31-58" aria-hidden="true" tabindex="-1"></a>  v2 <span class="ot">&lt;-</span> c[<span class="dv">2</span>]</span>
+<span id="cb31-59"><a href="#cb31-59" aria-hidden="true" tabindex="-1"></a>  tb <span class="ot">&lt;-</span> <span class="fu">table</span>(df[[v1]], df[[v2]])</span>
+<span id="cb31-60"><a href="#cb31-60" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">nrow</span>(tb)<span class="sc">&gt;</span><span class="dv">1</span> <span class="sc">&amp;&amp;</span> <span class="fu">ncol</span>(tb)<span class="sc">&gt;</span><span class="dv">1</span>) {</span>
+<span id="cb31-61"><a href="#cb31-61" aria-hidden="true" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(tb)</span>
+<span id="cb31-62"><a href="#cb31-62" aria-hidden="true" tabindex="-1"></a>    r_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">as.table</span>(res<span class="sc">$</span>residuals))</span>
+<span id="cb31-63"><a href="#cb31-63" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(r_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Var1"</span>, <span class="st">"Var2"</span>, <span class="st">"Residual"</span>)</span>
+<span id="cb31-64"><a href="#cb31-64" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb31-65"><a href="#cb31-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Format labels with newlines so they fit horizontally</span></span>
+<span id="cb31-66"><a href="#cb31-66" aria-hidden="true" tabindex="-1"></a>    r_df<span class="sc">$</span>Var1 <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(r_df<span class="sc">$</span>Var1, <span class="st">"/"</span>, <span class="st">"/</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb31-67"><a href="#cb31-67" aria-hidden="true" tabindex="-1"></a>    r_df<span class="sc">$</span>Var1 <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(r_df<span class="sc">$</span>Var1, <span class="st">" "</span>, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb31-68"><a href="#cb31-68" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb31-69"><a href="#cb31-69" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(r_df, <span class="fu">aes</span>(<span class="at">x =</span> Var1, <span class="at">y =</span> Var2, <span class="at">fill =</span> Residual)) <span class="sc">+</span></span>
+<span id="cb31-70"><a href="#cb31-70" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb31-71"><a href="#cb31-71" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Residual, <span class="dv">2</span>)), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">6</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>) <span class="sc">+</span></span>
+<span id="cb31-72"><a href="#cb31-72" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"indianred"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"steelblue"</span>, <span class="at">midpoint =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb31-73"><a href="#cb31-73" aria-hidden="true" tabindex="-1"></a>      <span class="fu">scale_x_discrete</span>(<span class="at">position =</span> <span class="st">"top"</span>) <span class="sc">+</span></span>
+<span id="cb31-74"><a href="#cb31-74" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb31-75"><a href="#cb31-75" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">size =</span> <span class="dv">12</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb31-76"><a href="#cb31-76" aria-hidden="true" tabindex="-1"></a>            <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">face =</span> <span class="st">"bold"</span>)) <span class="sc">+</span></span>
+<span id="cb31-77"><a href="#cb31-77" aria-hidden="true" tabindex="-1"></a>      <span class="fu">labs</span>(</span>
+<span id="cb31-78"><a href="#cb31-78" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="fu">sprintf</span>(<span class="st">"Pearson Residuals: %s vs %s"</span>, <span class="fu">str_replace</span>(v1, <span class="st">"_"</span>, <span class="st">" "</span>), <span class="fu">str_replace</span>(v2, <span class="st">"_"</span>, <span class="st">" "</span>)),</span>
+<span id="cb31-79"><a href="#cb31-79" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="fu">str_replace</span>(v1, <span class="st">"_"</span>, <span class="st">" "</span>),</span>
+<span id="cb31-80"><a href="#cb31-80" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="fu">str_replace</span>(v2, <span class="st">"_"</span>, <span class="st">" "</span>),</span>
+<span id="cb31-81"><a href="#cb31-81" aria-hidden="true" tabindex="-1"></a>        <span class="at">fill =</span> <span class="st">"Residual"</span></span>
+<span id="cb31-82"><a href="#cb31-82" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb31-83"><a href="#cb31-83" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggsave</span>(<span class="fu">sprintf</span>(<span class="st">"Plots/schema_corr_%s_%s.png"</span>, v1, v2), <span class="at">plot=</span>p, <span class="at">width=</span><span class="dv">10</span>, <span class="at">height=</span><span class="dv">7</span>)</span>
+<span id="cb31-84"><a href="#cb31-84" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb31-85"><a href="#cb31-85" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-86"><a href="#cb31-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-87"><a href="#cb31-87" aria-hidden="true" tabindex="-1"></a><span class="co"># --- RE-GENERATE HEATMAPS (DEFINITIONS ONLY) ---</span></span>
+<span id="cb31-88"><a href="#cb31-88" aria-hidden="true" tabindex="-1"></a>df_g_d <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(gd_probs, <span class="st">"Good_Def"</span>)</span>
+<span id="cb31-89"><a href="#cb31-89" aria-hidden="true" tabindex="-1"></a>df_b_d <span class="ot">&lt;-</span> <span class="fu">get_primary</span>(bd_probs, <span class="st">"Bad_Def"</span>)</span>
+<span id="cb31-90"><a href="#cb31-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-91"><a href="#cb31-91" aria-hidden="true" tabindex="-1"></a>raw_survey<span class="sc">$</span>python_index <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span>(<span class="fu">nrow</span>(raw_survey)<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb31-92"><a href="#cb31-92" aria-hidden="true" tabindex="-1"></a>m_df <span class="ot">&lt;-</span> raw_survey <span class="sc">%&gt;%</span></span>
+<span id="cb31-93"><a href="#cb31-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_g_d, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"python_index"</span><span class="ot">=</span><span class="st">"original_index"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-94"><a href="#cb31-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_b_d, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"python_index"</span><span class="ot">=</span><span class="st">"original_index"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-95"><a href="#cb31-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb31-96"><a href="#cb31-96" aria-hidden="true" tabindex="-1"></a>    <span class="at">Good_Def =</span> t_g_d[<span class="fu">as.character</span>(Good_Def)],</span>
+<span id="cb31-97"><a href="#cb31-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">Bad_Def =</span> t_b_d[<span class="fu">as.character</span>(Bad_Def)]</span>
+<span id="cb31-98"><a href="#cb31-98" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb31-99"><a href="#cb31-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-100"><a href="#cb31-100" aria-hidden="true" tabindex="-1"></a>distinction_cols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"Domains_Distinction1_"</span>, <span class="fu">names</span>(m_df), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-101"><a href="#cb31-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-102"><a href="#cb31-102" aria-hidden="true" tabindex="-1"></a>create_heatmap <span class="ot">&lt;-</span> <span class="cf">function</span>(data, group_col, title, filename) {</span>
+<span id="cb31-103"><a href="#cb31-103" aria-hidden="true" tabindex="-1"></a>  d_clean <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="sc">!!</span><span class="fu">sym</span>(group_col)) <span class="sc">&amp;</span> <span class="sc">!!</span><span class="fu">sym</span>(group_col) <span class="sc">!=</span> <span class="st">"Outlier"</span>)</span>
+<span id="cb31-104"><a href="#cb31-104" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-105"><a href="#cb31-105" aria-hidden="true" tabindex="-1"></a>  dist_means <span class="ot">&lt;-</span> d_clean <span class="sc">%&gt;%</span></span>
+<span id="cb31-106"><a href="#cb31-106" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="fu">all_of</span>(group_col), <span class="fu">all_of</span>(distinction_cols)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-107"><a href="#cb31-107" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">"Domains_Distinction1_"</span>), <span class="at">names_to =</span> <span class="st">"Domain"</span>, <span class="at">values_to =</span> <span class="st">"Score"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb31-108"><a href="#cb31-108" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Domain =</span> <span class="fu">str_remove</span>(Domain, <span class="st">"Domains_Distinction1_"</span>), <span class="at">Score =</span> <span class="fu">as.numeric</span>(Score)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-109"><a href="#cb31-109" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Score)) <span class="sc">%&gt;%</span></span>
+<span id="cb31-110"><a href="#cb31-110" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(<span class="sc">!!</span><span class="fu">sym</span>(group_col), Domain) <span class="sc">%&gt;%</span></span>
+<span id="cb31-111"><a href="#cb31-111" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">Probability =</span> <span class="fu">mean</span>(Score <span class="sc">&gt;=</span> <span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">'drop'</span>)</span>
+<span id="cb31-112"><a href="#cb31-112" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-113"><a href="#cb31-113" aria-hidden="true" tabindex="-1"></a>  domain_order <span class="ot">&lt;-</span> dist_means <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(Domain) <span class="sc">%&gt;%</span> <span class="fu">summarize</span>(<span class="at">Overall =</span> <span class="fu">mean</span>(Probability)) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(Overall) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(Domain)</span>
+<span id="cb31-114"><a href="#cb31-114" aria-hidden="true" tabindex="-1"></a>  dist_means <span class="ot">&lt;-</span> dist_means <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Domain =</span> <span class="fu">factor</span>(Domain, <span class="at">levels =</span> domain_order))</span>
+<span id="cb31-115"><a href="#cb31-115" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-116"><a href="#cb31-116" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add newlines to make sure they fit horizontally</span></span>
+<span id="cb31-117"><a href="#cb31-117" aria-hidden="true" tabindex="-1"></a>  dist_means[[group_col]] <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(dist_means[[group_col]], <span class="st">"/"</span>, <span class="st">"/</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb31-118"><a href="#cb31-118" aria-hidden="true" tabindex="-1"></a>  dist_means[[group_col]] <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(dist_means[[group_col]], <span class="st">" "</span>, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb31-119"><a href="#cb31-119" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-120"><a href="#cb31-120" aria-hidden="true" tabindex="-1"></a>  global_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(dist_means<span class="sc">$</span>Probability, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb31-121"><a href="#cb31-121" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-122"><a href="#cb31-122" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dist_means, <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">!!</span><span class="fu">sym</span>(group_col), <span class="at">y =</span> Domain, <span class="at">fill =</span> Probability)) <span class="sc">+</span></span>
+<span id="cb31-123"><a href="#cb31-123" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb31-124"><a href="#cb31-124" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"%.2f"</span>, Probability)), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb31-125"><a href="#cb31-125" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_gradient2</span>(<span class="at">low =</span> <span class="st">"steelblue"</span>, <span class="at">mid =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"indianred"</span>, <span class="at">midpoint =</span> global_mean) <span class="sc">+</span></span>
+<span id="cb31-126"><a href="#cb31-126" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_discrete</span>(<span class="at">position =</span> <span class="st">"top"</span>) <span class="sc">+</span></span>
+<span id="cb31-127"><a href="#cb31-127" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb31-128"><a href="#cb31-128" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">vjust =</span> <span class="dv">0</span>)) <span class="sc">+</span></span>
+<span id="cb31-129"><a href="#cb31-129" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> title, <span class="at">x =</span> <span class="st">"Cultural Model"</span>, <span class="at">y =</span> <span class="st">"Cultural Domain"</span>, <span class="at">fill =</span> <span class="st">"Probability</span><span class="sc">\n</span><span class="st">(Score \u2265 2)"</span>)</span>
+<span id="cb31-130"><a href="#cb31-130" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb31-131"><a href="#cb31-131" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(filename, <span class="at">plot =</span> p, <span class="at">width =</span> <span class="dv">11</span>, <span class="at">height =</span> <span class="dv">7</span>)</span>
+<span id="cb31-132"><a href="#cb31-132" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-133"><a href="#cb31-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-134"><a href="#cb31-134" aria-hidden="true" tabindex="-1"></a><span class="fu">create_heatmap</span>(m_df, <span class="st">"Good_Def"</span>, <span class="st">"Average Distinction Rating by Domain (Good Taste Definitions)"</span>, <span class="st">"Plots/distinction_domains.png"</span>)</span>
+<span id="cb31-135"><a href="#cb31-135" aria-hidden="true" tabindex="-1"></a><span class="fu">create_heatmap</span>(m_df, <span class="st">"Bad_Def"</span>, <span class="st">"Average Distinction Rating by Domain (Bad Taste Definitions)"</span>, <span class="st">"Plots/distinction_domains_bad.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -988,61 +1067,61 @@ Adding another scale for fill, which will replace the existing scale.</code></pr
 <section id="configuration-and-tables" class="level2">
 <h2 class="anchored" data-anchor-id="configuration-and-tables">4.1 Configuration and Tables</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"config.json"</span>, <span class="st">"r"</span>) <span class="im">as</span> f:</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    config <span class="op">=</span> json.load(f)</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_summary_table(csv_path, out_tex, label):</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(csv_path)</span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df[df[<span class="st">'Topic'</span>] <span class="op">!=</span> <span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean the name provided by BERTopic/NMF (e.g. "0_taste_good" -&gt; "Taste-Good")</span></span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'Name'</span>] <span class="op">=</span> df[<span class="st">'Name'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">" "</span>.join(x.split(<span class="st">'_'</span>)[<span class="dv">1</span>:]).title())</span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>    name_map <span class="op">=</span> {</span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Similar Say Usually"</span>: <span class="st">"Shared Taste"</span>,</span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Art Appreciate Quality"</span>: <span class="st">"Cultivated Discernment"</span>,</span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Look Appealing Clothing"</span>: <span class="st">"Personal Style"</span>,</span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Pleasing Choices Aesthetically"</span>: <span class="st">"Aesthetic Curation"</span>,</span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Likes Different Opinion"</span>: <span class="st">"Relational Distance"</span>,</span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Choices Music Clothing"</span>: <span class="st">"Questionable Consumption"</span>,</span>
-<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Usually Quality Ugly"</span>: <span class="st">"Lack of Refinement"</span>,</span>
-<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Care Really Look"</span>: <span class="st">"Aesthetic Neglect"</span></span>
-<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'Name'</span>] <span class="op">=</span> df[<span class="st">'Name'</span>].replace(name_map)</span>
-<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean representation array string</span></span>
-<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> get_words(r):</span>
-<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>        words <span class="op">=</span> re.findall(<span class="vs">r"'</span><span class="kw">(</span><span class="pp">[^']</span><span class="op">+</span><span class="kw">)</span><span class="vs">'"</span>, r)</span>
-<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">", "</span>.join(words)[:<span class="dv">60</span>] <span class="op">+</span> <span class="st">"..."</span></span>
-<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'Representation'</span>] <span class="op">=</span> df[<span class="st">'Representation'</span>].<span class="bu">apply</span>(get_words)</span>
-<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df[[<span class="st">'Topic'</span>, <span class="st">'Count'</span>, <span class="st">'Name'</span>, <span class="st">'Representation'</span>]]</span>
-<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>    tex_str <span class="op">=</span> <span class="st">"</span><span class="ch">\\</span><span class="st">begin</span><span class="sc">{table}</span><span class="st">[htpb]</span><span class="ch">\n\\</span><span class="st">centering</span><span class="ch">\n\\</span><span class="st">resizebox{</span><span class="ch">\\</span><span class="st">textwidth}{!}{</span><span class="ch">\n\\</span><span class="st">begin</span><span class="sc">{tabular}{llrl}</span><span class="ch">\n\\</span><span class="st">toprule</span><span class="ch">\n</span><span class="st">"</span></span>
-<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>    tex_str <span class="op">+=</span> <span class="st">"Topic &amp; Count &amp; Name &amp; Representation </span><span class="ch">\\\\\n\\</span><span class="st">midrule</span><span class="ch">\n</span><span class="st">"</span></span>
-<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _, row <span class="kw">in</span> df.iterrows():</span>
-<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>        name <span class="op">=</span> <span class="bu">str</span>(row[<span class="st">'Name'</span>]).replace(<span class="st">'&amp;'</span>, <span class="st">'</span><span class="ch">\\</span><span class="st">&amp;'</span>)</span>
-<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>        rep <span class="op">=</span> <span class="bu">str</span>(row[<span class="st">'Representation'</span>]).replace(<span class="st">'&amp;'</span>, <span class="st">'</span><span class="ch">\\</span><span class="st">&amp;'</span>)</span>
-<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>        tex_str <span class="op">+=</span> <span class="ss">f"</span><span class="sc">{</span>row[<span class="st">'Topic'</span>]<span class="sc">}</span><span class="ss"> &amp; </span><span class="sc">{</span>row[<span class="st">'Count'</span>]<span class="sc">}</span><span class="ss"> &amp; </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss"> &amp; </span><span class="sc">{</span>rep<span class="sc">}</span><span class="ss"> </span><span class="ch">\\\\\n</span><span class="ss">"</span></span>
-<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>    tex_str <span class="op">+=</span> <span class="st">"</span><span class="ch">\\</span><span class="st">bottomrule</span><span class="ch">\n\\</span><span class="st">end</span><span class="sc">{tabular}</span><span class="ch">\n</span><span class="st">}</span><span class="ch">\n</span><span class="st">"</span></span>
-<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>    tex_str <span class="op">+=</span> <span class="ss">f"</span><span class="ch">\\</span><span class="ss">caption</span><span class="ch">{{</span><span class="sc">{</span>label<span class="sc">.</span>replace(<span class="st">'_'</span>, <span class="st">' '</span>)<span class="sc">.</span>title()<span class="sc">}</span><span class="ch">}}\n</span><span class="ss">"</span></span>
-<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>    tex_str <span class="op">+=</span> <span class="ss">f"</span><span class="ch">\\</span><span class="ss">label</span><span class="ch">{{</span><span class="ss">tab:</span><span class="sc">{</span>label<span class="sc">}</span><span class="ch">}}\n\\</span><span class="ss">end</span><span class="ch">{{</span><span class="ss">table</span><span class="ch">}}\n</span><span class="ss">"</span></span>
-<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a>    os.makedirs(os.path.dirname(out_tex), exist_ok<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(out_tex, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
-<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>        f.write(tex_str)</span>
-<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a>make_summary_table(<span class="ss">f"</span><span class="sc">{</span>config[<span class="st">'good_model'</span>]<span class="sc">}</span><span class="ss">/topic_info.csv"</span>, <span class="st">"Tabs/good_taste_def_summary_table.tex"</span>, <span class="st">"good_taste_def_summary"</span>)</span>
-<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a>make_summary_table(<span class="ss">f"</span><span class="sc">{</span>config[<span class="st">'bad_model'</span>]<span class="sc">}</span><span class="ss">/topic_info.csv"</span>, <span class="st">"Tabs/bad_taste_def_summary_table.tex"</span>, <span class="st">"bad_taste_def_summary"</span>)</span>
-<span id="cb28-55"><a href="#cb28-55" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Successfully generated summary tables from config."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"config.json"</span>, <span class="st">"r"</span>) <span class="im">as</span> f:</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    config <span class="op">=</span> json.load(f)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> make_summary_table(csv_path, out_tex, label):</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(csv_path)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df[df[<span class="st">'Topic'</span>] <span class="op">!=</span> <span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean the name provided by BERTopic/NMF (e.g. "0_taste_good" -&gt; "Taste-Good")</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'Name'</span>] <span class="op">=</span> df[<span class="st">'Name'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">" "</span>.join(x.split(<span class="st">'_'</span>)[<span class="dv">1</span>:]).title())</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>    name_map <span class="op">=</span> {</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Similar Say Usually"</span>: <span class="st">"Shared Taste"</span>,</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Art Appreciate Quality"</span>: <span class="st">"Cultivated Discernment"</span>,</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Look Appealing Clothing"</span>: <span class="st">"Personal Style"</span>,</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Pleasing Choices Aesthetically"</span>: <span class="st">"Aesthetic Curation"</span>,</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Likes Different Opinion"</span>: <span class="st">"Relational Distance"</span>,</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Choices Music Clothing"</span>: <span class="st">"Questionable Consumption"</span>,</span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Usually Quality Ugly"</span>: <span class="st">"Lack of Refinement"</span>,</span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Care Really Look"</span>: <span class="st">"Aesthetic Neglect"</span></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'Name'</span>] <span class="op">=</span> df[<span class="st">'Name'</span>].replace(name_map)</span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clean representation array string</span></span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> get_words(r):</span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>        words <span class="op">=</span> re.findall(<span class="vs">r"'</span><span class="kw">(</span><span class="pp">[^']</span><span class="op">+</span><span class="kw">)</span><span class="vs">'"</span>, r)</span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">", "</span>.join(words)[:<span class="dv">60</span>] <span class="op">+</span> <span class="st">"..."</span></span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">'Representation'</span>] <span class="op">=</span> df[<span class="st">'Representation'</span>].<span class="bu">apply</span>(get_words)</span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> df[[<span class="st">'Topic'</span>, <span class="st">'Count'</span>, <span class="st">'Name'</span>, <span class="st">'Representation'</span>]]</span>
+<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a>    tex_str <span class="op">=</span> <span class="st">"</span><span class="ch">\\</span><span class="st">begin</span><span class="sc">{table}</span><span class="st">[htpb]</span><span class="ch">\n\\</span><span class="st">centering</span><span class="ch">\n\\</span><span class="st">resizebox{</span><span class="ch">\\</span><span class="st">textwidth}{!}{</span><span class="ch">\n\\</span><span class="st">begin</span><span class="sc">{tabular}{llrl}</span><span class="ch">\n\\</span><span class="st">toprule</span><span class="ch">\n</span><span class="st">"</span></span>
+<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a>    tex_str <span class="op">+=</span> <span class="st">"Topic &amp; Count &amp; Name &amp; Representation </span><span class="ch">\\\\\n\\</span><span class="st">midrule</span><span class="ch">\n</span><span class="st">"</span></span>
+<span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _, row <span class="kw">in</span> df.iterrows():</span>
+<span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a>        name <span class="op">=</span> <span class="bu">str</span>(row[<span class="st">'Name'</span>]).replace(<span class="st">'&amp;'</span>, <span class="st">'</span><span class="ch">\\</span><span class="st">&amp;'</span>)</span>
+<span id="cb32-42"><a href="#cb32-42" aria-hidden="true" tabindex="-1"></a>        rep <span class="op">=</span> <span class="bu">str</span>(row[<span class="st">'Representation'</span>]).replace(<span class="st">'&amp;'</span>, <span class="st">'</span><span class="ch">\\</span><span class="st">&amp;'</span>)</span>
+<span id="cb32-43"><a href="#cb32-43" aria-hidden="true" tabindex="-1"></a>        tex_str <span class="op">+=</span> <span class="ss">f"</span><span class="sc">{</span>row[<span class="st">'Topic'</span>]<span class="sc">}</span><span class="ss"> &amp; </span><span class="sc">{</span>row[<span class="st">'Count'</span>]<span class="sc">}</span><span class="ss"> &amp; </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss"> &amp; </span><span class="sc">{</span>rep<span class="sc">}</span><span class="ss"> </span><span class="ch">\\\\\n</span><span class="ss">"</span></span>
+<span id="cb32-44"><a href="#cb32-44" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-45"><a href="#cb32-45" aria-hidden="true" tabindex="-1"></a>    tex_str <span class="op">+=</span> <span class="st">"</span><span class="ch">\\</span><span class="st">bottomrule</span><span class="ch">\n\\</span><span class="st">end</span><span class="sc">{tabular}</span><span class="ch">\n</span><span class="st">}</span><span class="ch">\n</span><span class="st">"</span></span>
+<span id="cb32-46"><a href="#cb32-46" aria-hidden="true" tabindex="-1"></a>    tex_str <span class="op">+=</span> <span class="ss">f"</span><span class="ch">\\</span><span class="ss">caption</span><span class="ch">{{</span><span class="sc">{</span>label<span class="sc">.</span>replace(<span class="st">'_'</span>, <span class="st">' '</span>)<span class="sc">.</span>title()<span class="sc">}</span><span class="ch">}}\n</span><span class="ss">"</span></span>
+<span id="cb32-47"><a href="#cb32-47" aria-hidden="true" tabindex="-1"></a>    tex_str <span class="op">+=</span> <span class="ss">f"</span><span class="ch">\\</span><span class="ss">label</span><span class="ch">{{</span><span class="ss">tab:</span><span class="sc">{</span>label<span class="sc">}</span><span class="ch">}}\n\\</span><span class="ss">end</span><span class="ch">{{</span><span class="ss">table</span><span class="ch">}}\n</span><span class="ss">"</span></span>
+<span id="cb32-48"><a href="#cb32-48" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-49"><a href="#cb32-49" aria-hidden="true" tabindex="-1"></a>    os.makedirs(os.path.dirname(out_tex), exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb32-50"><a href="#cb32-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(out_tex, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb32-51"><a href="#cb32-51" aria-hidden="true" tabindex="-1"></a>        f.write(tex_str)</span>
+<span id="cb32-52"><a href="#cb32-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-53"><a href="#cb32-53" aria-hidden="true" tabindex="-1"></a>make_summary_table(<span class="ss">f"</span><span class="sc">{</span>config[<span class="st">'good_model'</span>]<span class="sc">}</span><span class="ss">/topic_info.csv"</span>, <span class="st">"Tabs/good_taste_def_summary_table.tex"</span>, <span class="st">"good_taste_def_summary"</span>)</span>
+<span id="cb32-54"><a href="#cb32-54" aria-hidden="true" tabindex="-1"></a>make_summary_table(<span class="ss">f"</span><span class="sc">{</span>config[<span class="st">'bad_model'</span>]<span class="sc">}</span><span class="ss">/topic_info.csv"</span>, <span class="st">"Tabs/bad_taste_def_summary_table.tex"</span>, <span class="st">"bad_taste_def_summary"</span>)</span>
+<span id="cb32-55"><a href="#cb32-55" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Successfully generated summary tables from config."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Successfully generated summary tables from config.</code></pre>
 </div>

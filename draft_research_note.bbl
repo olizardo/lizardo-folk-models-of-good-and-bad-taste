@@ -1,5 +1,10 @@
 \begin{thebibliography}{}
 
+\bibitem[Bonard et~al., 2024]{bonard2024}
+Bonard, C., Cova, F., and Humbert-Droz, S. (2024).
+\newblock De gustibus est disputandum: an empirical investigation of the folk concept of good taste.
+\newblock {\em Dataset}.
+
 \bibitem[Bourdieu, 1984]{bourdieu1984distinction-835}
 Bourdieu, P. (1984).
 \newblock {\em Distinction: A Social Critique of the Judgement of Taste}.
@@ -14,5 +19,25 @@ Haak, M. v.~d. and Wilterdink, N. (2019).
 Jarness, V. and Friedman, S. (2017).
 \newblock ‘i’m not a snob, but…’: Class boundaries and the downplaying of difference.
 \newblock {\em Poetics}, 61:14--25.
+
+\bibitem[Pauca et~al., 2004]{pauca2004text}
+Pauca, V.~P., Shahnaz, F., Berry, M.~W., and Plemmons, R.~J. (2004).
+\newblock Text mining using non-negative matrix factorizations.
+\newblock In {\em Proceedings of the 2004 SIAM International Conference on Data Mining}, pages 452--456.
+
+\bibitem[Shi et~al., 2018]{shi2018short}
+Shi, T., Kang, K., Choo, J., and Reddy, C.~K. (2018).
+\newblock Short-text topic modeling via non-negative matrix factorization enriched with local word-context correlations.
+\newblock In {\em Proceedings of the 2018 World Wide Web Conference}, pages 1105--1114.
+
+\bibitem[Xu et~al., 2003]{xu2003document}
+Xu, W., Liu, X., and Gong, Y. (2003).
+\newblock Document clustering based on non-negative matrix factorization.
+\newblock In {\em Proceedings of the 26th Annual International ACM SIGIR Conference on Research and Development in Information Retrieval}, pages 267--273.
+
+\bibitem[Yan et~al., 2013]{yan2013learning}
+Yan, X., Guo, J., Liu, S., and Cheng, X. (2013).
+\newblock Learning topics in short texts by non-negative matrix factorization on term correlation matrix.
+\newblock In {\em Proceedings of the 2013 SIAM International Conference on Data Mining}, pages 749--757.
 
 \end{thebibliography}

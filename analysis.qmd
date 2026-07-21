@@ -279,9 +279,22 @@ get_primary <- function(probs, name) {
 # Extract topic names dynamically from topic_info.csv
 get_topic_names <- function(model_dir) {
   info <- read_csv(file.path(model_dir, "topic_info.csv"), show_col_types = FALSE)
-  names_clean <- str_replace_all(str_replace(info$Name, "^\\d+_", ""), "_", " ")
-  names_title <- str_to_title(names_clean)
-  map <- setNames(names_title, as.character(info$Topic))
+  
+  meaningful_labels <- c(
+    "0_similar_say_usually" = "Shared Taste",
+    "1_art_appreciate_quality" = "Cultivated Discernment",
+    "2_look_appealing_clothing" = "Personal Style",
+    "3_pleasing_choices_aesthetically" = "Aesthetic Curation",
+    "0_likes_different_opinion" = "Relational Distance",
+    "1_choices_music_clothing" = "Questionable Consumption",
+    "2_usually_quality_ugly" = "Lack of Refinement",
+    "3_care_really_look" = "Aesthetic Neglect"
+  )
+  
+  names_mapped <- meaningful_labels[info$Name]
+  names_mapped[is.na(names_mapped)] <- str_to_title(str_replace_all(str_replace(info$Name[is.na(names_mapped)], "^\\d+_", ""), "_", " "))
+  
+  map <- setNames(names_mapped, as.character(info$Topic))
   map["-1"] <- "Outlier"
   map
 }
@@ -460,9 +473,22 @@ plot_means <- function(means_data, x_col, title, filename, map_dict) {
 # Extract topic names dynamically from topic_info.csv
 get_topic_names <- function(model_dir) {
   info <- read_csv(file.path(model_dir, "topic_info.csv"), show_col_types = FALSE)
-  names_clean <- str_replace_all(str_replace(info$Name, "^\\d+_", ""), "_", " ")
-  names_title <- str_to_title(names_clean)
-  map <- setNames(names_title, as.character(info$Topic))
+  
+  meaningful_labels <- c(
+    "0_similar_say_usually" = "Shared Taste",
+    "1_art_appreciate_quality" = "Cultivated Discernment",
+    "2_look_appealing_clothing" = "Personal Style",
+    "3_pleasing_choices_aesthetically" = "Aesthetic Curation",
+    "0_likes_different_opinion" = "Relational Distance",
+    "1_choices_music_clothing" = "Questionable Consumption",
+    "2_usually_quality_ugly" = "Lack of Refinement",
+    "3_care_really_look" = "Aesthetic Neglect"
+  )
+  
+  names_mapped <- meaningful_labels[info$Name]
+  names_mapped[is.na(names_mapped)] <- str_to_title(str_replace_all(str_replace(info$Name[is.na(names_mapped)], "^\\d+_", ""), "_", " "))
+  
+  map <- setNames(names_mapped, as.character(info$Topic))
   map["-1"] <- "Outlier"
   map
 }
@@ -598,8 +624,18 @@ plot_topics_and_keywords <- function(model_dir, title_prefix, color, prefix) {
   info <- read_csv(file.path(model_dir, "topic_info.csv"), show_col_types = FALSE) %>% filter(Topic != -1)
   
   # Format names
-  info$NameClean <- str_replace_all(str_replace(info$Name, "^\\d+_", ""), "_", " ")
-  info$NameClean <- str_to_title(info$NameClean)
+  meaningful_labels <- c(
+    "0_similar_say_usually" = "Shared Taste",
+    "1_art_appreciate_quality" = "Cultivated Discernment",
+    "2_look_appealing_clothing" = "Personal Style",
+    "3_pleasing_choices_aesthetically" = "Aesthetic Curation",
+    "0_likes_different_opinion" = "Relational Distance",
+    "1_choices_music_clothing" = "Questionable Consumption",
+    "2_usually_quality_ugly" = "Lack of Refinement",
+    "3_care_really_look" = "Aesthetic Neglect"
+  )
+  info$NameClean <- meaningful_labels[info$Name]
+  info$NameClean[is.na(info$NameClean)] <- str_to_title(str_replace_all(str_replace(info$Name[is.na(info$NameClean)], "^\\d+_", ""), "_", " "))
   
   p_topics <- ggplot(info, aes(x = reorder(NameClean, Count), y = Count)) +
     geom_bar(stat = "identity", fill = color) +
@@ -655,9 +691,20 @@ library(factoextra)
 plot_ca <- function(model_dir, title_prefix, prefix) {
   # Get names for plotting
   info <- read_csv(file.path(model_dir, "topic_info.csv"), show_col_types = FALSE)
-  names_clean <- str_replace_all(str_replace(info$Name, "^\\d+_", ""), "_", " ")
-  names_title <- str_to_title(names_clean)
-  map <- setNames(names_title, as.character(info$Topic))
+  meaningful_labels <- c(
+    "0_similar_say_usually" = "Shared Taste",
+    "1_art_appreciate_quality" = "Cultivated Discernment",
+    "2_look_appealing_clothing" = "Personal Style",
+    "3_pleasing_choices_aesthetically" = "Aesthetic Curation",
+    "0_likes_different_opinion" = "Relational Distance",
+    "1_choices_music_clothing" = "Questionable Consumption",
+    "2_usually_quality_ugly" = "Lack of Refinement",
+    "3_care_really_look" = "Aesthetic Neglect"
+  )
+  names_mapped <- meaningful_labels[info$Name]
+  names_mapped[is.na(names_mapped)] <- str_to_title(str_replace_all(str_replace(info$Name[is.na(names_mapped)], "^\\d+_", ""), "_", " "))
+  
+  map <- setNames(names_mapped, as.character(info$Topic))
   
   probs <- read_csv(file.path(model_dir, "document_topic_probabilities.csv"), show_col_types = FALSE)
   probs_clean <- probs %>% select(-original_index)
@@ -697,9 +744,22 @@ df <- gd %>% inner_join(bd, by="original_index")
 # Extract topic names dynamically from topic_info.csv
 get_topic_names <- function(model_dir) {
   info <- read_csv(file.path(model_dir, "topic_info.csv"), show_col_types = FALSE)
-  names_clean <- str_replace_all(str_replace(info$Name, "^\\d+_", ""), "_", " ")
-  names_title <- str_to_title(names_clean)
-  map <- setNames(names_title, as.character(info$Topic))
+  
+  meaningful_labels <- c(
+    "0_similar_say_usually" = "Shared Taste",
+    "1_art_appreciate_quality" = "Cultivated Discernment",
+    "2_look_appealing_clothing" = "Personal Style",
+    "3_pleasing_choices_aesthetically" = "Aesthetic Curation",
+    "0_likes_different_opinion" = "Relational Distance",
+    "1_choices_music_clothing" = "Questionable Consumption",
+    "2_usually_quality_ugly" = "Lack of Refinement",
+    "3_care_really_look" = "Aesthetic Neglect"
+  )
+  
+  names_mapped <- meaningful_labels[info$Name]
+  names_mapped[is.na(names_mapped)] <- str_to_title(str_replace_all(str_replace(info$Name[is.na(names_mapped)], "^\\d+_", ""), "_", " "))
+  
+  map <- setNames(names_mapped, as.character(info$Topic))
   map["-1"] <- "Outlier"
   map
 }
