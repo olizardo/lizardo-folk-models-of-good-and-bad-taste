@@ -8,14 +8,13 @@ Analyze survey data regarding sociological definitions of "good taste" and "bad 
 * **Topic Modeling Algorithm**: NMF (Python) (previously BERTopic). Implemented robustness checks across multiple `K` components, optimizing for a 4-topic solution.
 * **Pipeline Automation & Configuration**: 
     * The pipeline is entirely automated and dynamic. `config.json` dictates which models to use.
-    * Python and R scripts are organized in the `scripts/` folder (e.g., `scripts/run_chi_square.py`, `scripts/run_r_analyses.R`, `scripts/generate_anova.R`, `scripts/fix_plots.R`, `scripts/generate_tables.py`, `scripts/run_topic_modeling.py`). These scripts parse `topic_info.csv` dynamically to fetch topic names—do not hardcode label names.
-    * Use `python run_pipeline.py` from the root directory to re-execute the entire project (Topic Modeling -> Chi-Square -> R Stats/Plots -> LaTeX table generation).
-* **R Environment**: Initialized a bare `renv` for R-based analysis. R is located at `C:/Program Files/R/R-4.5.3/bin/Rscript.exe`. Always use this explicit path when invoking Rscript from Python subprocesses.
+    * Use `python run_pipeline.py` from the root directory to re-execute the entire project (Topic Modeling -> Chi-Square -> R Stats/Plots -> LaTeX table generation). All analytical steps are consolidated into `analysis.py` and `analysis.R` standalone scripts.
+* **R Environment**: Initialized a bare `renv` for R-based analysis. R is located at `C:/Program Files/R/R-4.5.3/bin/Rscript.exe`. Always use this explicit path when invoking Rscript from Python subprocesses (unless in a Positron Linux container where `Rscript` suffices).
 * **Statistical Modeling & Visualizations**:
-    * **Demographic Analysis**: Multinomial logistic regression (Wald tests) evaluating the probability of topic assignments across demographics. Predicted marginal probabilities for Age (faceted line plots with 95% CIs) and Gender (dodged bar plots) are generated using `ggeffects` dynamically in `analysis.qmd`.
+    * **Demographic Analysis**: Multinomial logistic regression (Wald tests) evaluating the probability of topic assignments across demographics. Predicted marginal probabilities for Age (faceted line plots with 95% CIs) and Gender (dodged bar plots) are generated using `ggeffects` dynamically in `analysis.R`.
     * **Correspondence Analysis (CA)**: CA plots mapping the schemas against each other.
     * **Domain Distinction**: PCA and ANOVAs of specific domains where respondents draw boundaries, visualized via heatmaps.
-* **Reporting**: Findings are structured in `draft_research_note.tex`. The master analytical steps are consolidated in `analysis.qmd`, which is auto-rebuilt by `run_pipeline.py`.
+* **Reporting**: Findings are structured in `draft_research_note.tex`. The master analytical steps are consolidated in `analysis.py` and `analysis.R`, which are auto-rebuilt sequentially by `run_pipeline.py`.
 
 ## Data Structure
 * Raw data is in `data/FolkTaste_BruteData.csv` (first row is variable names, second row is full question text).

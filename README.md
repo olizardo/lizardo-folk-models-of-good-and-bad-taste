@@ -11,12 +11,12 @@ The paper leverages computational text analysis (Non-Negative Matrix Factorizati
 The project directory is structured as follows:
 
 ```text
-├── analysis.qmd                 # Master Quarto notebook containing the computational pipeline (R/Python)
-├── run_pipeline.py              # Python wrapper to execute the full Quarto analysis pipeline
+├── analysis.py                  # Python script for NMF topic modeling and LaTeX table generation
+├── analysis.R                   # R script for multinomial regressions, ANOVA, and data visualization
+├── run_pipeline.py              # Python wrapper to execute the full analysis pipeline sequentially
 ├── data/                        # Raw and processed survey data
 ├── good_taste_nmf_k4/           # NMF topic modeling outputs for "Good Taste" (k=4)
 ├── bad_taste_nmf_k4/            # NMF topic modeling outputs for "Bad Taste" (k=4)
-├── scripts/                     # Helper Python and R scripts
 ├── draft_research_note.tex      # Source LaTeX file for the main research note
 ├── references.bib               # BibTeX file containing all references
 ├── Tabs/                        # Auto-generated LaTeX tables
@@ -30,7 +30,7 @@ The project directory is structured as follows:
 
 ## 🛠️ Prerequisites & Installation
 
-To run the reproducibility workflow, you will need **R**, **Python 3**, and the **Quarto** CLI (pre-installed in Positron and RStudio).
+To run the reproducibility workflow, you will need **R** and **Python 3**.
 
 ### 1. R Dependencies
 This project uses `renv` to lock down R dependencies. You can install them by running the following command in your R console:
@@ -50,18 +50,12 @@ Ensure your Python environment has the necessary packages installed (e.g., `pand
 2. **Open the Project**: Open the repository folder in your editor (e.g., RStudio, Positron, or VS Code).
 3. **Install Dependencies**: Run `renv::restore()` in R to install the locked package versions.
 4. **Run the Computational Pipeline**:
-   The replication pipeline is driven completely by `analysis.qmd`, which dynamically handles data cleaning, stats generation, and plot generation.
+   The replication pipeline is driven by `analysis.py` and `analysis.R`, which dynamically handle data cleaning, stats generation, and plot generation.
    
    To execute the entire project from start to finish, simply run the pipeline wrapper from your terminal:
    
    ```bash
    python run_pipeline.py
-   ```
-   
-   Alternatively, you can manually render the Quarto document using the Quarto CLI:
-   
-   ```bash
-   quarto render analysis.qmd
    ```
 
 All auto-generated tables and figures are stored in the `Tabs/` and `Plots/` directories, respectively.
