@@ -29,7 +29,7 @@
 
 \begin{abstract}
 
-Sociologists have long debated the nature of ``good'' and ``bad'' taste, yet how lay individuals implicitly define these categories remains understudied. Using open-ended survey responses, this research note applies Non-Negative Matrix Factorization (NMF) to inductively map folk cultural models of taste definitions. I identify four distinct cultural models for ``good taste'' (Shared Taste, Cultivated Discernment, Personal Style, Aesthetic Curation) and ``bad taste'' (Relational Distance, Questionable Consumption, Lack of Refinement, Aesthetic Neglect). Chi-square cross-tabulations demonstrate that these models align into coherent, overarching cultural logics linking positive and negative evaluations. Furthermore, multinomial analyses show that these models are systematically patterned by socio-demographic factors, including education, gender, age, and political ideology. Finally, domain-mapping heatmaps across 19 cultural areas reveal that while core domains like Music and Clothing are universally subject to taste distinctions, individuals holding aesthetic and cultivated models exhibit a significantly higher overall propensity to draw taste boundaries across non-core domains.
+Sociologists have long debated the nature of ``good'' and ``bad'' taste, yet how lay individuals implicitly define these categories remains understudied. Using open-ended survey responses, this research note applies Non-Negative Matrix Factorization (NMF) to inductively map folk cultural models of taste definitions. I identify four distinct cultural models for ``good taste'' (Shared Taste, Cultivated Discernment, Personal Style, Aesthetic Curation) and ``bad taste'' (Relational Distance, Questionable Consumption, Lack of Refinement, Aesthetic Neglect). Chi-square cross-tabulations demonstrate that these models align into coherent, overarching cultural logics linking positive and negative evaluations. Furthermore, multinomial analyses show that these models are systematically patterned by socio-demographic factors, particularly gender and age. Finally, domain-mapping heatmaps across 19 cultural areas reveal that while core domains like Music and Clothing are universally subject to taste distinctions, individuals holding aesthetic and cultivated models exhibit a significantly higher overall propensity to draw taste boundaries across non-core domains.
 \end{abstract}
 
 % \doublespacing
@@ -43,14 +43,16 @@ This research note is guided by four primary research questions:
 \begin{enumerate}
     \item What are the distinct, latent cultural models that lay individuals use to define ``good taste'' and ``bad taste''?
     \item How do cultural models of good taste cross-tabulate with cultural models of bad taste to form internally coherent, broader cultural logics?
-    \item Are these cultural models of taste systematically patterned by traditional socio-demographic hierarchies (e.g., age, education, and political orientation)?
+    \item Are these cultural models of taste systematically patterned by traditional socio-demographic hierarchies (e.g., age, gender, and education)?
     \item Does the propensity to draw boundaries (the total volume of differentiated cultural domains) vary significantly depending on the underlying cultural model an individual adopts?
 \end{enumerate}
 
 \section{Methods}
 
 \subsection{Data}
-The data for this analysis are drawn from a study by \citet{bonard2024} investigating folk conceptions of aesthetic taste. The original authors recruited a representative sample of the US population through the online participant platform Prolific Academic, compensating respondents \pounds 2.38 for their participation. A total of 297 individuals initially completed the survey. Following data quality protocols, 56 respondents were excluded based on their failure to pass four embedded attention checks. This yielded a final analytic sample of 241 participants ($M_{age} = 44.92, SD = 16.12$; 124 men, 114 women, and 3 identifying as `other'). The survey instrument asked respondents whether they generally distinguish between good and bad taste. Those who answered affirmatively were prompted to provide open-ended textual definitions of ``good taste'' and ``bad taste.'' These open-access, publicly available responses serve as the primary corpus for the present computational analysis.
+The data for this analysis are drawn from a study by \citet{bonard2024} investigating folk conceptions of aesthetic taste. The original authors recruited a representative sample of the US population through the online participant platform Prolific Academic, compensating respondents \pounds 2.38 for their participation. A total of 297 individuals initially completed the survey. Following data quality protocols, 56 respondents were excluded based on their failure to pass four embedded attention checks. This yielded a final analytic sample of 241 participants ($M_{age} = 44.92, SD = 16.12$; 124 men, 114 women, and 3 identifying as `other'). For demographic modeling, missing ages and unrealistic outliers (under 18) were safely dropped listwise. Additionally, to prevent model separation due to small sample sizes, extreme upper bounds of education (PhDs) were collapsed into a general graduate degree category, while parent's education was dropped from the final models due to structural missingness (85\% missing data owing to a survey skip logic error).
+
+The survey instrument asked respondents whether they generally distinguish between good and bad taste. Those who answered affirmatively were prompted to provide open-ended textual definitions of ``good taste'' and ``bad taste.'' These open-access, publicly available responses serve as the primary corpus for the present computational analysis.
 
 \subsection{Text Analysis}
 Among the 241 participants, 224 (93\%) indicated that they make a distinction between good and bad taste and thus provided open-ended definitions. These definitions were generally brief but highly informative. For ``good taste,'' responses averaged 170.15 characters in length ($SD = 90.41$, range: 26--469). For ``bad taste,'' definitions were slightly shorter, averaging 155.83 characters ($SD = 89.78$, range: 18--647). Combined, the average participant contributed 325.98 total characters of textual data ($SD = 166.99$, range: 45--899). 
@@ -135,13 +137,43 @@ To test whether these cultural models are isolated or form coherent ``logics,'' 
 
 \subsection{Demographics}
 
-To examine whether taste cultural models are patterned by socio-demographic factors, I fit multinomial logistic regression models predicting respondents' primary topic cultural model (across both models) using their Age, Gender, Education (factor), Parent's Education (factor), and Political Orientation (a 1--7 continuous scale ranging from extremely liberal to extremely conservative). The Likelihood Ratio $\chi^2$ tests are presented in Table \ref{tab:wald_models}. 
+To examine whether taste cultural models are patterned by socio-demographic factors, I fit multinomial logistic regression models predicting respondents' primary topic cultural model using Age, Gender, Education Level, and Political Orientation. The Likelihood Ratio $\chi^2$ tests are presented in Table \ref{tab:wald_models}. 
 
-As shown in Table \ref{tab:wald_models}, sociodemographic background strongly structures how respondents conceptualize taste. For the Good Taste models, every single predictor---Age, Gender, Education, Parent's Education, and Political Ideology---is highly significant ($p < 0.05$, with Education and Politics significant at $p < 0.001$). The pattern holds similarly for Bad Taste models, where Age, Gender, Education, and Parent's Education significantly predict topic assignment. Political ideology is the only variable that does not reach statistical significance ($p = 0.10$) when predicting Bad Taste conceptualizations. This indicates that while folk theories of taste are varied, they are not randomly distributed; they map closely onto traditional axes of social stratification.
+As shown in Table \ref{tab:wald_models}, sociodemographic background—particularly age and gender—structures how respondents conceptualize taste. For the Good Taste models, Age ($p \approx 0.05$) and Gender ($p < 0.05$) are significant predictors. The pattern is even stronger for Bad Taste models, where both Age ($p < 0.01$) and Gender ($p < 0.05$) significantly predict topic assignment. Education and Political Ideology did not reach statistical significance in these robust models, suggesting that generational cohorts and gender play a more primary role than formal educational attainment in shaping folk definitions of taste.
 
 \input{Tabs/wald_models.tex}
 
-To further illustrate these significant demographic boundaries without relying on noisy coefficient estimates from small cell counts, Figure \ref{fig:profile_good_taste} and Figure \ref{fig:profile_bad_taste} display demographic profile heatmaps for each cultural model. These heatmaps calculate the mean demographic percentage values for each topic and color-code them based on the raw percentage (where deeper blue indicates a higher percentage of respondents in that demographic category, and deeper red indicates a lower percentage). For example, Figure \ref{fig:profile_good_taste} demonstrates that respondents holding the \emph{Cultivated Discernment} good taste model skew distinctly older, more highly educated (both personally and across their parents' generation), and heavily liberal compared to the other groups. In contrast, those adopting the \emph{Personal Style} model are the youngest and least likely to have college-educated parents. Similar boundaries emerge in Figure \ref{fig:profile_bad_taste}, where the \emph{Lack of Refinement} bad taste model is uniquely concentrated among highly-educated liberals, while \emph{Questionable Consumption} appeals to a notably more conservative demographic base.
+To unpack these significant effects, I generated predicted probabilities with 95\% confidence intervals for both age and gender holding other variables constant. Figure \ref{fig:pred_age_good} and Figure \ref{fig:pred_age_bad} display the faceted age trajectories for Good and Bad Taste models. A clear generational divide emerges: younger respondents are significantly more likely to conceptualize bad taste subjectively and relationally (e.g., \emph{Likes Different Opinion}), whereas older adults shift heavily toward objective, aesthetic judgments, overwhelmingly defining bad taste as a \emph{Lack of Refinement} (e.g., ``usually quality ugly'') and good taste through \emph{Aesthetic Curation}. 
+
+Figure \ref{fig:pred_gender_good} and Figure \ref{fig:pred_gender_bad} illustrate the predicted probabilities by gender. For good taste, women are significantly more likely than men to define it as a shared relational property (\emph{Shared Taste}), while men are more likely to define it via pure aesthetics or highbrow discernment (\emph{Art Appreciate Quality}). For bad taste, men are heavily overrepresented in the \emph{Questionable Consumption} model, indicating a higher propensity to define bad taste simply by the consumption of the ``wrong'' things in specific domains like music and clothing. 
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=1\textwidth]{Plots/pred_age_ci_faceted_good.png}
+    \caption{Predicted Probabilities of Good Taste Models by Age (with 95\% CIs)}
+    \label{fig:pred_age_good}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=1\textwidth]{Plots/pred_age_ci_faceted_bad.png}
+    \caption{Predicted Probabilities of Bad Taste Models by Age (with 95\% CIs)}
+    \label{fig:pred_age_bad}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=1\textwidth]{Plots/pred_gender_ci_Good_Taste_Models_flipped.png}
+    \caption{Predicted Probabilities of Good Taste Models by Gender}
+    \label{fig:pred_gender_good}
+\end{figure}
+
+\begin{figure}[htpb]
+    \centering
+    \includegraphics[width=1\textwidth]{Plots/pred_gender_ci_Bad_Taste_Models_flipped.png}
+    \caption{Predicted Probabilities of Bad Taste Models by Gender}
+    \label{fig:pred_gender_bad}
+\end{figure}
 
 \begin{figure}[htpb]
     \centering
@@ -188,7 +220,7 @@ Second, visualizing the specific probabilities of boundary-drawing across these 
 
 This text-analytic exploration demonstrates that lay definitions of taste are not monolithic; they are multi-dimensional, spanning aesthetic, subjective, and quality-based dimensions. Crucially, these dimensions are symmetrical. If an individual views good taste through the lens of objective aesthetic criteria, they evaluate bad taste using the exact same yardstick. 
 
-Furthermore, by mapping these inductively derived cultural models back onto structured survey variables, we observe that the specific folk model an individual uses dictates the breadth of their cultural boundary-drawing. Future research should expand on these findings by examining how these deeply held, qualitative cultural models of taste interact with actual patterns of structural inequality.
+Furthermore, by mapping these inductively derived cultural models back onto structured survey variables, we observe that the specific folk model an individual uses is significantly structured by age and gender, and in turn dictates the breadth of their cultural boundary-drawing. Future research should expand on these findings by examining how these deeply held, qualitative cultural models of taste interact with actual patterns of structural inequality.
 
 \newpage
 \bibliographystyle{apalike}

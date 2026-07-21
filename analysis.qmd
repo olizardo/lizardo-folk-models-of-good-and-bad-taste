@@ -8,7 +8,7 @@ This file consolidates the entire data analysis pipeline (topic modeling, statis
 :::
 
 # 1. Topic Modeling (Python)
-```{python, eval=FALSE}
+```{python, eval=TRUE}
 import pandas as pd
 import numpy as np
 import json
@@ -32,8 +32,8 @@ def evaluate_nmf(docs, name, min_k=2, max_k=10):
         errors.append(nmf.reconstruction_err_)
         
     res_df = pd.DataFrame({'k': k_values, 'reconstruction_error': errors})
-    os.makedirs('report/Tabs', exist_ok=True)
-    res_df.to_csv(f'report/Tabs/nmf_reconstruction_{name}.csv', index=False)
+    os.makedirs('Tabs', exist_ok=True)
+    res_df.to_csv(f'Tabs/nmf_reconstruction_{name}.csv', index=False)
 
 def run_nmf_k4(docs, indices, model_prefix):
     domain_stops = ["don", "dont", "t", "didn", "didnt", "doesn", "doesnt", "ve", "ll", "re", "m", "isn", "isnt", "aren", "arent", "wasn", "wasnt", "weren", "werent", "haven", "havent", "hasn", "hasnt", "hadn", "hadnt", "won", "wont", "wouldn", "wouldnt", "can", "cant", "couldn", "couldnt", "shouldn", "shouldnt", "mightn", "mightnt", "mustn", "mustnt", "do", "does", "did", "doing", "done", "don't", "doesn't", "didn't", "taste", "good", "bad", "people", "person", "think", "things", "just", "like", "mean", "means"]
@@ -114,7 +114,7 @@ if __name__ == '__main__':
 ```
 
 # 2. Chi-Square Associations (Python)
-```{python, eval=FALSE}
+```{python, eval=TRUE}
 import pandas as pd
 from scipy.stats import chi2_contingency
 import itertools
@@ -133,25 +133,12 @@ def get_topic_names(model_dir):
     info = pd.read_csv(f"{model_dir}/topic_info.csv")
     mapping = {}
     
-    name_map = {
-        "Similar Say Usually": "Shared Taste",
-        "Art Appreciate Quality": "Cultivated Discernment",
-        "Look Appealing Clothing": "Personal Style",
-        "Pleasing Choices Aesthetically": "Aesthetic Curation",
-        "Likes Different Opinion": "Relational Distance",
-        "Choices Music Clothing": "Questionable Consumption",
-        "Usually Quality Ugly": "Lack of Refinement",
-        "Care Really Look": "Aesthetic Neglect"
-    }
-    
     for _, row in info.iterrows():
         t = row['Topic']
         if t == -1:
             mapping[str(t)] = "Outlier"
         else:
             clean_name = "_".join(row['Name'].split('_')[1:]).replace('_', ' ').title()
-            if clean_name in name_map:
-                clean_name = name_map[clean_name]
             mapping[str(t)] = clean_name
     return mapping
 
@@ -185,7 +172,7 @@ for d1, d2 in itertools.combinations(domains, 2):
 # 3. Demographic Analysis and Visualizations (R)
 
 ## 3.1 Main R Analyses (Wald Tests, Demographics)
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -202,8 +189,8 @@ config <- fromJSON("config.json")
 good_model_dir <- config$good_model
 bad_model_dir <- config$bad_model
 
-dir.create("report/Plots", showWarnings = FALSE)
-dir.create("report/Tabs", showWarnings = FALSE)
+dir.create("Plots", showWarnings = FALSE)
+dir.create("Tabs", showWarnings = FALSE)
 
 # 1. Wald Table for Demographics
 raw_survey <- read_csv("data/FolkTaste_CleanData.csv", show_col_types = FALSE)
@@ -214,22 +201,13 @@ raw_survey <- raw_survey %>% filter(Taste_Possibility == "YES")
 raw_survey$python_index <- 0:(nrow(raw_survey)-1)
 
 raw_survey$Age <- as.numeric(raw_survey$Age)
+# Handle unrealistic ages (e.g. < 18) by setting them to NA so they are dropped in modeling
+raw_survey$Age[raw_survey$Age < 18] <- NA
+
+# Collapse EducationLevel_Coded PhD (6) into Masters (5) to prevent separation in mlogit due to N=4
+raw_survey$EducationLevel_Coded[raw_survey$EducationLevel_Coded == 6] <- 5
 raw_survey$EducationLevel_Coded <- as.factor(raw_survey$EducationLevel_Coded)
-raw_survey$ParentEducation_Coded <- as.factor(raw_survey$ParentEducation_Coded)
 raw_survey$Political <- as.numeric(raw_survey$Political)
-
-# Impute unrealistic ages using a linear model based on other demographics
-imp_data <- raw_survey %>% select(python_index, Age, Gender, EducationLevel_Coded, ParentEducation_Coded, Political)
-imp_data$Age[imp_data$Age < 18] <- NA
-age_mod <- lm(Age ~ Gender + EducationLevel_Coded + ParentEducation_Coded + Political, data = imp_data)
-# get the python_indices of the rows that need imputation
-to_impute_idx <- imp_data$python_index[is.na(imp_data$Age)]
-pred_ages <- predict(age_mod, newdata = imp_data[is.na(imp_data$Age), ])
-
-# match the predictions to the rows safely
-for (i in seq_along(to_impute_idx)) {
-  raw_survey$Age[raw_survey$python_index == to_impute_idx[i]] <- pred_ages[i]
-}
 
 
 # ADD python_index globally since it's used multiple times
@@ -245,11 +223,12 @@ run_multinom <- function(prob_file, name) {
   merged_df <- merge(raw_survey, probs_valid, by.x="python_index", by.y="original_index")
   merged_df$primary_topic <- as.factor(merged_df$primary_topic)
   
-  model_data <- merged_df %>% drop_na(Age, Gender, EducationLevel_Coded, ParentEducation_Coded, Political) %>% filter(Gender %in% c("A man", "A woman"))
+  # Removed ParentEducation_Coded because it is missing for 85% of respondents (Drops N to 31 if included)
+  model_data <- merged_df %>% drop_na(Age, Gender, EducationLevel_Coded, Political) %>% filter(Gender %in% c("A man", "A woman"))
   
   if (length(unique(model_data$primary_topic)) > 1) {
     model_data$primary_topic <- relevel(model_data$primary_topic, ref=names(sort(table(model_data$primary_topic), decreasing=TRUE)[1]))
-    m <- multinom(primary_topic ~ poly(Age, 2) + Gender + EducationLevel_Coded + ParentEducation_Coded + Political, data=model_data, trace=FALSE)
+    m <- multinom(primary_topic ~ poly(Age, 2) + Gender + EducationLevel_Coded + Political, data=model_data, trace=FALSE)
     w <- Anova(m, type="III")
     
     df <- as.data.frame(w)
@@ -282,7 +261,7 @@ for (i in 1:nrow(all_res)) {
                                          all_res$Model[i], pred_label, all_res$`LR Chisq`[i], all_res$Df[i], pval_str))
 }
 latex_str <- paste0(latex_str, "\\bottomrule\n\\end{tabular}\n\\caption{Multinomial Logistic Regression Likelihood Ratio Tests for Topic Predictors}\n\\label{tab:wald_models}\n\\end{table}\n")
-writeLines(latex_str, "report/Tabs/wald_models.tex")
+writeLines(latex_str, "Tabs/wald_models.tex")
 
 
 # 2. Pearson Residual Plots
@@ -343,7 +322,7 @@ if (nrow(tb) > 1 && ncol(tb) > 1) {
       y = "Bad Taste Def",
       fill = "Residual"
     )
-  ggsave("report/Plots/schema_corr_Good_Def_Bad_Def.png", plot = p, width = 8, height = 6)
+  ggsave("Plots/schema_corr_Good_Def_Bad_Def.png", plot = p, width = 8, height = 6)
 }
 
 
@@ -355,7 +334,7 @@ print("R script executed successfully.")
 ```
 
 ## 3.2 Domain Count ANOVA
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 library(dplyr)
 library(readr)
 library(stringr)
@@ -451,7 +430,7 @@ for (i in 1:nrow(stats_df)) {
 latex_str <- paste0(latex_str, "\\bottomrule\n\\multicolumn{5}{l}{\\footnotesize $^{*}p<0.05; ^{**}p<0.01; ^{***}p<0.001$} \\\\\n")
 latex_str <- paste0(latex_str, "\\end{tabular}\n\\caption{ANOVA Results: Number of Domains (score $\\geq 2$) by Taste Cultural Model.}\n\\label{tab:anova_domain_counts}\n\\end{table}\n")
 
-writeLines(latex_str, "report/Tabs/anova_domain_counts.tex")
+writeLines(latex_str, "Tabs/anova_domain_counts.tex")
 
 # 5. Generate Plots
 plot_means <- function(means_data, x_col, title, filename, map_dict) {
@@ -491,19 +470,19 @@ get_topic_names <- function(model_dir) {
 t_g_d <- get_topic_names(good_model_dir)
 t_b_d <- get_topic_names(bad_model_dir)
 
-dir.create("report/Plots", showWarnings = FALSE)
+dir.create("Plots", showWarnings = FALSE)
 if (!is.null(res_good)) {
-  plot_means(res_good$means, "Good_Def", "Mean Number of Distinguishable Domains\nby Good Taste Cultural Model", "report/Plots/domain_counts_good.png", t_g_d)
+  plot_means(res_good$means, "Good_Def", "Mean Number of Distinguishable Domains\nby Good Taste Cultural Model", "Plots/domain_counts_good.png", t_g_d)
 }
 if (!is.null(res_bad)) {
-  plot_means(res_bad$means, "Bad_Def", "Mean Number of Distinguishable Domains\nby Bad Taste Cultural Model", "report/Plots/domain_counts_bad.png", t_b_d)
+  plot_means(res_bad$means, "Bad_Def", "Mean Number of Distinguishable Domains\nby Bad Taste Cultural Model", "Plots/domain_counts_bad.png", t_b_d)
 }
 
 print("Domain counts ANOVA and plots generated successfully.")
 ```
 
 ## 3.3 ANOVA for Distinction Domains
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 library(dplyr)
 library(readr)
 library(stringr)
@@ -578,7 +557,7 @@ format_cell <- function(f, p_adj) {
 combined$Good_Def <- format_cell(res_gd$F_val, res_gd$p_adj)
 combined$Bad_Def <- format_cell(res_bd$F_val, res_bd$p_adj)
 
-dir.create("report/Tabs", showWarnings = FALSE)
+dir.create("Tabs", showWarnings = FALSE)
 
 # Write to LaTeX
 latex_str <- "\\begin{table}[htpb]\n\\centering\n\\resizebox{\\textwidth}{!}{\n\\begin{tabular}{lcc}\n\\toprule\n"
@@ -594,11 +573,11 @@ for (i in 1:nrow(combined)) {
 latex_str <- paste0(latex_str, "\\bottomrule\n\\multicolumn{3}{l}{\\footnotesize $^{*}p<0.05; ^{**}p<0.01; ^{***}p<0.001$ (Benjamini-Hochberg FDR corrected)} \\\\\n")
 latex_str <- paste0(latex_str, "\\end{tabular}\n}\n\\caption{One-Way ANOVA Results: Mean Differences in Domain Distinction Ratings by Taste Cultural Model. Values are $F$-statistics with FDR-adjusted $p$-values in parentheses.}\n\\label{tab:anova_distinction}\n\\end{table}\n")
 
-writeLines(latex_str, "report/Tabs/anova_distinction.tex")
+writeLines(latex_str, "Tabs/anova_distinction.tex")
 ```
 
 ## 3.4 Pearson Residuals and Heatmaps
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 library(tidytext)
 library(dplyr)
 library(ggplot2)
@@ -611,7 +590,7 @@ config <- fromJSON("config.json")
 good_model_dir <- config$good_model
 bad_model_dir <- config$bad_model
 
-dir.create("report/Plots", showWarnings = FALSE)
+dir.create("Plots", showWarnings = FALSE)
 
 # --- TOPIC FREQUENCIES AND KEYWORDS ---
 plot_topics_and_keywords <- function(model_dir, title_prefix, color, prefix) {
@@ -627,7 +606,7 @@ plot_topics_and_keywords <- function(model_dir, title_prefix, color, prefix) {
     coord_flip() +
     theme_minimal(base_size = 14) +
     labs(title = paste(title_prefix, "(Definitions)"), x = "Cultural Model", y = "Count")
-  ggsave(sprintf("report/Plots/%s_topics.png", prefix), plot = p_topics, width = 8, height = 6)
+  ggsave(sprintf("Plots/%s_topics.png", prefix), plot = p_topics, width = 8, height = 6)
   
   # 2. Keywords
   clean_keywords <- function(rep_str) {
@@ -664,7 +643,7 @@ plot_topics_and_keywords <- function(model_dir, title_prefix, color, prefix) {
     ) +
     labs(title = paste("Top Keywords per", title_prefix, "Cultural Model"), x = "Keyword", y = "Relative Prominence (NMF Weight)")
   
-  ggsave(sprintf("report/Plots/%s_keywords.png", prefix), plot = p_keywords, width = 10, height = 6)
+  ggsave(sprintf("Plots/%s_keywords.png", prefix), plot = p_keywords, width = 10, height = 6)
 }
 plot_topics_and_keywords(good_model_dir, "Good Taste", "steelblue", "good_taste")
 plot_topics_and_keywords(bad_model_dir, "Bad Taste", "indianred", "bad_taste")
@@ -691,7 +670,7 @@ plot_ca <- function(model_dir, title_prefix, prefix) {
   p_ca <- fviz_ca_biplot(res.ca, geom.row = "point", col.row = assigned, col.col = "black", 
                          title = paste("CA:", title_prefix, "Taste Cultural Models"), palette = "jco", legend.title = "Assigned Cultural Model")
   p_ca <- p_ca + theme(legend.position = "bottom", legend.direction="vertical")
-  ggsave(sprintf("report/Plots/%s.png", prefix), plot = p_ca, width = 10, height = 7)
+  ggsave(sprintf("Plots/%s.png", prefix), plot = p_ca, width = 10, height = 7)
 }
 plot_ca(good_model_dir, "Good", "ca_good_taste")
 plot_ca(bad_model_dir, "Bad", "ca_bad_taste")
@@ -764,7 +743,7 @@ for (c in combos) {
         y = str_replace(v2, "_", " "),
         fill = "Residual"
       )
-    ggsave(sprintf("report/Plots/schema_corr_%s_%s.png", v1, v2), plot=p, width=10, height=7)
+    ggsave(sprintf("Plots/schema_corr_%s_%s.png", v1, v2), plot=p, width=10, height=7)
   }
 }
 
@@ -792,23 +771,25 @@ create_heatmap <- function(data, group_col, title, filename) {
     mutate(Domain = str_remove(Domain, "Domains_Distinction1_"), Score = as.numeric(Score)) %>%
     filter(!is.na(Score)) %>%
     group_by(!!sym(group_col), Domain) %>%
-    summarize(Mean_Score = mean(Score, na.rm = TRUE), .groups = 'drop')
+    summarize(Probability = mean(Score >= 2, na.rm = TRUE), .groups = 'drop')
   
-  domain_order <- dist_means %>% group_by(Domain) %>% summarize(Overall = mean(Mean_Score)) %>% arrange(Overall) %>% pull(Domain)
+  domain_order <- dist_means %>% group_by(Domain) %>% summarize(Overall = mean(Probability)) %>% arrange(Overall) %>% pull(Domain)
   dist_means <- dist_means %>% mutate(Domain = factor(Domain, levels = domain_order))
   
   # Add newlines to make sure they fit horizontally
   dist_means[[group_col]] <- str_replace_all(dist_means[[group_col]], "/", "/\n")
   dist_means[[group_col]] <- str_replace_all(dist_means[[group_col]], " ", "\n")
   
-  p <- ggplot(dist_means, aes(x = !!sym(group_col), y = Domain, fill = Mean_Score)) +
+  global_mean <- mean(dist_means$Probability, na.rm = TRUE)
+  
+  p <- ggplot(dist_means, aes(x = !!sym(group_col), y = Domain, fill = Probability)) +
     geom_tile(color = "white") +
-    geom_text(aes(label = sprintf("%.2f", Mean_Score)), color = "black", size = 4) +
-    scale_fill_gradient2(low = "steelblue", mid = "white", high = "indianred", midpoint = 1.5) +
+    geom_text(aes(label = sprintf("%.2f", Probability)), color = "black", size = 4) +
+    scale_fill_gradient2(low = "steelblue", mid = "white", high = "indianred", midpoint = global_mean) +
     scale_x_discrete(position = "top") +
     theme_minimal(base_size = 14) +
     theme(axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 0)) +
-    labs(title = title, x = "Cultural Model", y = "Cultural Domain", fill = "Mean Score")
+    labs(title = title, x = "Cultural Model", y = "Cultural Domain", fill = "Probability\n(Score \u2265 2)")
   
   ggsave(filename, plot = p, width = 11, height = 7)
 }
@@ -820,7 +801,7 @@ create_heatmap(m_df, "Bad_Def", "Average Distinction Rating by Domain (Bad Taste
 # 4. Utilities
 
 ## 4.1 Configuration and Tables
-```{python, eval=FALSE}
+```{python, eval=TRUE}
 import pandas as pd
 import re
 import json
