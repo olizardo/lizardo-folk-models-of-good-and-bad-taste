@@ -18,19 +18,18 @@ plot_topics_and_keywords <- function(model_dir, title_prefix, color, prefix) {
   info <- read_csv(file.path(model_dir, "topic_info.csv"), show_col_types = FALSE) %>% filter(Topic != -1)
   
   # Format names
-  info$NameClean <- str_replace_all(str_replace(info$Name, "^\\d+_", ""), "_", " ")
-  info$NameClean <- str_to_title(info$NameClean)
-  
-  for (i in seq_along(info$NameClean)) {
-    if (info$NameClean[i] == "Similar Say Usually") info$NameClean[i] <- "Shared Taste"
-    if (info$NameClean[i] == "Art Appreciate Quality") info$NameClean[i] <- "Cultivated Discernment"
-    if (info$NameClean[i] == "Look Appealing Clothing") info$NameClean[i] <- "Personal Style"
-    if (info$NameClean[i] == "Pleasing Choices Aesthetically") info$NameClean[i] <- "Aesthetic Curation"
-    if (info$NameClean[i] == "Likes Different Opinion") info$NameClean[i] <- "Relational Distance"
-    if (info$NameClean[i] == "Choices Music Clothing") info$NameClean[i] <- "Questionable Consumption"
-    if (info$NameClean[i] == "Usually Quality Ugly") info$NameClean[i] <- "Lack of Refinement"
-    if (info$NameClean[i] == "Care Really Look") info$NameClean[i] <- "Aesthetic Neglect"
-  }
+  meaningful_labels <- c(
+    "0_similar_say_usually" = "Shared Taste",
+    "1_art_appreciate_quality" = "Cultivated Discernment",
+    "2_look_appealing_clothing" = "Personal Style",
+    "3_pleasing_choices_aesthetically" = "Aesthetic Curation",
+    "0_likes_different_opinion" = "Relational Distance",
+    "1_choices_music_clothing" = "Questionable Consumption",
+    "2_usually_quality_ugly" = "Lack of Refinement",
+    "3_care_really_look" = "Aesthetic Neglect"
+  )
+  info$NameClean <- meaningful_labels[info$Name]
+  info$NameClean[is.na(info$NameClean)] <- str_to_title(str_replace_all(str_replace(info$Name[is.na(info$NameClean)], "^\\d+_", ""), "_", " "))
   
   p_topics <- ggplot(info, aes(x = reorder(NameClean, Count), y = Count)) +
     geom_bar(stat = "identity", fill = color) +
@@ -86,21 +85,20 @@ library(factoextra)
 plot_ca <- function(model_dir, title_prefix, prefix) {
   # Get names for plotting
   info <- read_csv(file.path(model_dir, "topic_info.csv"), show_col_types = FALSE)
-  names_clean <- str_replace_all(str_replace(info$Name, "^\\d+_", ""), "_", " ")
-  names_title <- str_to_title(names_clean)
+  meaningful_labels <- c(
+    "0_similar_say_usually" = "Shared Taste",
+    "1_art_appreciate_quality" = "Cultivated Discernment",
+    "2_look_appealing_clothing" = "Personal Style",
+    "3_pleasing_choices_aesthetically" = "Aesthetic Curation",
+    "0_likes_different_opinion" = "Relational Distance",
+    "1_choices_music_clothing" = "Questionable Consumption",
+    "2_usually_quality_ugly" = "Lack of Refinement",
+    "3_care_really_look" = "Aesthetic Neglect"
+  )
+  names_mapped <- meaningful_labels[info$Name]
+  names_mapped[is.na(names_mapped)] <- str_to_title(str_replace_all(str_replace(info$Name[is.na(names_mapped)], "^\\d+_", ""), "_", " "))
   
-  for (i in seq_along(names_title)) {
-    if (names_title[i] == "Similar Say Usually") names_title[i] <- "Shared Taste"
-    if (names_title[i] == "Art Appreciate Quality") names_title[i] <- "Cultivated Discernment"
-    if (names_title[i] == "Look Appealing Clothing") names_title[i] <- "Personal Style"
-    if (names_title[i] == "Pleasing Choices Aesthetically") names_title[i] <- "Aesthetic Curation"
-    if (names_title[i] == "Likes Different Opinion") names_title[i] <- "Relational Distance"
-    if (names_title[i] == "Choices Music Clothing") names_title[i] <- "Questionable Consumption"
-    if (names_title[i] == "Usually Quality Ugly") names_title[i] <- "Lack of Refinement"
-    if (names_title[i] == "Care Really Look") names_title[i] <- "Aesthetic Neglect"
-  }
-  
-  map <- setNames(names_title, as.character(info$Topic))
+  map <- setNames(names_mapped, as.character(info$Topic))
   
   probs <- read_csv(file.path(model_dir, "document_topic_probabilities.csv"), show_col_types = FALSE)
   probs_clean <- probs %>% select(-original_index)
@@ -144,18 +142,20 @@ get_topic_names <- function(model_dir) {
   names_title <- str_to_title(names_clean)
   
   # Inject manual names for specific mappings
-  for (i in seq_along(names_title)) {
-    if (names_title[i] == "Similar Say Usually") names_title[i] <- "Shared Taste"
-    if (names_title[i] == "Art Appreciate Quality") names_title[i] <- "Cultivated Discernment"
-    if (names_title[i] == "Look Appealing Clothing") names_title[i] <- "Personal Style"
-    if (names_title[i] == "Pleasing Choices Aesthetically") names_title[i] <- "Aesthetic Curation"
-    if (names_title[i] == "Likes Different Opinion") names_title[i] <- "Relational Distance"
-    if (names_title[i] == "Choices Music Clothing") names_title[i] <- "Questionable Consumption"
-    if (names_title[i] == "Usually Quality Ugly") names_title[i] <- "Lack of Refinement"
-    if (names_title[i] == "Care Really Look") names_title[i] <- "Aesthetic Neglect"
-  }
+  meaningful_labels <- c(
+    "0_similar_say_usually" = "Shared Taste",
+    "1_art_appreciate_quality" = "Cultivated Discernment",
+    "2_look_appealing_clothing" = "Personal Style",
+    "3_pleasing_choices_aesthetically" = "Aesthetic Curation",
+    "0_likes_different_opinion" = "Relational Distance",
+    "1_choices_music_clothing" = "Questionable Consumption",
+    "2_usually_quality_ugly" = "Lack of Refinement",
+    "3_care_really_look" = "Aesthetic Neglect"
+  )
+  names_mapped <- meaningful_labels[info$Name]
+  names_mapped[is.na(names_mapped)] <- str_to_title(str_replace_all(str_replace(info$Name[is.na(names_mapped)], "^\\d+_", ""), "_", " "))
   
-  map <- setNames(names_title, as.character(info$Topic))
+  map <- setNames(names_mapped, as.character(info$Topic))
   map["-1"] <- "Outlier"
   map
 }

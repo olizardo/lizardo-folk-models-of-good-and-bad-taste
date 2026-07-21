@@ -2,7 +2,7 @@ PWD /home/omarlizardo/CULTURE PROJECTS/OMAR PROJECTS/lizardo-folk-models-of-good
 INPUT /home/omarlizardo/.TinyTeX/texmf.cnf
 INPUT /home/omarlizardo/.TinyTeX/texmf-dist/web2c/texmf.cnf
 INPUT /home/omarlizardo/.TinyTeX/texmf-var/web2c/pdftex/pdflatex.fmt
-INPUT draft_research_note.tex
+INPUT /home/omarlizardo/CULTURE PROJECTS/OMAR PROJECTS/lizardo-folk-models-of-good-and-bad-taste/draft_research_note.tex
 OUTPUT draft_research_note.log
 INPUT /home/omarlizardo/.TinyTeX/texmf-dist/tex/latex/base/article.cls
 INPUT /home/omarlizardo/.TinyTeX/texmf-dist/tex/latex/base/article.cls
